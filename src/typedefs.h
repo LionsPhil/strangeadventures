@@ -4,7 +4,7 @@ The basic datatypes
 
 */
 
-#define DEMO_VERSION
+//#define DEMO_VERSION
 
 
 typedef signed char int8;

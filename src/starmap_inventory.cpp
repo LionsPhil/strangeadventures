@@ -1731,7 +1731,7 @@ int32 eledras_bauble(char *title)
 			if (strlen(itname) <= strlen(itemtypes[c].name))
 			{
 				for (x = 0; x <= (int)(strlen(itemtypes[c].name)-strlen(itname)); x++)
-				if (!_strnicmp(itname, itemtypes[c].name + x, strlen(itname)))
+				if (!strncasecmp(itname, itemtypes[c].name + x, strlen(itname)))
 				{
 					it = c;
 					break;
@@ -1754,7 +1754,7 @@ int32 eledras_bauble(char *title)
 				it = -1;
 
 		if (it>-1)
-			if (!stricmp(itemtypes[it].clas, textstring[STR_INV_ARTIFACT]))	// check for duplicate artifacts
+			if (!strcasecmp(itemtypes[it].clas, textstring[STR_INV_ARTIFACT]))	// check for duplicate artifacts
 			{
 				for (c = 0; c < kla_numitems; c++)
 					if (kla_items[c] == it)

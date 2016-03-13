@@ -5,10 +5,13 @@
 #include <stdio.h>
 #include <memory.h>
 #include <string.h>
+#include <stdlib.h>
 
 #ifdef WINDOWS
 #include <io.h>
 #include <malloc.h>
+#else
+#include <dirent.h>
 #endif
 
 #include "is_fileio.h"
@@ -35,7 +38,6 @@ void modconfig_init()
 	int x;
 	int y;
 	int handle;
-	_finddata_t find;
 	char tmps[256];
 	FILE *fil;
 
@@ -44,6 +46,9 @@ void modconfig_init()
 	// allocate memory for mod names
 	moddirs = (t_moddir*)calloc(MAX_MODDIRS, sizeof(t_moddir));
 	n_moddirs = 0;
+
+#ifdef WINDOWS
+	_finddata_t find;
 
 	// read mod names
 	handle = _findfirst("mods/*.*", &find);
@@ -66,6 +71,26 @@ void modconfig_init()
 		}
 		_findclose(handle);
 	}
+#else
+	DIR *find;
+	find = opendir("mods");
+	if (NULL != find) {
+		struct dirent *de;
+
+		while (NULL != (de = readdir(find))) {
+			if (n_moddirs < MAX_MODDIRS)
+			if(de->d_type == DT_DIR) {
+				if (strcmp(de->d_name, ".") && strcmp(de->d_name, ".."))
+				{
+					sprintf(moddirs[n_moddirs].dir, "mods/%s/", de->d_name);
+					sprintf(moddirs[n_moddirs].name, de->d_name);
+					n_moddirs++;
+				}
+			}
+		}
+		closedir(find);
+	}
+#endif
 
 	if (n_moddirs > 1)
 	{
