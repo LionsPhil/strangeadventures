@@ -707,7 +707,7 @@ void combat_start(int32 flt)
 		x = cships[t].x; y = cships[t].y;
 		cships[t].x = (x * cos1k[angle] + y * sin1k[angle]) >> 6;
 		cships[t].y = (y * cos1k[angle] - x * sin1k[angle]) >> 6;
-		cships[t].a = cships[t].a + angle & 1023;
+		cships[t].a = (cships[t].a + angle) & 1023;
 	}
 
 	for (t = 0; t < MAX_COMBAT_SHIPS; t++)
@@ -785,6 +785,7 @@ void klakar_pissoff()
 	char str[256];
 
 	r = race_klakar;
+	t = 0;
 
 	halfbritescreen();
 
@@ -1321,6 +1322,7 @@ void combat_movement(int32 t)
 					wx = cships[tg].x;
 					wy = cships[tg].y;
 				}
+				else { wx = 0; wy = 0; } // appease compiler
 				a = get_direction( (wx - cships[c].x)>>10, (wy - cships[c].y)>>10 );
 				r = get_distance( (wx - cships[c].x)>>10, (wy - cships[c].y)>>10 );
 
@@ -2279,6 +2281,7 @@ void combat_help_screen()
 	t_ik_image *bg;
 
 	bg = ik_load_pcx("graphics/helpc.pcx", NULL);
+	t = 0;
 
 	prep_screen();
 	ik_copybox(bg, screen, 0, 0, 640, 480, 0,0);

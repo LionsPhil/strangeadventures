@@ -22,7 +22,7 @@
 //     CONSTANTS
 // ----------------
 
-char *ecard_keywords[eckMax] =
+const char *ecard_keywords[eckMax] =
 {
 	"CARD",
 	"NAME",

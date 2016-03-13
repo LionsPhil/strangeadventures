@@ -56,24 +56,24 @@ void interface_deinit();
 void interface_drawborder(t_ik_image *img,
 													int32 left, int32 top, int32 right, int32 bottom,
 													int32 fill, int32 color,
-													char *title);
+													const char *title);
 void interface_thinborder(t_ik_image *img,
 													int32 left, int32 top, int32 right, int32 bottom,
 													int32 color, int32 fill = -1);
 int32 interface_textbox(t_ik_image *img, t_ik_font *fnt,
 											 int32 left, int32 top, int32 w, int32 h,
 											 int32 color,
-											 char *text);
+											 const char *text);
 int32 interface_textboxsize(t_ik_font *fnt,
 														int32 w, int32 h,
-														char *text);
+														const char *text);
 int32 interface_popup(t_ik_font *fnt,
 										 int32 left, int32 top, int32 w, int32 h,
 										 int32 co1, int32 co2,
-										 char *label, char *text,
-										 char *button1 = NULL, char *button2 = NULL, char *button3 = NULL);
+										 const char *label, const char *text,
+										 const char *button1 = NULL, const char *button2 = NULL, const char *button3 = NULL);
 void interface_drawslider(t_ik_image *img, int32 left, int32 top, int32 a, int32 l, int32 rng, int32 val, int32 color);
-void interface_drawbutton(t_ik_image *img, int32 left, int32 top, int32 l, int32 color, char *text);
+void interface_drawbutton(t_ik_image *img, int32 left, int32 top, int32 l, int32 color, const char *text);
 
 void interface_cleartuts();
 void interface_tutorial(int n);

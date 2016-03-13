@@ -63,7 +63,7 @@ void modconfig_init()
 				if (strcmp(find.name, ".") && strcmp(find.name, ".."))
 				{
 					sprintf(moddirs[n_moddirs].dir, "mods/%s/", find.name);
-					sprintf(moddirs[n_moddirs].name, find.name);
+					sprintf(moddirs[n_moddirs].name, "%s", find.name);
 					n_moddirs++;
 				}
 			}
@@ -83,7 +83,7 @@ void modconfig_init()
 				if (strcmp(de->d_name, ".") && strcmp(de->d_name, ".."))
 				{
 					sprintf(moddirs[n_moddirs].dir, "mods/%s/", de->d_name);
-					sprintf(moddirs[n_moddirs].name, de->d_name);
+					sprintf(moddirs[n_moddirs].name, "%s", de->d_name);
 					n_moddirs++;
 				}
 			}
@@ -169,7 +169,7 @@ int modconfig_main()
 			{
 				if (strcmp(moddir, moddirs[msel].dir))
 				{
-					sprintf(moddir, moddirs[msel].dir);
+					sprintf(moddir, "%s", moddirs[msel].dir);
 					end = 1;
 				}
 			}
@@ -227,7 +227,7 @@ int modconfig_main()
 				if (mx > bx+176 && mx < bx+240 && my > by+h-32 && my < by+h-16)
 				if (strcmp(moddir, moddirs[msel].dir))
 				{
-					sprintf(moddir, moddirs[msel].dir);
+					sprintf(moddir, "%s", moddirs[msel].dir);
 					Play_SoundFX(0, 0, 100);
 					end = 1;
 				}

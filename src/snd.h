@@ -280,7 +280,7 @@ extern t_wavesound wavesnd[WAV_MAX];
 
 // ******** SOUND *********
 
-int Load_WAV(char *filename, int id);
+int Load_WAV(const char *filename, int id);
 void load_all_sfx(void);
 int Delete_Sound(int id);
 int Delete_All_Sounds(void);
@@ -317,7 +317,7 @@ void upd_music(int pos);
 int m_get_pan(int ch, int pos);
 int m_get_vol(int ch, int pos);
 
-void save_cur_music(char *fname);
-void load_cur_music(char *fname);
+void save_cur_music(const char *fname);
+void load_cur_music(const char *fname);
 void prep_music(int n); // copy from songs[] to song
 void plop_music(int n); // copy from song to songs[]

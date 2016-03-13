@@ -1,4 +1,4 @@
-AM_CXXFLAGS = -Wall -std=gnu++98
+AM_CXXFLAGS = -std=gnu++98 -Wall -Wno-unused-but-set-variable
 
 bin_PROGRAMS = strangelp
 strangelp_SOURCES = \

@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 
 #ifndef WINDOWS
 	fprintf(stderr, "Strange Adventures in Infinite Space\n");
-	fprintf(stderr, "Unofficial Port by Chris Collins\n");
+	fprintf(stderr, "Unofficial fork by Philip Boulain et. al. (see README.md)\n");
 #endif
 
 	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO) < 0)

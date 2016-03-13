@@ -62,7 +62,7 @@ void interface_deinit()
 void interface_drawborder(t_ik_image *img,
 													int32 left, int32 top, int32 right, int32 bottom,
 													int32 fill, int32 color,
-													char *title)
+													const char *title)
 {
 	int32 x, y;
 	int32 flag;
@@ -162,7 +162,7 @@ void interface_drawslider(t_ik_image *img, int32 left, int32 top, int32 a, int32
 
 }
 
-void interface_drawbutton(t_ik_image *img, int32 left, int32 top, int32 l, int32 color, char *text)
+void interface_drawbutton(t_ik_image *img, int32 left, int32 top, int32 l, int32 color, const char *text)
 {
 	int32 x;
 
@@ -176,11 +176,11 @@ void interface_drawbutton(t_ik_image *img, int32 left, int32 top, int32 l, int32
 int32 interface_textbox(t_ik_image *img, t_ik_font *fnt,
 											 int32 left, int32 top, int32 w, int32 h,
 											 int32 color,
-											 char *text)
+											 const char *text)
 {
-	char *txb;
-	char *txp;
-	char *spc;
+	const char *txb;
+	const char *txp;
+	const char *spc;
 	int32 x, y;
 	int32 c, l;
 	char lne[80];
@@ -241,11 +241,11 @@ int32 interface_textbox(t_ik_image *img, t_ik_font *fnt,
 
 int32 interface_textboxsize(t_ik_font *fnt,
 														int32 w, int32 h,
-														char *text)
+														const char *text)
 {
-	char *txb;
-	char *txp;
-	char *spc;
+	const char *txb;
+	const char *txp;
+	const char *spc;
 	int32 x, y;
 	int32 c, l;
 	char lne[80];
@@ -301,7 +301,7 @@ int32 interface_textboxsize(t_ik_font *fnt,
 int32 interface_popup(t_ik_font *fnt,
 										 int32 left, int32 top, int32 w, int32 h,
 										 int32 co1, int32 co2,
-										 char *label, char *text, char *button1, char *button2, char *button3)
+										 const char *label, const char *text, const char *button1, const char *button2, const char *button3)
 {
 	int32 mc, c;
 	int32 end = 0;

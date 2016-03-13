@@ -110,9 +110,9 @@ void combat_displayships()
 	{	camera.ship_sel = -1; camera.ship_trg = -1; }
 
 	if (ty>-1)
-		sprintf(top, shiptypes[ty].name);
+		sprintf(top, "%s", shiptypes[ty].name);
 	else
-		sprintf(top, player.shipname);
+		sprintf(top, "%s", player.shipname);
 	interface_drawborder(screen,
 											 bx, by, bx+160, by+h,
 											 1, COMBAT_INTERFACE_COLOR, top); // shipname
@@ -252,9 +252,9 @@ void combat_displayships()
 		ty = cships[s].type;
 
 	if (ty>-1)
-		sprintf(top, shiptypes[ty].name);
+		sprintf(top, "%s", shiptypes[ty].name);
 	else
-		sprintf(top, textstring[STR_COMBAT_NOTARGET]);
+		sprintf(top, "%s", textstring[STR_COMBAT_NOTARGET]);
 	interface_drawborder(screen,
 											 bx, by, bx+160, by+h,
 											 1, COMBAT_INTERFACE_COLOR, top); // shipname

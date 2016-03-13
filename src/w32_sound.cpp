@@ -47,8 +47,6 @@ t_wavesound wavesnd[WAV_MAX];
 int sound_init()
 {
 
-	static int first_time = 1; // used to track the first time the function is entered
-
 	// initialize the sound fx array
 	for (int index=0; index<WAV_MAX; index++)
 	{
@@ -74,9 +72,9 @@ Mix_Chunk *lsnd(int32 name)
 	return wave;
 }
 
-int Load_WAV(char *filename, int id)
+int Load_WAV(const char *filename, int id)
 {
-	sprintf(wavesnd[id].name, filename);
+	sprintf(wavesnd[id].name, "%s", filename);
 	lsnd(id);
 	return id;
 }

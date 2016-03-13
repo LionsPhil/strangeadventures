@@ -151,7 +151,7 @@ void ik_start_log()
 	last_logdate = -1;
 }
 
-void ik_print_log(char *ln, ...)
+void ik_print_log(const char *ln, ...)
 {
 	char dlin[256], *dl=dlin;
 	char text1[256], text2[256];
@@ -181,5 +181,5 @@ void ik_print_log(char *ln, ...)
 		last_logdate = date;
 	}
 
-	fprintf(logfile, dl);
+	fprintf(logfile, "%s", dl);
 }

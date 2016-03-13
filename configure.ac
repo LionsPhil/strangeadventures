@@ -42,6 +42,9 @@ AS_IF([test "x$enable_windows" = "xyes"], [
 	AC_DEFINE([WINDOWS], [], [Windows build])
 ])
 
+# Support --enable-silent-rules or make V=0 for cleaner build logs
+AM_SILENT_RULES
+
 AC_CONFIG_FILES([Makefile
                  src/Makefile])
 AC_OUTPUT

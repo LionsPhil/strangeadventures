@@ -314,7 +314,7 @@ void del_image(t_ik_image *img)
 	free(img);
 }
 
-t_ik_image *ik_load_pcx(char *fname, uint8 *pal)
+t_ik_image *ik_load_pcx(const char *fname, uint8 *pal)
 {
 	int32 x,y,po;
 	int32 c,ch;
@@ -429,7 +429,7 @@ t_ik_image *ik_load_pcx(char *fname, uint8 *pal)
 	return image;
 }
 
-t_ik_image *ik_load_tga(char *fname, uint8 *pal)
+t_ik_image *ik_load_tga(const char *fname, uint8 *pal)
 {
 	t_ik_image *img;
 	FILE *fil;
@@ -515,7 +515,7 @@ void ik_save_screenshot(t_ik_image *img, uint8 *pal)
 #endif
 }
 
-void ik_save_tga(char *fname, t_ik_image *img, uint8 *pal)
+void ik_save_tga(const char *fname, t_ik_image *img, uint8 *pal)
 {
 	int p;
 	uint8 hdr[18] = {
