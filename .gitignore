@@ -1,0 +1,8 @@
+# Data files from the full free release
+gamedata/
+graphics/
+mods/
+sounds/
+
+# Autotools and build cruft *isn't* in here, so you can git clean without -x to
+# get rid of them, since clean with -x would also take our your data files.
