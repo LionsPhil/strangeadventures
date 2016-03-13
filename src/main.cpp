@@ -2,19 +2,24 @@
 //     INCLUDES
 // ----------------
 
-#include <iostream.h> // include important C/C++ stuff
-#include <conio.h>
+/* #include <iostream.h> // include important C/C++ stuff */
+#include <iostream>
+
 #include <stdlib.h>
-#include <malloc.h>
 #include <memory.h>
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <math.h>
-#include <io.h>
 #include <fcntl.h>
 #include <time.h>
 #include <SDL.h>
+
+#ifdef WINDOWS
+#include <malloc.h>
+#include <conio.h>
+#include <io.h>
+#endif
 
 #include "typedefs.h"
 #include "is_fileio.h"

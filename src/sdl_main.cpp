@@ -20,9 +20,14 @@ int main(int argc, char *argv[])
 	c_maxx=gfx_width;
 	c_maxy=gfx_height;
 
+#ifndef WINDOWS
+	fprintf(stderr, "Strange Adventures in Infinite Space\n");
+	fprintf(stderr, "Unofficial Port by Chris Collins\n");
+#endif
+
 	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO) < 0)
 	{	
-		//sdlerr("initialising SDL"); 
+		fprintf(stderr, "Problem initialising SDL: %s\n", SDL_GetError());
 		return 1; 
 	}
 	SDL_WM_SetCaption("Strange Adventures In Infinite Space", "Strange Adventures In Infinite Space");
@@ -33,6 +38,7 @@ int main(int argc, char *argv[])
 	// init SDL mixer
 	if (Mix_OpenAudio(22050, AUDIO_S16, 2, 1024) < 0)
 	{
+		fprintf(stderr, "Problem initialising Audio: %s\n", SDL_GetError());
 		return 1;
 	}
 	Mix_AllocateChannels(16);

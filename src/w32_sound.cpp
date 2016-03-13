@@ -2,25 +2,31 @@
 
 #define INITGUID
 
+#ifdef WINDOWS
 #include <windows.h>   // include important windows stuff
 #include <windowsx.h> 
 #include <mmsystem.h>
 #include <objbase.h>
 #include <iostream.h> // include important C/C++ stuff
 #include <conio.h>
-#include <stdlib.h>
 #include <malloc.h>
+#include <io.h>
+
+#include <dsound.h>
+
+#else
+#include <iostream>
+#endif
+
+#include <stdlib.h>
 #include <memory.h>
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <math.h>
-#include <io.h>
+#include <cmath>
 #include <fcntl.h>
 #include <SDL.h>
 #include <SDL_mixer.h>
-
-#include <dsound.h>
 
 #include "typedefs.h"
 #include "iface_globals.h"
@@ -183,11 +189,11 @@ int Set_Sound_Pan(int ch,int pan)
 
 	if (pan < 0)
 	{
-		lf = 255; rt = (int)(255 - sqrt(-pan)*2);
+		lf = 255; rt = (int)(255 - std::sqrt((double)-pan)*2);
 	}
 	else
 	{
-		rt = 255; lf = (int)(255 - sqrt(pan)*2);
+		rt = 255; lf = (int)(255 - std::sqrt((double)pan)*2);
 	}
 
 	Mix_SetPanning(ch, lf, rt);

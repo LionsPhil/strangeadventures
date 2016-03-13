@@ -1,13 +1,16 @@
+#include "typedefs.h"
+
 #ifndef DEMO_VERSION
 
 #include <stdio.h>
-#include <io.h>
-#include <malloc.h>
 #include <memory.h>
 #include <string.h>
 
+#ifdef WINDOWS
+#include <io.h>
+#include <malloc.h>
+#endif
 
-#include "typedefs.h"
 #include "is_fileio.h"
 #include "iface_globals.h"
 #include "gfx.h"

@@ -5,6 +5,7 @@ All DIRECTDRAW stuff here
 
 */
 
+#ifdef WINDOWS
 #define WIN32_LEAN_AND_MEAN  
 
 #include <windows.h>   // include important windows stuff
@@ -12,14 +13,18 @@ All DIRECTDRAW stuff here
 #include <mmsystem.h>
 #include <iostream.h> // include important C/C++ stuff
 #include <conio.h>
-#include <stdlib.h>
 #include <malloc.h>
+#include <io.h>
+#else
+#include <iostream>
+using namespace std;
+#endif
+#include <stdlib.h>
 #include <memory.h>
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <math.h>
-#include <io.h>
 #include <fcntl.h>
 #include <SDL.h>
 
@@ -36,7 +41,7 @@ All DIRECTDRAW stuff here
 // GLOBALS
 
 extern SDL_Surface *sdlsurf;
-UCHAR *drawbuffer;  // video buffer
+unsigned char *drawbuffer;  // video buffer
 int drawpitch;      // line pitch
 
 #ifdef MOVIE

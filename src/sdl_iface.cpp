@@ -6,21 +6,29 @@ code to handle all/most of the interaction with the win32 system
 */
 
 // INCLUDES ///////////////////////////////////////////////
+#ifdef WINDOWS
 #define WIN32_LEAN_AND_MEAN  
 
 #include <windows.h>   // include important windows stuff
 #include <windowsx.h> 
 #include <mmsystem.h>
-#include <iostream.h> // include important C/C++ stuff
 #include <conio.h>
-#include <stdlib.h>
 #include <malloc.h>
+#include <io.h>
+
+#else
+
+#include <iostream> // include important C/C++ stuff
+using namespace std;
+
+#endif
+
+#include <stdlib.h>
 #include <memory.h>
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <math.h>
-#include <io.h>
 #include <fcntl.h>
 #include <SDL.h>
 
@@ -112,6 +120,8 @@ void eventhandler()
 				case SDLK_ESCAPE :
 					must_quit=1;
 					break;
+			default:
+				break;
 			}
 
 			ik_inchar = event.key.keysym.unicode & 0xff;

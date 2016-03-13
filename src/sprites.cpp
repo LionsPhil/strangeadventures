@@ -9,8 +9,13 @@
 #include <math.h>
 #include <time.h>
 #include <string.h>
+#ifdef WINDOWS
 #include <malloc.h>
 #include <io.h>
+#else
+#include <sys/types.h>
+#include <dirent.h>
+#endif
 
 #include "typedefs.h"
 #include "iface_globals.h"
@@ -146,9 +151,13 @@ void free_spritepak(t_ik_spritepak *pak)
 t_ik_spritepak *load_sprites(char *fname)
 {
 	// NOTE: load_sprites loads default .SPR, and FRAMES from the mod
+#ifdef WINDOWS
 	struct _finddata_t find;
 	long fhandle;
 	int fi;
+#else
+	DIR		   *find;
+#endif
 	int fnum;
 	char spritedir[256];
 	char framename[256];
@@ -171,6 +180,7 @@ and mark them in the replacement array.
 	max = 0;
 	if (strlen(moddir))	
 	{
+#ifdef WINDOWS
 		sprintf(spritedir, "%s%s", moddir, fname);
 		sprintf(spritedir+strlen(spritedir)-4, "/\0");
 		sprintf(framename, "%sframe*.tga", spritedir);
@@ -192,6 +202,28 @@ and mark them in the replacement array.
 			}
 			_findclose(fhandle);
 		}
+#else
+		sprintf(spritedir, "%s%s", moddir, fname);
+		sprintf(spritedir+strlen(spritedir)-4, "/\0");
+
+		find = opendir(spritedir);
+		if (NULL != find) {
+			struct dirent *de;
+
+			while (NULL != (de = readdir(find))) {
+				if (!strncasecmp(de->d_name, "frame",5)
+				    and !strncasecmp(de->d_name+8, ".tga", 4)) {
+					sscanf(de->d_name+5, "%03d", &fnum);
+					if (fnum < 256) {
+						rep[fnum] = 1;
+						if (fnum+1 > max)
+							max = fnum+1;
+					}
+				}
+			}
+			closedir(find);
+		}
+#endif
 	}
 
 	fil=fopen(fname,"rb");	// don't use myopen here
