@@ -4,6 +4,9 @@ The basic datatypes
 
 */
 
+// Somewhat of a hack for now
+#include "../config.h"
+
 //#define DEMO_VERSION
 
 

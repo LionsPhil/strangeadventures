@@ -16,11 +16,6 @@ code to handle all/most of the interaction with the win32 system
 #include <malloc.h>
 #include <io.h>
 
-#else
-
-#include <iostream> // include important C/C++ stuff
-using namespace std;
-
 #endif
 
 #include <stdlib.h>

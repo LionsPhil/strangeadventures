@@ -35,6 +35,13 @@ AC_SEARCH_LIBS([Mix_OpenAudio], [SDL_mixer], [], [
 	AC_MSG_ERROR([unable to find Mix_OpenAudio from libSDL_mixer])
 ])
 
+# Configure flag to indicate a Windows build
+AC_ARG_ENABLE([windows],
+	AS_HELP_STRING([--enable-windows], [Build for Windows (you must also use mingw32!)]))
+AS_IF([test "x$enable_windows" = "xyes"], [
+	AC_DEFINE([WINDOWS], [], [Windows build])
+])
+
 AC_CONFIG_FILES([Makefile
                  src/Makefile])
 AC_OUTPUT
