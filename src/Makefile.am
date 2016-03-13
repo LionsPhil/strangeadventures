@@ -38,6 +38,6 @@ strangelp_SOURCES = \
 	startgame.h \
 	textstr.cpp \
 	textstr.h \
-	Typedefs.h \
+	typedefs.h \
 	w32_gfx.cpp \
 	w32_sound.cpp
