@@ -4,7 +4,7 @@
 
 #ifdef WINDOWS
 #include <windows.h>   // include important windows stuff
-#include <windowsx.h> 
+#include <windowsx.h>
 #include <mmsystem.h>
 #include <objbase.h>
 #include <iostream.h> // include important C/C++ stuff
@@ -54,7 +54,7 @@ int sound_init()
 	{
 		wavesnd[index].name[0] = 0;
 		wavesnd[index].wave = NULL;
-	} 
+	}
 
 	// return sucess
 	return(1);
@@ -150,7 +150,7 @@ int Play_SoundFX(int id, int t, int volume, int rate, int pan, int cutoff)
 			Play_Sound(id, ch+CHN_SFX, 0, volume, rate, pan);
 		}
 	}
-	
+
 //	Play_Sound(id, CHN_SFX, 0, volume, rate, pan);
 
 	return 1;
@@ -163,7 +163,7 @@ int Set_Sound_Volume(int ch,int vol)
 {
 	// this function sets the volume on a sound 0-100
 	vol = (vol * s_volume * 128) / 10000;
-	
+
 	Mix_Volume(ch, vol);
 
 	// return success
@@ -206,7 +206,7 @@ int Set_Sound_Pan(int ch,int pan)
 int Stop_All_Sounds(void)
 {
 	for (int index=0; index<16; index++)
-		Stop_Sound(index);	
+		Stop_Sound(index);
 	for (int x=0; x<NUM_SFX; x++)
 	{ sfxchan[x].et=0; sfxchan[x].st=0; sfxchan[x].id=-1; }
 
@@ -220,7 +220,7 @@ int Stop_Sound(int ch)
 	Mix_HaltChannel(ch);
 
 	return(1);
-} 
+}
 
 ///////////////////////////////////////////////////////////
 
@@ -230,7 +230,7 @@ int Delete_All_Sounds(void)
 		Delete_Sound(index);
 
 	return(1);
-} 
+}
 
 ///////////////////////////////////////////////////////////
 
@@ -241,10 +241,10 @@ int Delete_Sound(int id)
 		Mix_FreeChunk((Mix_Chunk*)wavesnd[id].wave);
 		wavesnd[id].wave = NULL;
 		return(1);
-  } 
-	
+  }
+
 	return(1);
-} 
+}
 
 ///////////////////////////////////////////////////////////
 
@@ -253,7 +253,7 @@ int Status_Sound(int ch)
 	if (Mix_Playing(ch))
 		return 1;
 	return 0;
-} 
+}
 
 int Get_Sound_Size(int id)
 {

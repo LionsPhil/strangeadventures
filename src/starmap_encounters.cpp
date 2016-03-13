@@ -54,8 +54,8 @@ int32 starmap_entersystem()
 	int32 m;
 	int32 ret = 1;
 
-	if (sm_stars[player.system].novadate>0 && 
-			player.stardate>=sm_stars[player.system].novadate && 
+	if (sm_stars[player.system].novadate>0 &&
+			player.stardate>=sm_stars[player.system].novadate &&
 			player.stardate<=sm_stars[player.system].novadate + 120)
 	{
 		player.death = 4;
@@ -104,7 +104,7 @@ int32 starmap_entersystem()
 			}
 		}
 		else	// flee
-		{			
+		{
 			ret = 0;
 		}
 	}
@@ -140,7 +140,7 @@ void starmap_exploreplanet()
 	if (sm_stars[player.target].explored)
 		cname=0;
 	sm_stars[player.target].explored = 2;
-	c = sm_stars[player.target].card; 
+	c = sm_stars[player.target].card;
 //	card_display(c);
 
 	h = 216;
@@ -154,7 +154,7 @@ void starmap_exploreplanet()
 				starmap_tutorialtype = tut_upgrade;
 			else if (itemtypes[it].type == item_device)
 				starmap_tutorialtype = tut_device;
-			else 
+			else
 				starmap_tutorialtype = tut_treasure;
 		}
 	}
@@ -204,7 +204,7 @@ void starmap_exploreplanet()
 
 	sprintf(texty, ecards[c].text, "A", "B");
 	if (ecards[c].type == card_event)
-	{	
+	{
 		sprintf(name, textstring[STR_CARD_EVENT]);
 #ifndef DEMO_VERSION
 		if (!strcmp(ecards[c].name, textstring[STR_EVENT_DEVA]))
@@ -226,7 +226,7 @@ void starmap_exploreplanet()
 						sh = -1;
 				}
 			}
-	
+
 			sh = player.ships[sh];
 			Play_Sound(WAV_FLARE, 15, 1);
 			s = 0;
@@ -243,14 +243,14 @@ void starmap_exploreplanet()
 				for (n = 0; n < shiptypes[sh].num_systems; n++)
 				{
 					if (shipsystems[shiptypes[sh].system[n]].item > -1)
-					{	
+					{
 						if (r == s)
 						{	s = n; break; }
-						r++; 
+						r++;
 					}
 				}
-				sprintf(texty, ecards[c].text, 
-								shiptypes[sh].name, 
+				sprintf(texty, ecards[c].text,
+								shiptypes[sh].name,
 								shipsystems[shiptypes[sh].system[s]].name);
 				shiptypes[sh].sysdmg[s]=1;
 				//starmap_uninstallsystem(it, 1);
@@ -259,7 +259,7 @@ void starmap_exploreplanet()
 			{
 				sprintf(texty, ecards[c].text2, shiptypes[sh].name); // player.shipname);
 			}
-			
+
 		}
 		else if (!strcmp(ecards[c].name, textstring[STR_EVENT_THIEF]))
 		{
@@ -309,7 +309,7 @@ void starmap_exploreplanet()
 							s = -1;
 						else if (s == homesystem)
 							s = -1;
-						else 
+						else
 							for (r = 0; r < STARMAP_MAX_FLEETS; r++)
 								if (sm_fleets[r].num_ships>0 && r!=n && sm_fleets[r].system==s)
 									s = -1;
@@ -338,13 +338,13 @@ void starmap_exploreplanet()
 					if (shipsystems[shiptypes[0].system[s]].item == -1)
 						s = -1;
 				}
-				sprintf(texty, ecards[c].text, 
+				sprintf(texty, ecards[c].text,
 								shipsystems[shiptypes[0].system[s]].name);
 				starmap_destroysystem(s);
 			}
 			else
 			{
-				sprintf(texty, ecards[c].text2, 
+				sprintf(texty, ecards[c].text2,
 								player.shipname);
 				player.death = 5;
 				player.num_ships = 0;
@@ -460,8 +460,8 @@ void starmap_exploreplanet()
 		sprintf(name, textstring[STR_CARD_ALLY]);
 	}
 	else
-	{	
-		sprintf(name, textstring[STR_CARD_DISCOVERY], itemtypes[it].clas); 
+	{
+		sprintf(name, textstring[STR_CARD_DISCOVERY], itemtypes[it].clas);
 		for (n = 0; n < (int32)strlen(name); n++)
 		{
 			if (name[n]>='a' && name[n]<='z')
@@ -507,7 +507,7 @@ void starmap_exploreplanet()
 	while (!must_quit && !end)
 	{
 		ik_eventhandler();  // always call every frame
-		mc = ik_mclick();	
+		mc = ik_mclick();
 
 		ot = ti; ti = get_ik_timer(2);
 		if (ti != ot)
@@ -540,9 +540,9 @@ void starmap_exploreplanet()
 				if (ik_mouse_x > bx+16 && ik_mouse_x < bx+176 && ik_mouse_y > by+h-40 && ik_mouse_y < by+h-24)
 				{
 					Play_SoundFX(WAV_INFO);
-					interface_popup(font_6x8, bx+16, by+h-112, 192, 96, STARMAP_INTERFACE_COLOR, 0, 
+					interface_popup(font_6x8, bx+16, by+h-112, 192, 96, STARMAP_INTERFACE_COLOR, 0,
 												itemtypes[i[(ik_mouse_y-(by+h-40))/8]].name, itemtypes[i[(ik_mouse_y-(by+h-40))/8]].text);
-				}				
+				}
 			}
 		}
 
@@ -550,7 +550,7 @@ void starmap_exploreplanet()
 //			end = 1;
 	}
 
-	ik_print_log("Exploring the star system, discovered a %s planet and named it %s.\n", 
+	ik_print_log("Exploring the star system, discovered a %s planet and named it %s.\n",
 								platypes[sm_stars[player.target].planet].name,
 								sm_stars[player.target].planetname);
 
@@ -570,7 +570,7 @@ void starmap_exploreplanet()
 			else
 				sprintf(hisher, textstring[STR_MERC_HIS]);
 
-			sprintf(texty, textstring[STR_MERC_PAYMENT], 
+			sprintf(texty, textstring[STR_MERC_PAYMENT],
 							hulls[shiptypes[ecards[c].parm].hull].name,
 							shiptypes[ecards[c].parm].name,
 							hisher);
@@ -655,7 +655,7 @@ int32 starmap_explorehole(int32 h, int32 t)
 	while (!must_quit && !end)
 	{
 		ik_eventhandler();  // always call every frame
-		mc = ik_mclick();	
+		mc = ik_mclick();
 		mx = ik_mouse_x - bx; my = ik_mouse_y - by;
 
 		if (must_quit)
@@ -721,7 +721,7 @@ int32 starmap_explorehole(int32 h, int32 t)
 	player.explore = 0;
 	Stop_Sound(15);
 
-	return end-1;	
+	return end-1;
 }
 
 // alien encounters
@@ -762,7 +762,7 @@ int32 fleet_encounter(int32 flt, int32 inc)
 	while (!must_quit && !end)
 	{
 		ik_eventhandler();  // always call every frame
-		mc = ik_mclick();	
+		mc = ik_mclick();
 		t0 = t; t = get_ik_timer(0);
 		mx = ik_mouse_x - bx; my = ik_mouse_y - by;
 		if (mc == 1 && mx > 16 && mx < 64 && my > 160 && my < 176)
@@ -803,9 +803,9 @@ int32 fleet_encounter(int32 flt, int32 inc)
 									 spr_IFarrows->spr[10-(s<32)+(s>80)], 5+(l<<8));
 			}
 			l = ((t&63)*3 - 95 + 1024) & 1023;
-			ik_dspriteline(screen, bx + 80, by + 152, 
-										bx + 80 + ((sin1k[l] * 112) >> 16), 
-										by + 152 - ((cos1k[l] * 112) >> 16), 
+			ik_dspriteline(screen, bx + 80, by + 152,
+										bx + 80 + ((sin1k[l] * 112) >> 16),
+										by + 152 - ((cos1k[l] * 112) >> 16),
 										8, (t&31), 18, spr_weapons->spr[2], 5+(10<<8));
 			if (!inc)
 			{
@@ -850,7 +850,7 @@ void starmap_meetrace(int32 r)
 	if (r < race_klakar)
 		return;
 
-	if (r >= race_unknown) 
+	if (r >= race_unknown)
 		return;
 
 	races[r].met = 1;
@@ -877,7 +877,7 @@ void starmap_meetrace(int32 r)
 	while (!must_quit && !end)
 	{
 		ik_eventhandler();  // always call every frame
-		mc = ik_mclick();	
+		mc = ik_mclick();
 		c = ik_inkey();
 		mx = ik_mouse_x - bx; my = ik_mouse_y - by;
 
@@ -968,7 +968,7 @@ void starmap_mantle(int32 flt)
 			while (!must_quit && !end)
 			{
 				ik_eventhandler();  // always call every frame
-				mc = ik_mclick();	
+				mc = ik_mclick();
 				c = ik_inkey();
 				mx = ik_mouse_x - bx; my = ik_mouse_y - by;
 
@@ -1086,7 +1086,7 @@ void enemy_encounter(int32 r)
 	while (!must_quit && !end)
 	{
 		ik_eventhandler();  // always call every frame
-		mc = ik_mclick();	
+		mc = ik_mclick();
 		c = ik_inkey();
 		mx = ik_mouse_x - bx; my = ik_mouse_y - by;
 
@@ -1123,7 +1123,7 @@ int32 muktian_encounter()
 	m = 0; mc = -1;
 	for (c = 0; c < player.num_ships; c++)
 	if (shiptypes[player.ships[c]].race == 	r)
-	{	
+	{
 		m = 1; mc = c;
 	}
 
@@ -1171,7 +1171,7 @@ int32 muktian_encounter()
 	while (!must_quit && !end)
 	{
 		ik_eventhandler();  // always call every frame
-		mc = ik_mclick();	
+		mc = ik_mclick();
 		c = ik_inkey();
 		mx = ik_mouse_x - bx; my = ik_mouse_y - by;
 
@@ -1203,11 +1203,11 @@ int32 muktian_encounter()
 		{
 			Play_Sound(WAV_MUKTIAN, 15, 1);
 
-			interface_popup(font_6x8, 224, 192, 192, 0, STARMAP_INTERFACE_COLOR, 0, 
+			interface_popup(font_6x8, 224, 192, 192, 0, STARMAP_INTERFACE_COLOR, 0,
 											textstring[STR_AMBASSADORT], textstring[STR_AMBASSADOR], textstring[STR_OK]);
 			Stop_Sound(15);
 			for (c = 0; c < num_itemtypes; c++)
-			if (itemtypes[c].flag & lifeform_ambassador) 
+			if (itemtypes[c].flag & lifeform_ambassador)
 			{
 				starmap_additem(c, 0);
 			}
@@ -1257,7 +1257,7 @@ void klakar_encounter()
 	while (!must_quit && !end)
 	{
 		ik_eventhandler();  // always call every frame
-		mc = ik_mclick();	
+		mc = ik_mclick();
 		c = ik_inkey();
 		mx = ik_mouse_x - bx; my = ik_mouse_y - by;
 
@@ -1344,7 +1344,7 @@ void kawangi_warning()
 	while (!must_quit && !end)
 	{
 		ik_eventhandler();  // always call every frame
-		mc = ik_mclick();	
+		mc = ik_mclick();
 		c = ik_inkey();
 		mx = ik_mouse_x - bx; my = ik_mouse_y - by;
 
@@ -1409,7 +1409,7 @@ void kawangi_message(int32 flt, int32 m)
 			kawangi_score++;
 		}
 		break;
-		
+
 		default: ;
 	}
 
@@ -1432,7 +1432,7 @@ void kawangi_message(int32 flt, int32 m)
 	while (!must_quit && !end)
 	{
 		ik_eventhandler();  // always call every frame
-		mc = ik_mclick();	
+		mc = ik_mclick();
 		c = ik_inkey();
 		mx = ik_mouse_x - bx; my = ik_mouse_y - by;
 
@@ -1490,10 +1490,10 @@ void starmap_kawangimove(int flt)
 				r = starmap_stardist(c, homesystem);
 				if (r < cr)	// only go to planets that are closer to hope
 				{
-					r += starmap_stardist(sm_fleets[flt].system, c) * 2;	
+					r += starmap_stardist(sm_fleets[flt].system, c) * 2;
 					// add the distance to this star from current
 					if (r < rr || rr==-1)
-					{	
+					{
 						sm_fleets[flt].target = c;
 						rr = r;
 					}

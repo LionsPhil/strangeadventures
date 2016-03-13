@@ -269,7 +269,7 @@ typedef struct {
 	void *wave;
 } t_wavesound;
 
-typedef struct 
+typedef struct
 {
 	int id;      // sample playing
 	int st, et;  // start and end time
@@ -298,7 +298,7 @@ int Get_Sound_Rate(int id);
 
 // ********* MUSIC ********
 
-typedef struct 
+typedef struct
 {
 	int8 volseq[64];
 	int8 panseq[64];

@@ -62,7 +62,7 @@ void cards_init()
 	ini = myopen("gamedata/cards.ini", "rb");
 	if (!ini)
 		return;
- 
+
 	end = 0; num = 0; flag = 0;
 	while (!end)
 	{
@@ -186,7 +186,7 @@ void card_display(int n)
 	while (!must_quit && !end)
 	{
 		ik_eventhandler();  // always call every frame
-		mc = ik_mclick();	
+		mc = ik_mclick();
 		c = ik_inkey();
 
 		if (c == 13)

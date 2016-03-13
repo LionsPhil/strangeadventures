@@ -8,7 +8,7 @@
 
 typedef struct _t_job
 {
-	char name[64];	
+	char name[64];
 	int32 value;
 } t_job;
 

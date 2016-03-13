@@ -30,7 +30,7 @@
 
 
 
-char *planet_keywords[plkMax] = 
+char *planet_keywords[plkMax] =
 {
 	"PLNT",
 	"NAME",
@@ -39,7 +39,7 @@ char *planet_keywords[plkMax] =
 	"END",
 };
 
-char *star_keywords[stkMax] = 
+char *star_keywords[stkMax] =
 {
 	"STAR",
 	"NAME",
@@ -47,7 +47,7 @@ char *star_keywords[stkMax] =
 	"END",
 };
 
-char *item_keywords[itkMax] = 
+char *item_keywords[itkMax] =
 {
 	"ITEM",
 	"NAME",
@@ -60,7 +60,7 @@ char *item_keywords[itkMax] =
 	"END",
 };
 
-char *raceflt_keywords[rflMax] = 
+char *raceflt_keywords[rflMax] =
 {
 	"FSET",
 	"RACE",
@@ -294,7 +294,7 @@ void player_init()
 	player.target = homesystem;
 	player.explore = 0;
 //	player.card = -1;
-	
+
 	player.x = sm_stars[player.system].x;
 	player.y = sm_stars[player.system].y;
 
@@ -414,7 +414,7 @@ void allies_init()
 
 void starmap_initsprites()
 {
-	t_ik_image *pcx;	
+	t_ik_image *pcx;
 	int n;
 
 	spr_SMstars		= load_sprites("graphics/smstars.spr");
@@ -423,7 +423,7 @@ void starmap_initsprites()
 	spr_SMplanet2 = load_sprites("graphics/smplnet2.spr");
 	spr_SMnebula	= load_sprites("graphics/smnebula.spr");
 	spr_SMraces		= load_sprites("graphics/smraces.spr");
-	
+
 	pcx = NULL;
 
 	if (!spr_SMstars)
@@ -720,7 +720,7 @@ void starmap_inititems()
 	if (!ini)
 		return;
 
-	end = 0; num = 0; 
+	end = 0; num = 0;
 	flag = 0; num_types = 0;
 	while (!end)
 	{
@@ -785,8 +785,8 @@ void starmap_inititems()
 			{
 				for (n = 0; n < num_shipsystems; n++)
 					if (!strcmp(shipsystems[n].name, itemtypes[num].name))
-					{	
-						itemtypes[num].index = n; shipsystems[n].item = num; 
+					{
+						itemtypes[num].index = n; shipsystems[n].item = num;
 						if (shipsystems[n].type == sys_weapon)
 							shipweapons[shipsystems[n].par[0]].item = num;
 					}
@@ -1080,7 +1080,7 @@ void starmap_createnebula(int n)
 				if (r < 24)
 				{
 					if ((t%num_groups == c%num_groups) || (tries>=100))
-					{	
+					{
 						if (end == -1)
 							end = 1;
 						if (r < 12 && tries<100)
@@ -1167,11 +1167,11 @@ void starmap_createnebulagfx()
 		{
 			t = sm_nebulamap[(y<<9)+x];
 			if (!t)
-			{	
-				c = 0; 
+			{
+				c = 0;
 			}
 			else
-			{	
+			{
 				if (t < 14)
 					c = 9*16+t/2+2;
 				else if (t < 70)
@@ -1274,7 +1274,7 @@ void starmap_createfleets(int32 num) // create enemy fleets
 	int32 kaw = 0;
 #endif
 
-	int32 dif=settings.dif_enemies;	
+	int32 dif=settings.dif_enemies;
 
 #ifndef DEMO_VERSION
 	for (c = 0; c < num_stars; c++)
@@ -1357,7 +1357,7 @@ void starmap_createfleets(int32 num) // create enemy fleets
 			{
 				sm_fleets[c].num_ships = 1;
 				sm_fleets[c].ships[0] = 0;
-				while ((shiptypes[sm_fleets[c].ships[0]].race != sm_fleets[c].race || 
+				while ((shiptypes[sm_fleets[c].ships[0]].race != sm_fleets[c].race ||
 								shiptypes[sm_fleets[c].ships[0]].flag == 1) &&
 								!must_quit)
 				{
@@ -1396,7 +1396,7 @@ void starmap_createfleets(int32 num) // create enemy fleets
 						}
 					}
 				}
-				
+
 			}
 
 			// location
@@ -1453,9 +1453,9 @@ void starmap_createfleets(int32 num) // create enemy fleets
 #endif
 		}
 /*
-		prep_screen(); 
+		prep_screen();
 //		ik_drawbox(screen, 0, 360+c*8, 128, 368+c*8, 0);
-		ik_print(screen, font_6x8, 0, 360+c*16, 0, "%s %d", races[sm_fleets[c].race].name, sm_fleets[c].num_ships); 
+		ik_print(screen, font_6x8, 0, 360+c*16, 0, "%s %d", races[sm_fleets[c].race].name, sm_fleets[c].num_ships);
 		for (n = 0; n < sm_fleets[c].num_ships; n++)
 		{
 			ik_drsprite(screen, 128+n*16, 364+c*16, 0, 16, hulls[shiptypes[sm_fleets[c].ships[n]].hull].sprite, 0);
@@ -1778,8 +1778,8 @@ void starmap_initshipnames()
 
 	num_captnames = 0;
 	num_shipnames = 0;
-	end = 0; num = 0; 
-	flag = 0; 
+	end = 0; num = 0;
+	flag = 0;
 	while (!end)
 	{
 		end = read_line1(ini, s1);
@@ -1802,7 +1802,7 @@ void starmap_initshipnames()
 
 	}
 	fclose(ini);
-	
+
 }
 
 void starmap_initracefleets()
@@ -1819,8 +1819,8 @@ void starmap_initracefleets()
 	if (!ini)
 		return;
 
-	end = 0; num = 0; 
-	flag = 0; 
+	end = 0; num = 0;
+	flag = 0;
 	while (!end)
 	{
 		end = read_line(ini, s1, s2);

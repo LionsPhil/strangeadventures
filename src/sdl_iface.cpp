@@ -7,10 +7,10 @@ code to handle all/most of the interaction with the win32 system
 
 // INCLUDES ///////////////////////////////////////////////
 #ifdef WINDOWS
-#define WIN32_LEAN_AND_MEAN  
+#define WIN32_LEAN_AND_MEAN
 
 #include <windows.h>   // include important windows stuff
-#include <windowsx.h> 
+#include <windowsx.h>
 #include <mmsystem.h>
 #include <conio.h>
 #include <malloc.h>
@@ -53,7 +53,7 @@ typedef unsigned char  UCHAR;
 typedef unsigned char  BYTE;
 
 typedef struct {
-	int32 start, freq; 
+	int32 start, freq;
 } t_ik_timer;
 
 // PROTOTYPES /////////////////////////////////////////////
@@ -102,9 +102,9 @@ void eventhandler()
 
 	keystate = SDL_GetKeyState(NULL);
 
-	while ( SDL_PollEvent(&event) ) 
+	while ( SDL_PollEvent(&event) )
 	{
-		switch (event.type) 
+		switch (event.type)
 		{
 			case SDL_KEYDOWN:
 			switch(event.key.keysym.sym){
@@ -131,7 +131,7 @@ void eventhandler()
 				b = (event.button.button == SDL_BUTTON_LEFT) +
 						2*(event.button.button == SDL_BUTTON_RIGHT) +
 						4*(event.button.button == SDL_BUTTON_MIDDLE);
-				ik_mouse_c = b;	
+				ik_mouse_c = b;
 				ik_mouse_b |= b;
 			case SDL_MOUSEMOTION:
 				ik_mouse_x = event.motion.x;

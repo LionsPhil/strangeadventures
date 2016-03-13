@@ -16,7 +16,7 @@
 //#define STARMAP_BUILD_HELP
 //#define LOG_OUTPUT
 
-//#define STARMAP_DEBUGINFO 
+//#define STARMAP_DEBUGINFO
 //#define STARMAP_DEBUGENEMIES
 //#define STARMAP_DEBUGTANRU
 //#define STARMAP_DEBUGALLIES
@@ -40,7 +40,7 @@
 #define RC_BLOWUP 12
 #define RC_HOLED 13
 #define RC_LOST 14
-#else 
+#else
 #define RC_MUCRON 4
 #define RC_PLANET 4
 #define RC_FOMAX 5
@@ -66,7 +66,7 @@
 	#define NUM_ITEMS			1	// 6
 	#define NUM_RAREITEMS	1 // 2
 	#define NUM_LIFEFORMS	3
-#else 
+#else
 #ifdef STARMAP_DEBUGRAREITEMS
 	#define NUM_EVENTS		2
 	#define NUM_ALLIES		2
@@ -162,7 +162,7 @@ typedef struct _t_player
 	int32 hyptime;
 
 	int32 explore;
-	int32 stardate;	
+	int32 stardate;
 	int32 death;
 	int32 deatht;
 	int32 hole;

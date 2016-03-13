@@ -193,7 +193,7 @@ void splash_screen()
 				ik_copybox(bg[s], screen, 0, 0, 640, 480, 0,0);
 			else
 				ik_drawbox(screen, 0, 0, 640, 480, 0);
-			
+
 			ik_blit();
 		}
 	}
@@ -284,11 +284,11 @@ void splash_screen()
 			if (t > 80)
 			{
 				if (t-80 < 50)
-				{	
+				{
 					z = 192 + ((t-80)*96)/50;
-					l = 13*16 + 5-(t-80)/10; 
+					l = 13*16 + 5-(t-80)/10;
 					ik_drsprite(screen, 104, 80, 0, z, spr_titles->spr[1], 5+(l<<8));
-					l = 13*16 + 15-(t-80)/5; 
+					l = 13*16 + 15-(t-80)/5;
 				}
 				else
 				{	l = 13*16+6+s; }
@@ -298,11 +298,11 @@ void splash_screen()
 			if (t > 180)
 			{
 				if (t-180 < 50)
-				{	
+				{
 					z = 192 + ((t-180)*96)/50;
-					l = 13*16 + 5-(t-180)/10; 
+					l = 13*16 + 5-(t-180)/10;
 					ik_drsprite(screen, 104, 224, 0, z, spr_titles->spr[2], 5+(l<<8));
-					l = 13*16 + 15-(t-180)/5; 
+					l = 13*16 + 15-(t-180)/5;
 				}
 				else
 				{	l = 13*16+6+s; }
@@ -312,11 +312,11 @@ void splash_screen()
 			if (t > 260)
 			{
 				if (t-260 < 50)
-				{	
+				{
 					z = 256 + ((t-260)*128)/50;
-					l = 13*16 + 5-(t-260)/10; 
+					l = 13*16 + 5-(t-260)/10;
 					ik_drsprite(screen, 536, 144, 0, z, spr_titles->spr[3], 5+(l<<8));
-					l = 13*16 + 15-(t-260)/5; 
+					l = 13*16 + 15-(t-260)/5;
 				}
 				else
 				{	l = 13*16+6+s; }
@@ -330,8 +330,8 @@ void splash_screen()
 				else
 					l = 12*16+6+s;
 
-				ik_drsprite(screen, 320, 352, 
-						0, 
+				ik_drsprite(screen, 320, 352,
+						0,
 						640+(sin1k[(t*8)&1023]>>12), spr_titles->spr[0], 5+(l<<8));
 			}
 
@@ -401,7 +401,7 @@ void credits_screen()
 		if (mc==1 || c>0)
 		{ must_quit = 1; }
 
-		
+
 		c = t; t = get_ik_timer(2);
 		if (t >= 1765)
 			end = 1;
@@ -457,7 +457,7 @@ void credits_screen()
 						ik_putpixel(screen, x, y, gfx_addbuffer[r + co]);
 					}
 			}
-			
+
 			ik_blit();
 		}
 	}
@@ -484,8 +484,8 @@ int32 main_menu()
 	{
 		if (i==1)	// start game
 		{
-			if (startgame())	
-			{	
+			if (startgame())
+			{
 #ifdef LOG_OUTPUT
 				ik_start_log();
 #endif
@@ -627,7 +627,7 @@ int32 intro_screen()
 		Play_Sound(WAV_MUS_THEME, 15, 1);
 
 	backy = ik_load_pcx("graphics/titback.pcx", NULL);
-	
+
 
 	nebby = new_image(640, 480);
 	ik_drawbox(nebby, 0, 0, 639, 479, 0);
@@ -675,7 +675,7 @@ int32 intro_screen()
 						mode = 0;
 					else
 						mode = 2;
-					Play_SoundFX(WAV_DOT, 0, 50); 
+					Play_SoundFX(WAV_DOT, 0, 50);
 					if (hiscmusic)
 					{
 						got_hiscore = -2;
@@ -684,12 +684,12 @@ int32 intro_screen()
 					}
 				}
 				if (mx > 256 && mx < 384)
-				{	
+				{
 					if (mode == 1)
 						mode = 0;
 					else
 						mode = 1;
-					Play_SoundFX(WAV_DOT, 0, 50); 
+					Play_SoundFX(WAV_DOT, 0, 50);
 					if (hiscmusic)
 					{
 						got_hiscore = -2;
@@ -704,7 +704,7 @@ int32 intro_screen()
 			{
 				if (my > 112 && my < 320 && mx > 16 && mx < 624 && mode == 1)
 				{
-					Play_SoundFX(WAV_DOT, 0, 50); 
+					Play_SoundFX(WAV_DOT, 0, 50);
 					if (hiscmusic)
 					{
 						got_hiscore = -2;
@@ -796,13 +796,13 @@ int32 intro_screen()
 			//ik_drawbox(screen, 0, 0, 639, 479, 0);
 
 			//ik_copybox(backy, nebby, 0, 0, 639, 479, 0, 0);
-			
+
 			// draw zooming nebula
 			fra = (fra + 1) & 3;
 			for (c = 0; c < nebn; c++)
 			{
 				d[c] = 1024-((t*4+(c*768)/nebn)%768);	// distance to nebula plane ( 256...1024)
-				tx[c] = 65536-d[c]*160+sin1k[c*300]/2; 
+				tx[c] = 65536-d[c]*160+sin1k[c*300]/2;
 				ty[c] = 65536-d[c]*120+cos1k[c*300]/2;	// corner coords
 				if (d[c] < 512)
 					l[c] = (d[c]-256)/16;
@@ -851,7 +851,7 @@ int32 intro_screen()
 
 			ik_copybox(nebby, screen, 0, 0, 640, 480, 0, 0);
 
-			// draw stars			
+			// draw stars
 			for (c = 0; c < starn; c++)
 			{
 				x = 320 + sx[c] / sz[c];
@@ -872,8 +872,8 @@ int32 intro_screen()
 			{
 				case 0:
 				//ik_dsprite(screen, 64, 128, spr_title->spr[0], 0);
-//				ik_drsprite(screen, 320, 192, 
-//						0, 
+//				ik_drsprite(screen, 320, 192,
+//						0,
 //						640+(sin1k[(t*8)&1023]>>12), spr_titles->spr[0], 5+((6*16+15)<<8));
 				ik_drsprite(screen, 320, 192, 0, 640, spr_titles->spr[0], 5+((6*16+15)<<8));
 				break;
@@ -892,7 +892,7 @@ int32 intro_screen()
 				for (c = 0; c < num_scores; c++)
 				{
 					// 50 +  + 12
-					ik_print(screen, font_6x8, 32, 144+c*8, 11-8*(c==got_hiscore), textstring[STR_HISCORE_ENTRY], 
+					ik_print(screen, font_6x8, 32, 144+c*8, 11-8*(c==got_hiscore), textstring[STR_HISCORE_ENTRY],
 									scores[c].cname, scores[c].sname, scores[c].deathmsg);
 					ik_print(screen, font_6x8,572, 144+c*8, 11-8*(c==got_hiscore), "%6d", scores[c].score);
 				}
@@ -952,7 +952,7 @@ int32 intro_screen()
 
 			ik_print(screen, font_6x8, 3, 3, 0, SAIS_VERSION_NUMBER);
 
-			ik_blit();	
+			ik_blit();
 		}
 	}
 

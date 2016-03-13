@@ -178,7 +178,7 @@ and mark them in the replacement array.
 	for (x = 0; x < 256; x++)
 		rep[x] = 0;
 	max = 0;
-	if (strlen(moddir))	
+	if (strlen(moddir))
 	{
 #ifdef WINDOWS
 		sprintf(spritedir, "%s%s", moddir, fname);
@@ -321,7 +321,7 @@ void save_sprites(char *fname, t_ik_spritepak *pak)
 // basic sprite draw.. corner align, 0-masked
 // flags:
 // 1:  center align (move up-left by half the size)
-// 2:  color 
+// 2:  color
 // 4:  blank
 void ik_dsprite(t_ik_image *img, int32 x, int32 y, t_ik_sprite *spr, int32 flags)
 {
@@ -342,7 +342,7 @@ void ik_dsprite(t_ik_image *img, int32 x, int32 y, t_ik_sprite *spr, int32 flags
   for (py=yb; py<ye; py++)
   {
 		px=xb;
-    p1=ik_image_pointer(img,px,py); 
+    p1=ik_image_pointer(img,px,py);
     p2=spr->data+((py-y)*spr->w)+(px-x);
 		if (!co)
 			for (;px<xe;px++)
@@ -359,7 +359,7 @@ void ik_dsprite(t_ik_image *img, int32 x, int32 y, t_ik_sprite *spr, int32 flags
 				{
       		if (*p2<16)
     	  	  *p1=*p2+co*16;
-					else 
+					else
 	        	*p1=*p2;
 				}
 
@@ -372,7 +372,7 @@ void ik_dsprite(t_ik_image *img, int32 x, int32 y, t_ik_sprite *spr, int32 flags
 // flags:
 // 1:  Light   (flags = 1 + lightcolor*256)
 // 2:  Trans   (50% transparency)
-// 4:  Add     
+// 4:  Add
 void ik_drsprite(t_ik_image *img, int32 x, int32 y, int32 r, int32 s, t_ik_sprite *spr, int32 flags)
 {
   int32 x1,y1,x2;
@@ -382,8 +382,8 @@ void ik_drsprite(t_ik_image *img, int32 x, int32 y, int32 r, int32 s, t_ik_sprit
 	int32 dx,dy;
   uint8 *p1;
 
-	if (s<=2) 
-	{	
+	if (s<=2)
+	{
 		c = spr->co;
 		if (c)
 		{
@@ -407,7 +407,7 @@ void ik_drsprite(t_ik_image *img, int32 x, int32 y, int32 r, int32 s, t_ik_sprit
 	}
 
 	s=(s<<10)/MAX(spr->w,spr->h);
-  size=MAX(spr->w,spr->h)*s>>11; 
+  size=MAX(spr->w,spr->h)*s>>11;
 
   if (x<c_minx-size || y<c_miny-size || x>=c_maxx+size || y>=c_maxy+size) return;
 
@@ -432,12 +432,12 @@ void ik_drsprite(t_ik_image *img, int32 x, int32 y, int32 r, int32 s, t_ik_sprit
 			// Clamp X
 			if (dx>0)
 			{
-				if (xt+(x2-x1)*dx>spr->w<<16) 	cutright=MAX(cutright, (xt+(x2-x1)*dx-(spr->w<<16))/dx); 
-				if (xt<0)												cutleft=MAX(cutleft, -xt/dx+1); 
+				if (xt+(x2-x1)*dx>spr->w<<16) 	cutright=MAX(cutright, (xt+(x2-x1)*dx-(spr->w<<16))/dx);
+				if (xt<0)												cutleft=MAX(cutleft, -xt/dx+1);
 			}
 			else if (dx<0)
 			{
-				if (xt+(x2-x1)*dx<0)			cutright=MAX(cutright, (xt+(x2-x1)*dx)/dx); 
+				if (xt+(x2-x1)*dx<0)			cutright=MAX(cutright, (xt+(x2-x1)*dx)/dx);
 				if (xt>spr->w<<16)				cutleft=MAX(cutleft, -(xt-(spr->w<<16))/dx+1);
 			}
 			else if (xt<0 || xt>=spr->w<<16)	 x2=x1;   // don't draw hline
@@ -451,8 +451,8 @@ void ik_drsprite(t_ik_image *img, int32 x, int32 y, int32 r, int32 s, t_ik_sprit
 			}
 			else if (dy<0)
 			{
-				if (yt+(x2-x1)*dy<0)				cutright=MAX(cutright, (yt+(x2-x1)*dy)/dy); 
-				if (yt>spr->h<<16)					cutleft=MAX(cutleft, -(yt-(spr->h<<16))/dy+1); 
+				if (yt+(x2-x1)*dy<0)				cutright=MAX(cutright, (yt+(x2-x1)*dy)/dy);
+				if (yt>spr->h<<16)					cutleft=MAX(cutleft, -(yt-(spr->h<<16))/dy+1);
 			}
 			else if (yt<0 || yt>=spr->h<<16)	x2=x1;  // don't draw hline
 
@@ -489,7 +489,7 @@ void ik_drsprite(t_ik_image *img, int32 x, int32 y, int32 r, int32 s, t_ik_sprit
 
 	        p1++;
 					xt+=dx; yt+=dy;
-				}    
+				}
     }
   }
 }
@@ -498,9 +498,9 @@ void ik_drsprite(t_ik_image *img, int32 x, int32 y, int32 r, int32 s, t_ik_sprit
 // flags:
 // 1:  Light   (flags = 1 + lightcolor*256)
 // 2:  Trans   (50% transparency)
-// 4:  Add     
+// 4:  Add
 
-void ik_dspriteline(t_ik_image *img, int32 xb, int32 yb, int32 xe, int32 ye, int32 s, 
+void ik_dspriteline(t_ik_image *img, int32 xb, int32 yb, int32 xe, int32 ye, int32 s,
 										int32 offset, int32 ybits, t_ik_sprite *spr, int32 flags)
 {
 	double r;
@@ -512,14 +512,14 @@ void ik_dspriteline(t_ik_image *img, int32 xb, int32 yb, int32 xe, int32 ye, int
 	int32 xl0,yl0,xl1,yl1,topy;
   uint8 *p1;
 
-	if (s<=2) 
-	{	
+	if (s<=2)
+	{
 		ik_drawline(img, xb,yb,xe,ye,spr->co);
 		return;
 	}
 
 	s=(s<<6)/MAX(spr->w,spr->h);
-  size=MAX(spr->w,spr->h)*s>>7; 
+  size=MAX(spr->w,spr->h)*s>>7;
 
 	xl0=MAX(c_minx, MIN(xb-size, xe-size));
 	xl1=MIN(c_maxx, MAX(xb+size, xe+size));
@@ -550,12 +550,12 @@ void ik_dspriteline(t_ik_image *img, int32 xb, int32 yb, int32 xe, int32 ye, int
 			// Clamp X
 			if (dx>0)
 			{
-				if (xt+(x2-x1)*dx>spr->w<<16) 	cutright=MAX(cutright, (xt+(x2-x1)*dx-(spr->w<<16))/dx); 
-				if (xt<0)												cutleft=MAX(cutleft, -xt/dx+1); 
+				if (xt+(x2-x1)*dx>spr->w<<16) 	cutright=MAX(cutright, (xt+(x2-x1)*dx-(spr->w<<16))/dx);
+				if (xt<0)												cutleft=MAX(cutleft, -xt/dx+1);
 			}
 			else if (dx<0)
 			{
-				if (xt+(x2-x1)*dx<0)			cutright=MAX(cutright, (xt+(x2-x1)*dx)/dx); 
+				if (xt+(x2-x1)*dx<0)			cutright=MAX(cutright, (xt+(x2-x1)*dx)/dx);
 				if (xt>spr->w<<16)				cutleft=MAX(cutleft, -(xt-(spr->w<<16))/dx+1);
 			}
 			else if (xt<0 || xt>=spr->w<<16)	x2=x1;  // don't draw hline
@@ -569,8 +569,8 @@ void ik_dspriteline(t_ik_image *img, int32 xb, int32 yb, int32 xe, int32 ye, int
 			}
 			else if (dy<0)
 			{
-				if (yt+(x2-x1)*dy<topy)		cutright=MAX(cutright, -(topy-(yt+(x2-x1)*dy))/dy+1); 
-				if (yt>0)									cutleft=MAX(cutleft, -yt/dy+1); 
+				if (yt+(x2-x1)*dy<topy)		cutright=MAX(cutright, -(topy-(yt+(x2-x1)*dy))/dy+1);
+				if (yt>0)									cutleft=MAX(cutleft, -yt/dy+1);
 			}
 			else if (yt<topy || yt>=0)	 x2=x1;   // don't draw hline
 
@@ -607,7 +607,7 @@ void ik_dspriteline(t_ik_image *img, int32 xb, int32 yb, int32 xe, int32 ye, int
 
 	        p1++;
 					xt+=dx; yt+=dy;
-				}    
+				}
     }
   }
 }

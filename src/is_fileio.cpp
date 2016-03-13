@@ -60,7 +60,7 @@ int read_line(FILE *in, char *out1, char *out2)
 		{
 			*sptr = 0;
 			if (!feof(in))
-				end = 1; 
+				end = 1;
 			else
 				end = 2;
 		}
@@ -107,7 +107,7 @@ int read_line1(FILE *in, char *out1)
 		{
 			*sptr = 0;
 			if (!feof(in))
-				end = 1; 
+				end = 1;
 			else
 				end = 2;
 		}
@@ -130,7 +130,7 @@ void ik_start_log()
 	int n;
 	FILE *fil;
 	char fname[32];
-	
+
 	logfile = NULL;
 
 	n=0;

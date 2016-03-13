@@ -64,7 +64,7 @@ void game_over()
 	char texty[512];
 	char topic[64];
 	char edate[32];
-	char *bargraphnames[7] = 
+	char *bargraphnames[7] =
 	{
 		textstring[STR_ENDGAME_BAR1],
 		textstring[STR_ENDGAME_BAR2],
@@ -85,7 +85,7 @@ void game_over()
 
 	y = 0;
 
-	val = 0; 
+	val = 0;
 
 #ifndef DEMO_VERSION
 	vl[0] = -2000;
@@ -205,8 +205,8 @@ void game_over()
 		else
 			ik_drawbox(screen, v, c*16+by+2, bx+2 + (vl[c]-mnv)*(w-4)/(mxv-mnv), c*16+by+6, 72);
 	}
-	
-	v = 0; 
+
+	v = 0;
 	for (c = 0; c < 12; c++)
 		if (player.stardate%365 >= months[c].sd)
 			v = c;
@@ -214,12 +214,12 @@ void game_over()
 
 	if (player.system == homesystem && player.death==0)
 	{	bx = 192; by = 208; h = 128; }	// returns home
-	else 
+	else
 	{	bx = 192; by = 208; h = 128; } // dies
 
 	sprintf(edate, textstring[STR_ENDGAME_DATEF], c, months[v].name, player.stardate/365+4580);
 
-	sprintf(topic,  textstring[STR_ENDGAME_OVER], 
+	sprintf(topic,  textstring[STR_ENDGAME_OVER],
 					textstring[STR_ENDGAME_DATE], edate);
 
 	sprintf(edate, textstring[STR_ENDGAME_DATEF2], months[v].name, c, player.stardate/365+4580);
@@ -231,8 +231,8 @@ void game_over()
 		for (y = 0; y < STARMAP_MAX_FLEETS; y++)
 		if (sm_fleets[y].race == race_kawangi && sm_fleets[y].num_ships > 0)	// kawangi left
 		{
-			w = 1; 
-			val /= 2; 
+			w = 1;
+			val /= 2;
 			h = 208;
 			break;
 		}
@@ -294,8 +294,8 @@ void game_over()
 		{
 			default:
 			case 1:	// combat
-				sprintf(texty, 
-								textstring[STR_ENDGAME_DEATH1], 
+				sprintf(texty,
+								textstring[STR_ENDGAME_DEATH1],
 								shiptypes[0].name);
 				sprintf(player.deathmsg, "%s %s", textstring[STR_ENDGAME_MSG2], edate);
 				deathpic = spr_SMraces->spr[RC_BLOWUP];
@@ -304,21 +304,21 @@ void game_over()
 				sprintf(texty,
 								textstring[STR_ENDGAME_DEATH2],
 								shiptypes[0].name);
-				sprintf(player.deathmsg, "%s %s", textstring[STR_ENDGAME_MSG3], edate);			
+				sprintf(player.deathmsg, "%s %s", textstring[STR_ENDGAME_MSG3], edate);
 				deathpic = spr_SMraces->spr[RC_HOLED];
 				break;
 			case 3: // vacuum collapse
 				sprintf(texty,
 								textstring[STR_ENDGAME_DEATH3],
 								shiptypes[0].name);
-				sprintf(player.deathmsg, "%s %s", textstring[STR_ENDGAME_MSG4], edate);			
+				sprintf(player.deathmsg, "%s %s", textstring[STR_ENDGAME_MSG4], edate);
 				deathpic = spr_SMraces->spr[RC_BLOWUP];
 			break;
 			case 4: // nova shockwave
 				sprintf(texty,
 								textstring[STR_ENDGAME_DEATH4],
 								shiptypes[0].name);
-				sprintf(player.deathmsg, "%s %s", textstring[STR_ENDGAME_MSG5], edate);			
+				sprintf(player.deathmsg, "%s %s", textstring[STR_ENDGAME_MSG5], edate);
 				deathpic = spr_SMraces->spr[RC_BLOWUP];
 			break;
 			case 5: // sabotage
@@ -444,7 +444,7 @@ void endgame_init()
 	int flag;
 	int n;
 	int tv1;
-	
+
 	ini = myopen("gamedata/jobs.ini", "rb");
 	if (!ini)
 		return;
@@ -476,7 +476,7 @@ void endgame_init()
 		{	flag = 1; num = 0; }
 		else if (!strcmp(s1, "END"))
 			flag = 0;
-		else 
+		else
 		{
 			if (flag == 1)
 			{

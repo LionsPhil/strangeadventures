@@ -53,7 +53,7 @@ void cs_player_init()
 	player.num_ships = 1;
 	player.ships[0] = 0;
 
-	player.num_items = 0; 
+	player.num_items = 0;
 
 	for (c = 0; c < num_shiptypes; c++)
 	{
@@ -144,7 +144,7 @@ void cs_insertship(int32 st)
 	{
 		if (sm_fleets[f].ships[x] != t2)
 		{
-			s = x; break;			
+			s = x; break;
 		}
 	}
 
@@ -208,14 +208,14 @@ int32 cs_setupbattle()
 		ik_eventhandler();
 	}
 	Play_Sound(WAV_MUS_TITLE, 14, 1, 80, 22050, 1000);
-		
+
 	end = 0; t = get_ik_timer(2);
 	while (!end && !must_quit)
 	{
 		ik_eventhandler();
 		c = ik_inkey();
 		mc = ik_mclick();
-		mx = ik_mouse_x - bx; 
+		mx = ik_mouse_x - bx;
 		my = ik_mouse_y - by;
 
 		y = t;

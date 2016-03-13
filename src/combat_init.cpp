@@ -49,7 +49,7 @@ char *shiptype_keywords[shkMax] =
 	"END",
 };
 
-char *shipweapon_keywords[wpkMax] = 
+char *shipweapon_keywords[wpkMax] =
 {
 	"WEAP",
 	"NAME",
@@ -83,7 +83,7 @@ char *shipweapon_flagwords[wpfMax] =
 	"noclip",
 };
 
-char *shipsystem_keywords[sykMax] = 
+char *shipsystem_keywords[sykMax] =
 {
 	"SYST",
 	"NAME",
@@ -309,7 +309,7 @@ void combat_initshiptypes()
 	if (!ini)
 		return;
 
-	end = 0; num = 0; 
+	end = 0; num = 0;
 	flag = 0; num_enemies = 0;
 	while (!end)
 	{
@@ -396,7 +396,7 @@ void combat_initshiptypes()
 			case shkThruster:
 			for (n = 0; n < num_shipsystems; n++)
 				if (!strcmp(shipsystems[n].name, s2))
-				{	
+				{
 					shiptypes[num].system[shiptypes[num].num_systems] = n;
 					shiptypes[num].sysdmg[shiptypes[num].num_systems] = 0;
 					shiptypes[num].num_systems++;
@@ -600,7 +600,7 @@ void combat_initshipsystems()
 	if (!ini)
 		return;
 
-	end = 0; num = 0; 
+	end = 0; num = 0;
 	flag = 0; num_systypes = 0;
 	while (!end)
 	{
@@ -697,8 +697,8 @@ void combat_deinitshipsystems()
 
 void combat_initsprites()
 {
-	t_ik_image *pcx;	
-	int x, y, n; 
+	t_ik_image *pcx;
+	int x, y, n;
 
 	spr_ships = load_sprites("graphics/ships.spr");
 	spr_shipsilu = load_sprites("graphics/shipsilu.spr");
@@ -770,8 +770,8 @@ void combat_initsprites()
 		spr_weapons->spr[14] = get_sprite(pcx, 192, 64, 128, 128);
 		spr_weapons->spr[15] = get_sprite(pcx, 0, 96, 32, 32);
 		spr_weapons->spr[16] = get_sprite(pcx, 160, 0, 32, 32);
-		spr_weapons->spr[17] = get_sprite(pcx, 128, 64, 32, 32); 
-		spr_weapons->spr[18] = get_sprite(pcx, 32, 96, 32, 32); 
+		spr_weapons->spr[17] = get_sprite(pcx, 128, 64, 32, 32);
+		spr_weapons->spr[18] = get_sprite(pcx, 32, 96, 32, 32);
 
 		del_image(pcx);
 		save_sprites("graphics/weapons.spr", spr_weapons);
@@ -781,7 +781,7 @@ void combat_initsprites()
 	{
 		spr_explode1 = new_spritepak(10);
 		pcx = ik_load_pcx("xplosion.pcx", NULL);
-		
+
 		for (n=0; n<10; n++)
 		{
 			x = n%5; y = n/5;
@@ -796,7 +796,7 @@ void combat_initsprites()
 	{
 		spr_shockwave = new_spritepak(5);
 		pcx = ik_load_pcx("shock.pcx", NULL);
-		
+
 		for (n=0; n<5; n++)
 		{
 			spr_shockwave->spr[n] = get_sprite(pcx, (n%3)*128, (n/3)*128, 128, 128);
@@ -810,7 +810,7 @@ void combat_initsprites()
 	{
 		spr_shield = new_spritepak(5);
 		pcx = ik_load_pcx("shields.pcx", NULL);
-		
+
 		for (n=0; n<5; n++)
 		{
 			spr_shield->spr[n] = get_sprite(pcx, n*128, 0, 128, 128);
@@ -896,7 +896,7 @@ void sort_shiptype_systems(int32 num)
 	int n, c;
 	int w, t;
 
-	w = 0; 
+	w = 0;
 	// systems are sorted by type (weapons first to match hardpoints)
 	for (n=0; n < shiptypes[num].num_systems; n++)
 	{

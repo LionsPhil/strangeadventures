@@ -510,7 +510,7 @@ enum textstrings	// reduced for DEMO_VERSION
 };
 #endif
 
-extern char *textbuffer;	
+extern char *textbuffer;
 extern char *textstring[STR_MAX];
 
 

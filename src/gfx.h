@@ -21,7 +21,7 @@ typedef struct {
 typedef struct {
 	int32 w,h;    // size
 	uint32 co;     // average color
-	uint8 *data;	// linear bitmap 
+	uint8 *data;	// linear bitmap
 } t_ik_sprite;
 
 typedef struct {
@@ -31,7 +31,7 @@ typedef struct {
 
 typedef struct {
 	uint16 w,h;		// size
-	uint8 *data;	// linear bitmap 
+	uint8 *data;	// linear bitmap
 } t_ik_font;
 
 // GFX GLOBALS
@@ -132,5 +132,5 @@ void							save_sprites(char *fname, t_ik_spritepak *pak);
 // sprite drawing
 void ik_dsprite(t_ik_image *img, int32 x, int32 y, t_ik_sprite *spr, int32 flags=0);
 void ik_drsprite(t_ik_image *img, int32 x, int32 y, int32 r, int32 s, t_ik_sprite *spr, int32 flags=0);
-void ik_dspriteline(t_ik_image *img, int32 xb, int32 yb, int32 xe, int32 ye, int32 s, 
+void ik_dspriteline(t_ik_image *img, int32 xb, int32 yb, int32 xe, int32 ye, int32 s,
 										int32 offset, int32 ybits, t_ik_sprite *spr, int32 flags=0);

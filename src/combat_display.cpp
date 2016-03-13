@@ -99,7 +99,7 @@ void combat_displayships()
 	bx = 0; by = 0; h = 288;
 
 	s = camera.ship_sel;
-	if (s==-1) 
+	if (s==-1)
 	{	select_ship(0, t); s = 0; }
 
 	ty = cships[s].type;
@@ -131,16 +131,16 @@ void combat_displayships()
 		{
 			l = 0;
 			if (hull->hardpts[hp].type == hdpWeapon && shipsystems[shiptypes[ty].system[hp]].item>-1)
-				l=(cships[s].syshits[hp]>0); 
+				l=(cships[s].syshits[hp]>0);
 			if (hull->hardpts[hp].type == hdpEngine && shiptypes[ty].engine>-1)
-				l=3*(cships[s].syshits[shiptypes[ty].sys_eng]>0); 
+				l=3*(cships[s].syshits[shiptypes[ty].sys_eng]>0);
 			if (hull->hardpts[hp].type == hdpThruster && shiptypes[ty].thrust>-1)
-				l=2*(cships[s].syshits[shiptypes[ty].sys_thru]>0); 
+				l=2*(cships[s].syshits[shiptypes[ty].sys_thru]>0);
 
-			ik_dsprite(screen, bx + 8 + hull->hardpts[hp].x*2, by + 32 + hull->hardpts[hp].y*2, 
+			ik_dsprite(screen, bx + 8 + hull->hardpts[hp].x*2, by + 32 + hull->hardpts[hp].y*2,
 									spr_IFsystem->spr[hull->hardpts[hp].type * 4 + 1], 2+(l<<8));
 		}
-	
+
 		// show system damage
 		ik_print(screen, font_4x8, bx+16, by + 176, COMBAT_INTERFACE_COLOR, textstring[STR_COMBAT_STATUS]);
 		y = 0;
@@ -211,7 +211,7 @@ void combat_displayships()
 	{
 		if ((cships[s].own&1)==0)
 			f |= 1;
-		else 
+		else
 			f |= 2;
 	}
 	if (cships[playership].hits > 0 && f > 1)
@@ -246,7 +246,7 @@ void combat_displayships()
 	bx = 0; by = 320; h = 160;
 
 	s = camera.ship_trg;
-	if (s==-1) 
+	if (s==-1)
 		ty = -1;
 	else
 		ty = cships[s].type;
@@ -278,12 +278,12 @@ void combat_displayships()
 			{
 				l = 0;
 				if (hull->hardpts[hp].type == hdpWeapon)
-					l=(cships[s].syshits[hp]>0); 
+					l=(cships[s].syshits[hp]>0);
 				if (hull->hardpts[hp].type == hdpEngine)
-					l=3*(cships[s].syshits[shiptypes[ty].sys_eng]>0); 
+					l=3*(cships[s].syshits[shiptypes[ty].sys_eng]>0);
 				if (hull->hardpts[hp].type == hdpThruster)
-					l=2*(cships[s].syshits[shiptypes[ty].sys_thru]>0); 
-				ik_dsprite(screen, bx + 8 + hull->hardpts[hp].x*2, by + 16 + hull->hardpts[hp].y*2, 
+					l=2*(cships[s].syshits[shiptypes[ty].sys_thru]>0);
+				ik_dsprite(screen, bx + 8 + hull->hardpts[hp].x*2, by + 16 + hull->hardpts[hp].y*2,
 										spr_IFsystem->spr[hull->hardpts[hp].type * 4 + 1], 2+(l<<8));
 			}
 		}
@@ -324,7 +324,7 @@ void combat_display(int32 t)
 
 	if (nebula)
 	{
-		
+
 		s = (4096<<12) / (camera.z+1) + (1<<13);
 		ty = sy = ((-camera.y<<1)-232*s)&0xffffff;
 		sx = ((camera.x<<1)-232*s)&0xffffff;
@@ -414,11 +414,11 @@ void combat_display(int32 t)
 		hull = &hulls[shiptypes[cships[s].type].hull];
 		cships[s].ds_x = cx + ((((cships[s].x - camera.x)>>8) * camera.z) >> 14);
 		cships[s].ds_y = cy - ((((cships[s].y - camera.y)>>8) * camera.z) >> 14);
-		cships[s].ds_s = 	(hulls[shiptypes[cships[s].type].hull].size * camera.z) >> 12; 
-		if (cships[s].own != 2 || t > klaktime+75)	
+		cships[s].ds_s = 	(hulls[shiptypes[cships[s].type].hull].size * camera.z) >> 12;
+		if (cships[s].own != 2 || t > klaktime+75)
 		{
 			if (simulated)
-			{	
+			{
 				if (s == playership)
 					l = 90;
 				else if (cships[s].own == 0)
@@ -456,23 +456,23 @@ void combat_display(int32 t)
 				else
 					l = 31-p;
 
-				ik_dspriteline(screen, 
+				ik_dspriteline(screen,
 											cships[s].ds_x,
 											cships[s].ds_y,
 											x,
 											y,
 											(20 * camera.z) >> 12,
-											(-t*13)&31, 18, 
+											(-t*13)&31, 18,
 											spr_weapons->spr[1+(rand()&1)], 5 + (l << 8));
 
-				ik_drsprite(screen, 
+				ik_drsprite(screen,
 										(cships[s].ds_x*(32-p)+x*p)>>5,
 										(cships[s].ds_y*(32-p)+y*p)>>5,
 										rand()&1023,
 										(64 * camera.z) >> 12,
 										spr_shockwave->spr[4], 4);
 				if (rand()&1)
-				ik_drsprite(screen, 
+				ik_drsprite(screen,
 										(cships[s].ds_x*(32-p)+x*p)>>5,
 										(cships[s].ds_y*(32-p)+y*p)>>5,
 										rand()&1023,
@@ -491,18 +491,18 @@ void combat_display(int32 t)
 
 
 			if (l == 15)
-				ik_drsprite(screen, 
+				ik_drsprite(screen,
 										cships[s].ds_x,
 										cships[s].ds_y,
 										cships[s].a,
-										cships[s].ds_s, 
+										cships[s].ds_s,
 										hulls[shiptypes[cships[s].type].hull].sprite, 0);
 			else
-				ik_drsprite(screen, 
+				ik_drsprite(screen,
 										cships[s].ds_x,
 										cships[s].ds_y,
 										cships[s].a,
-										cships[s].ds_s, 
+										cships[s].ds_s,
 										hulls[shiptypes[cships[s].type].hull].sprite, 5+(l<<8));
 		}
 		if (cships[s].own == 2)
@@ -510,21 +510,21 @@ void combat_display(int32 t)
 			if (t - klaktime < 75)
 			{
 				l = (t-klaktime)*15/75;
-				ik_drsprite(screen, 
+				ik_drsprite(screen,
 										cships[s].ds_x,
 										cships[s].ds_y,
 										cships[s].a,
-										((t-klaktime)*camera.z)>>12, 
+										((t-klaktime)*camera.z)>>12,
 										spr_shockwave->spr[4], 5+(l<<8));
 			}
 			else if (t - klaktime < 100)
 			{
 				l = ((klaktime+100-t)*15) / 25;
-				ik_drsprite(screen, 
+				ik_drsprite(screen,
 										cships[s].ds_x,
 										cships[s].ds_y,
 										cships[s].a,
-										(256*camera.z)>>12, 
+										(256*camera.z)>>12,
 										spr_shockwave->spr[4], 5+(l<<8));
 			}
 		}
@@ -534,11 +534,11 @@ void combat_display(int32 t)
 			l = 15; //(cships[s].shld * 15) / p;
 			l = (l * (cships[s].shld_time+32-t))>>5;
 			p = (p-1)/10; if (p>4) p=4;
-			ik_drsprite(screen, 
+			ik_drsprite(screen,
 									cships[s].ds_x,
 									cships[s].ds_y,
 									rand()%1024,
-									cships[s].ds_s, 
+									cships[s].ds_s,
 									spr_shield->spr[p], 5+(l<<8));
 		}
 
@@ -559,15 +559,15 @@ void combat_display(int32 t)
 			sy = cships[s].ds_y;
 			tx = sin1k[cships[s].a];
 			ty = cos1k[cships[s].a];
-			ik_drawline(screen, 
+			ik_drawline(screen,
 									sx - ((tx*sz*2+ty*sz*3)>>17), sy + ((ty*sz*2-tx*sz*3)>>17),
-									sx + ((tx*sz*4)>>17), sy - ((ty*sz*4)>>17), 
+									sx + ((tx*sz*4)>>17), sy - ((ty*sz*4)>>17),
 									p, 0, 255, 1);
-			ik_drawline(screen, 
+			ik_drawline(screen,
 									sx - ((tx*sz*2-ty*sz*3)>>17), sy + ((ty*sz*2+tx*sz*3)>>17),
-									sx + ((tx*sz*4)>>17), sy - ((ty*sz*4)>>17), 
+									sx + ((tx*sz*4)>>17), sy - ((ty*sz*4)>>17),
 									p, 0, 255, 1);
-			ik_drawline(screen, 
+			ik_drawline(screen,
 									sx - ((tx*sz*2+ty*sz*3)>>17), sy + ((ty*sz*2-tx*sz*3)>>17),
 									sx - ((tx*sz*2-ty*sz*3)>>17), sy + ((ty*sz*2+tx*sz*3)>>17),
 									p, 0, 255, 1);
@@ -578,9 +578,9 @@ void combat_display(int32 t)
 	for (c = 0; c < MAX_COMBAT_SHIPS; c++)
 		if (cships[c].type > -1 && cships[c].own == 1 && cships[c].flee == 2)
 		{
-			if (cships[c].ds_x+cships[c].ds_s < cx-240 || 
+			if (cships[c].ds_x+cships[c].ds_s < cx-240 ||
 					cships[c].ds_x-cships[c].ds_s > cx+240 ||
-					cships[c].ds_y+cships[c].ds_s < cy-240 || 
+					cships[c].ds_y+cships[c].ds_s < cy-240 ||
 					cships[c].ds_y-cships[c].ds_s > cy+240 ||
 					(cships[c].cloaked && t > cships[c].cloaktime+50))
 			{
@@ -598,7 +598,7 @@ void combat_display(int32 t)
 				cbeams[c].wep = NULL;
 				continue;
 			}
-			sx = cprojs[cbeams[c].stg].x; 
+			sx = cprojs[cbeams[c].stg].x;
 			sy = cprojs[cbeams[c].stg].y;
 		}
 		else
@@ -632,13 +632,13 @@ void combat_display(int32 t)
 		}
 		if (l < 2) l = 2;
 		if (l > 15) l = 15;
-		ik_dspriteline(screen, 
+		ik_dspriteline(screen,
 									cx + ((((sx - camera.x)>>8) * camera.z) >> 14),
 									cy - ((((sy - camera.y)>>8) * camera.z) >> 14),
 									cx + ((((tx - camera.x)>>8) * camera.z) >> 14),
 									cy - ((((ty - camera.y)>>8) * camera.z) >> 14),
 									(cbeams[c].wep->size * camera.z) >> 12,
-									(-t*13)&31, 18, 
+									(-t*13)&31, 18,
 									cbeams[c].wep->sprite, 5 + (l << 8));
 	}
 
@@ -648,16 +648,16 @@ void combat_display(int32 t)
 		l = 15;
 		p = cprojs[c].wep->flags;
 		if (p & wpfDisperse)
-		{	
-			sz = 4 + ((cprojs[c].wep->size-4) * (t - cprojs[c].str)) / (cprojs[c].end - cprojs[c].str); 
-			l = 15 - (14 * (t - cprojs[c].str)) / (cprojs[c].end - cprojs[c].str); 
+		{
+			sz = 4 + ((cprojs[c].wep->size-4) * (t - cprojs[c].str)) / (cprojs[c].end - cprojs[c].str);
+			l = 15 - (14 * (t - cprojs[c].str)) / (cprojs[c].end - cprojs[c].str);
 			if (cprojs[c].hits < cprojs[c].wep->damage)
 			{	// fade as its hits go away
 				l = 1 + ((l-1)*cprojs[c].hits)/cprojs[c].wep->damage;
 			}
 		}
 		else if (p & wpfImplode)
-		{	
+		{
 			if (t - cprojs[c].str < 32)
 				sz = (cprojs[c].wep->size * (t-cprojs[c].str)) >> 5;
 			else
@@ -669,7 +669,7 @@ void combat_display(int32 t)
 
 
 		if (p & wpfTrans)
-			a = 5 + (l << 8); 
+			a = 5 + (l << 8);
 		else
 			a = 0;
 
@@ -743,7 +743,7 @@ void combat_display(int32 t)
 								cy - ((((cexplo[c].y - camera.y)>>8) * camera.z) >> 14),
 								a,
 								(sz * camera.z) >> 12,
-								cexplo[c].spr->spr[p], 
+								cexplo[c].spr->spr[p],
 								5+(l<<8));
 		if (t > cexplo[c].end)
 			cexplo[c].spr = NULL;
@@ -753,38 +753,38 @@ void combat_display(int32 t)
 	{
 		t = get_ik_timer(1);
 
-		s = camera.ship_sel; 
+		s = camera.ship_sel;
 		if (t >= camera.time_sel + 40)
-		{	
-			l = 6; 
-			p = MAX(cships[s].ds_s, 16); 
+		{
+			l = 6;
+			p = MAX(cships[s].ds_s, 16);
 			a = cships[s].a;
 		}
 		else
-		{	
+		{
 			l = 15 - ((t - camera.time_sel) >> 2);
 			p = cships[s].ds_s + ((cships[s].ds_s * (camera.time_sel + 40 - t))>>5);
 			a = (cships[s].a + (camera.time_sel + 40 - t)*16) & 1023;
 		}
-		ik_drsprite(screen, 
+		ik_drsprite(screen,
 								cships[s].ds_x,
 								cships[s].ds_y,
 								a,
-								p, 
+								p,
 								spr_IFtarget->spr[8], 5+(l<<8));
 		if (t < camera.time_sel + 32)
 		{
 			l = 15 - ((t - camera.time_sel) >> 1);
-			ik_drsprite(screen, 
+			ik_drsprite(screen,
 									cships[s].ds_x,
 									cships[s].ds_y,
 									a,
-									(cships[s].ds_s * (t - camera.time_sel))>>3, 
+									(cships[s].ds_s * (t - camera.time_sel))>>3,
 									spr_IFtarget->spr[8], 5+(l<<8));
 		}
 
 		fr = 2;
-		s = cships[camera.ship_sel].target; 
+		s = cships[camera.ship_sel].target;
 		if (s > -1)
 		{
 			camera.ship_trg = s;
@@ -799,13 +799,13 @@ void combat_display(int32 t)
 				fr = 2;
 
 			if (t >= camera.time_trg + 40)
-			{	
-				l = 6; 
-				p = cships[s].ds_s; 
+			{
+				l = 6;
+				p = cships[s].ds_s;
 				a = cships[s].a;
 			}
 			else
-			{	
+			{
 				l = 15 - ((t - camera.time_trg) >> 2);
 				p = cships[s].ds_s + ((cships[s].ds_s * (camera.time_trg + 40 - t))>>5);
 				a = (cships[s].a + (camera.time_trg + 40 - t)*16) & 1023;
@@ -814,20 +814,20 @@ void combat_display(int32 t)
 			if (fr==2)	// "board"
 				ik_print(screen, font_6x8, cships[s].ds_x-15, cships[s].ds_y-cships[s].ds_s/2-12, 4, "BOARD");
 
-			ik_drsprite(screen, 
+			ik_drsprite(screen,
 									cships[s].ds_x,
 									cships[s].ds_y,
 									a,
-									MAX(cships[s].ds_s, 16), 
+									MAX(cships[s].ds_s, 16),
 									spr_IFtarget->spr[6+fr], 5+(l<<8));
 			if (t < camera.time_trg + 32)
 			{
 				l = 15 - ((t - camera.time_trg) >> 1);
-				ik_drsprite(screen, 
+				ik_drsprite(screen,
 										cships[s].ds_x,
 										cships[s].ds_y,
 										a,
-										(cships[s].ds_s * (t - camera.time_trg))>>3, 
+										(cships[s].ds_s * (t - camera.time_trg))>>3,
 										spr_IFtarget->spr[6+fr], 5+(l<<8));
 			}
 		}
@@ -859,7 +859,7 @@ void combat_display(int32 t)
 			if (cships[camera.ship_sel].tac==0)
 			{
 				a = get_direction(x-cships[camera.ship_sel].ds_x, cships[camera.ship_sel].ds_y-y);
-				ik_dspriteline(screen, 
+				ik_dspriteline(screen,
 											cships[camera.ship_sel].ds_x,
 											cships[camera.ship_sel].ds_y,
 											x - (sin1k[a]>>13),
@@ -868,7 +868,7 @@ void combat_display(int32 t)
 				a = get_direction(cships[s].ds_x-x, y-cships[s].ds_y);
 				if ((cships[s].own&1) != (cships[camera.ship_sel].own&1))
 				{
-					ik_dspriteline(screen, 
+					ik_dspriteline(screen,
 												x + (sin1k[a]>>13),
 												y - (cos1k[a]>>13),
 												cships[s].ds_x,
@@ -878,18 +878,18 @@ void combat_display(int32 t)
 			}
 			else
 			{
-				ik_dspriteline(screen, 
+				ik_dspriteline(screen,
 											cships[camera.ship_sel].ds_x,
 											cships[camera.ship_sel].ds_y,
 											cships[s].ds_x,
 											cships[s].ds_y,
 											8, (t&15), 16, spr_IFtarget->spr[fr*2], 5+(l<<8));
 			}
-			ik_drsprite(screen, 
+			ik_drsprite(screen,
 									x,
 									y,
 									(t*8) & 1023,
-									12, 
+									12,
 									spr_IFtarget->spr[fr+6], 5+(l<<8));
 		}
 		else
@@ -900,14 +900,14 @@ void combat_display(int32 t)
 				y = cships[s].ds_y;
 			}
 			else
-			ik_drsprite(screen, 
+			ik_drsprite(screen,
 									x,
 									y,
 									(t*8) & 1023,
-									12, 
+									12,
 									spr_IFtarget->spr[fr+6], 5+(l<<8));
 
-			ik_dspriteline(screen, 
+			ik_dspriteline(screen,
 										cships[camera.ship_sel].ds_x,
 										cships[camera.ship_sel].ds_y,
 										x,

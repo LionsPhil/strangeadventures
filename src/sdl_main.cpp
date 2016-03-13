@@ -12,10 +12,10 @@ extern SDL_Surface *sdlsurf;
 
 int main(int argc, char *argv[])
 {
-	gfx_width=640; gfx_height=480; 
-	gfx_fullscreen=0; 
+	gfx_width=640; gfx_height=480;
+	gfx_fullscreen=0;
 
-	c_minx=0; 
+	c_minx=0;
 	c_miny=0;
 	c_maxx=gfx_width;
 	c_maxy=gfx_height;
@@ -26,9 +26,9 @@ int main(int argc, char *argv[])
 #endif
 
 	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_AUDIO) < 0)
-	{	
+	{
 		fprintf(stderr, "Problem initialising SDL: %s\n", SDL_GetError());
-		return 1; 
+		return 1;
 	}
 	SDL_WM_SetCaption("Strange Adventures In Infinite Space", "Strange Adventures In Infinite Space");
 

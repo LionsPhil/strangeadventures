@@ -59,7 +59,7 @@ void interface_deinit()
 	interface_deinitsprites();
 }
 
-void interface_drawborder(t_ik_image *img, 
+void interface_drawborder(t_ik_image *img,
 													int32 left, int32 top, int32 right, int32 bottom,
 													int32 fill, int32 color,
 													char *title)
@@ -71,7 +71,7 @@ void interface_drawborder(t_ik_image *img,
 	strcpy(title2, title);
 	y = strlen(title2);
 	for (x = 0; x < y; x++)
-	{	
+	{
 		if (title2[x] >= 'a' && title2[x] <= 'z')
 			title2[x] -= ('a' - 'A');
 	}
@@ -108,7 +108,7 @@ void interface_drawborder(t_ik_image *img,
 	}
 }
 
-void interface_thinborder(t_ik_image *img, 
+void interface_thinborder(t_ik_image *img,
 													int32 left, int32 top, int32 right, int32 bottom,
 													int32 color, int32 fill)
 {
@@ -120,7 +120,7 @@ void interface_thinborder(t_ik_image *img,
 	else
 		flag = 2 + (color << 8);
 
-	if (fill > -1) 
+	if (fill > -1)
 		ik_drawbox(img, left, top, right-1, bottom-1, fill);
 
 	for (y = top + 8; y < bottom - 8; y += 8)
@@ -175,7 +175,7 @@ void interface_drawbutton(t_ik_image *img, int32 left, int32 top, int32 l, int32
 
 int32 interface_textbox(t_ik_image *img, t_ik_font *fnt,
 											 int32 left, int32 top, int32 w, int32 h,
-											 int32 color, 
+											 int32 color,
 											 char *text)
 {
 	char *txb;
@@ -185,7 +185,7 @@ int32 interface_textbox(t_ik_image *img, t_ik_font *fnt,
 	int32 c, l;
 	char lne[80];
 
-	txb = text; 
+	txb = text;
 	y = top;
 	l = strlen(text);
 	c = 0;
@@ -228,7 +228,7 @@ int32 interface_textbox(t_ik_image *img, t_ik_font *fnt,
 			txb = txp;
 		}
 		for (x = 0; x < (int)strlen(lne); x++)
-			if (lne[x] == '|')  
+			if (lne[x] == '|')
 				lne[x] = ' ';
 		ik_print(img, fnt, left, y, color, lne);
 //		ik_print(img, fnt, left-8, y, color, "%d", (y-top)/fnt->h);
@@ -250,7 +250,7 @@ int32 interface_textboxsize(t_ik_font *fnt,
 	int32 c, l;
 	char lne[80];
 
-	txb = text; 
+	txb = text;
 	y = 0;
 	l = strlen(text);
 	c = 0;
@@ -298,9 +298,9 @@ int32 interface_textboxsize(t_ik_font *fnt,
 	return y;
 }
 
-int32 interface_popup(t_ik_font *fnt, 
+int32 interface_popup(t_ik_font *fnt,
 										 int32 left, int32 top, int32 w, int32 h,
-										 int32 co1, int32 co2, 
+										 int32 co1, int32 co2,
 										 char *label, char *text, char *button1, char *button2, char *button3)
 {
 	int32 mc, c;
@@ -319,7 +319,7 @@ int32 interface_popup(t_ik_font *fnt,
 	if (button3)
 	{	bl = MAX((int32)strlen(button3), bl); bc[2] = button3[0]; }
 
-	
+
 	for (c = 0; c < 3; c++)
 	{
 		if (bc[c] >= 'a' && bc[c] <='z')
@@ -372,7 +372,7 @@ int32 interface_popup(t_ik_font *fnt,
 	while (!must_quit && !end)
 	{
 		ik_eventhandler();  // always call every frame
-		mc = ik_mclick();	
+		mc = ik_mclick();
 		c = ik_inkey();
 
 		if (c >= 'a' && c <= 'z')
@@ -407,7 +407,7 @@ int32 interface_popup(t_ik_font *fnt,
 						end = 2;
 				}
 			}
-		}	
+		}
 
 		c = t; t = get_ik_timer(2);
 		if (t != c)
@@ -444,7 +444,7 @@ int32 interface_popup(t_ik_font *fnt,
 
 void interface_initsprites()
 {
-	t_ik_image *pcx;	
+	t_ik_image *pcx;
 	int x, y, n;
 
 	font_4x8 = ik_load_font("graphics/fnt2.pcx", 4, 8);
@@ -635,9 +635,9 @@ void interface_tutorial(int n)
 	if (tut_seen[n])
 		return;
 
-	r = interface_popup(font_6x8, -1, -1, 288, 0, 12, 0, 
+	r = interface_popup(font_6x8, -1, -1, 288, 0, 12, 0,
 			textstring[STR_TUT_TSTARMAP + n],
-			textstring[STR_TUT_STARMAP + n], 
+			textstring[STR_TUT_STARMAP + n],
 			textstring[STR_OK], textstring[STR_TUT_END]);
 
 	if (r)
@@ -646,58 +646,58 @@ void interface_tutorial(int n)
 	switch(n)
 	{
 		case tut_starmap:
-			interface_popup(font_6x8, -1, -1, 288, 0, 11, 0, 
+			interface_popup(font_6x8, -1, -1, 288, 0, 11, 0,
 				"Tutorial: starmap",
-				"Your starship is located near the bottom of the screen, in the Glory star system. Left click any other star, and a green STAR LANE will appear. Try to make sure that the star lane does not pass through obstacles like a nebula or black hole. When you are ready to travel to the selected star, left click on the word ENGAGE. You can also press F1 at any time to view a comprehensive HELP SCREEN.", 
+				"Your starship is located near the bottom of the screen, in the Glory star system. Left click any other star, and a green STAR LANE will appear. Try to make sure that the star lane does not pass through obstacles like a nebula or black hole. When you are ready to travel to the selected star, left click on the word ENGAGE. You can also press F1 at any time to view a comprehensive HELP SCREEN.",
 				"OK");
 		break;
 
 		case tut_explore:
-			interface_popup(font_6x8, -1, -1, 288, 0, 11, 0, 
+			interface_popup(font_6x8, -1, -1, 288, 0, 11, 0,
 				"Tutorial: planetary exploration",
-				"This window displays the most interesting planet in orbit around this star. It also lists information about the planet environment and more importantly the DISCOVERY you have made there. The discovery will be either an EVENT or an ITEM. You may also rename the planet in this window by clicking on its randomized name.", 
+				"This window displays the most interesting planet in orbit around this star. It also lists information about the planet environment and more importantly the DISCOVERY you have made there. The discovery will be either an EVENT or an ITEM. You may also rename the planet in this window by clicking on its randomized name.",
 				"OK");
 		break;
 
 		case tut_upgrade:
-			interface_popup(font_6x8, -1, -1, 288, 0, 11, 0, 
+			interface_popup(font_6x8, -1, -1, 288, 0, 11, 0,
 				"Tutorial: ship upgrade",
-				"You have discovered an item which may be used to UPGRADE your ship. To INSTALL it, left click the yellow triangle icon next its name in the CARGO window. You may also UNINSTALL a ship component by clicking the yellow 'X' symbol next to an already installed system under the ship silhouette.", 
+				"You have discovered an item which may be used to UPGRADE your ship. To INSTALL it, left click the yellow triangle icon next its name in the CARGO window. You may also UNINSTALL a ship component by clicking the yellow 'X' symbol next to an already installed system under the ship silhouette.",
 				"OK");
 		break;
 
 		case tut_device:
-			interface_popup(font_6x8, -1, -1, 288, 0, 11, 0, 
+			interface_popup(font_6x8, -1, -1, 288, 0, 11, 0,
 				"Tutorial: alien device",
-				"You have discovered a DEVICE of alien or unknown origin. Look at the CARGO window and left click the rectangular yellow icon next to the name of the item to USE it.", 
+				"You have discovered a DEVICE of alien or unknown origin. Look at the CARGO window and left click the rectangular yellow icon next to the name of the item to USE it.",
 				"OK");
 		break;
 
 		case tut_treasure:
-			interface_popup(font_6x8, -1, -1, 288, 0, 11, 0, 
+			interface_popup(font_6x8, -1, -1, 288, 0, 11, 0,
 				"Tutorial: treasure",
-				"You have discovered a VALUABLE ITEM or an UNUSUAL LIFEFORM which has been added to your CARGO window. In the end of the game, you will sell it to Lextor Mucron for a profit.", 
+				"You have discovered a VALUABLE ITEM or an UNUSUAL LIFEFORM which has been added to your CARGO window. In the end of the game, you will sell it to Lextor Mucron for a profit.",
 				"OK");
 		break;
 
 		case tut_ally:
-			interface_popup(font_6x8, -1, -1, 288, 0, 11, 0, 
+			interface_popup(font_6x8, -1, -1, 288, 0, 11, 0,
 				"Tutorial: allied ship",
-				"A new ALLY has been added to your flotilla. Click the small ship icons in the upper left hand corner of the screen to view other starships besides your own. The icon will blink if the ship is damaged.", 
+				"A new ALLY has been added to your flotilla. Click the small ship icons in the upper left hand corner of the screen to view other starships besides your own. The icon will blink if the ship is damaged.",
 				"OK");
 		break;
 
 		case tut_encounter:
-			interface_popup(font_6x8, -1, -1, 288, 0, 11, 0, 
+			interface_popup(font_6x8, -1, -1, 288, 0, 11, 0,
 				"Tutorial: alien encounter",
-				"You have encountered one of the many alien races which inhabit the Purple Void. The RADAR SCREEN displays how many alien starships are in orbit around this star, and their relative sizes. You must choose to encounter the alien patrol or flee. If you choose to encounter the aliens, left click ENGAGE. If you wish to flee, left click AVOID and you will return to a previously explored star.", 
+				"You have encountered one of the many alien races which inhabit the Purple Void. The RADAR SCREEN displays how many alien starships are in orbit around this star, and their relative sizes. You must choose to encounter the alien patrol or flee. If you choose to encounter the aliens, left click ENGAGE. If you wish to flee, left click AVOID and you will return to a previously explored star.",
 				"OK");
 		break;
 
 		case tut_combat:
-			interface_popup(font_6x8, -1, -1, 288, 0, 11, 0, 
+			interface_popup(font_6x8, -1, -1, 288, 0, 11, 0,
 				"Tutorial: space combat",
-				"You have engaged one or more enemy starships. Left click on a friendly ship to select it, then left click anywhere on the tactical map including enemy ships. Your ship will then begin to move towards that point at best speed. When a hostile ship is within range of your weapons, they will fire automatically. You can also press F1 at any time to view a comprehensive HELP SCREEN.", 
+				"You have engaged one or more enemy starships. Left click on a friendly ship to select it, then left click anywhere on the tactical map including enemy ships. Your ship will then begin to move towards that point at best speed. When a hostile ship is within range of your weapons, they will fire automatically. You can also press F1 at any time to view a comprehensive HELP SCREEN.",
 				"OK");
 		break;
 

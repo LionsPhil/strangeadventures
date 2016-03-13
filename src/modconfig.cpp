@@ -143,9 +143,9 @@ int modconfig_main()
 			if (mode == 1)
 			{
 				if (strcmp(moddir, moddirs[msel].dir))
-				{	
+				{
 					sprintf(moddir, moddirs[msel].dir);
-					end = 1; 
+					end = 1;
 				}
 			}
 		}
@@ -192,19 +192,19 @@ int modconfig_main()
 							if (!strcmp(moddirs[y].dir, moddir))
 								msel = y;
 						Play_SoundFX(0, 0, 100);
-					}				
+					}
 				}
 				if (mx > bx+16 && mx < bx+80 && my > by+h-32 && my < by+h-16)
-				{	
-					mode = 0; 
+				{
+					mode = 0;
 					Play_SoundFX(0, 0, 100);
 				}
 				if (mx > bx+176 && mx < bx+240 && my > by+h-32 && my < by+h-16)
 				if (strcmp(moddir, moddirs[msel].dir))
-				{	
+				{
 					sprintf(moddir, moddirs[msel].dir);
 					Play_SoundFX(0, 0, 100);
-					end = 1; 
+					end = 1;
 				}
 				break;
 
@@ -221,7 +221,7 @@ int modconfig_main()
 			{
 				case 0:	// main menu
 				bx = 192; by = 164; h = 128;
-				interface_drawborder(screen, bx, by, bx+256, by+h, 1, 
+				interface_drawborder(screen, bx, by, bx+256, by+h, 1,
 						MOD_INTERFACE_COLOR, "Strange Adventures in Infinite Space");
 
 				interface_drawbutton(screen, bx+48, by+40, 160, MOD_INTERFACE_COLOR, "STANDARD GAME");
@@ -231,7 +231,7 @@ int modconfig_main()
 
 				case 1:
 				bx = 192; by = 148; h = 160;
-				interface_drawborder(screen, bx, by, bx+256, by+h, 1, 
+				interface_drawborder(screen, bx, by, bx+256, by+h, 1,
 						MOD_INTERFACE_COLOR, "Strange Adventures in Infinite Space");
 
 				y = 0;
@@ -241,7 +241,7 @@ int modconfig_main()
 
 				ik_print(screen, font_6x8, bx+16, by+22, 0, "Select a mod", moddirs[y].name);
 				interface_thinborder(screen, bx+16, by+32, bx+240, by+120, MOD_INTERFACE_COLOR, 0);
-				
+
 				for (x = 0; x < n_moddirs; x++)
 				{
 					y = x - mscr;
@@ -266,7 +266,7 @@ int modconfig_main()
 			}
 
 			update_palette();
-			ik_blit();	
+			ik_blit();
 		}
 	}
 

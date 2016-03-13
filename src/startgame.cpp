@@ -67,7 +67,7 @@ int32 startgame()
 		ik_eventhandler();
 		c = ik_inkey();
 		mc = ik_mclick();
-		mx = ik_mouse_x - bx; 
+		mx = ik_mouse_x - bx;
 		my = ik_mouse_y - by;
 
 		ot = ti;
@@ -133,23 +133,23 @@ int32 startgame()
 			{
 				settings.dif_ship = (mx - 16)/72;
 				Play_SoundFX(WAV_SLIDER,0);
-				upd = 1; 
+				upd = 1;
 			}
 			else if (my > 112 && my < 176) // nebula
 			{
 				settings.dif_nebula = (mx - 16)/72;
 				Play_SoundFX(WAV_SLIDER,0);
-				upd = 1; 
+				upd = 1;
 			}
 			else if (my > 192 && my < 224) // enemies
 			{
 				settings.dif_enemies = (mx - 16)/72;
 				Play_SoundFX(WAV_SLIDER,0);
-				upd = 1; 
+				upd = 1;
 			}
 			else if (my > 232 && my < 240)	// easy/hard
 			{
-				c = (mx-40)/32; 
+				c = (mx-40)/32;
 				if (c < 0) c=0;
 				if (c > 4) c=4;
 				settings.dif_nebula = (c+1)/2;
@@ -251,13 +251,13 @@ int32 startgame()
 
 		y = 3;
 		interface_drawborder(screen, bx, by, bx+256, by+h, 1, STARMAP_INTERFACE_COLOR, textstring[STR_STARTGAME_TITLE1]);
-		y +=  1 + interface_textbox(screen, font_6x8, bx+84, by+y*8, 160, 88, 0, 
+		y +=  1 + interface_textbox(screen, font_6x8, bx+84, by+y*8, 160, 88, 0,
 								textstring[STR_STARTGAME_MUCRON1]);
-		y +=  1 + interface_textbox(screen, font_6x8, bx+16, by+y*8, 224, 88, 0, 
+		y +=  1 + interface_textbox(screen, font_6x8, bx+16, by+y*8, 224, 88, 0,
 								textstring[STR_STARTGAME_MUCRON2]);
-		y +=  1 + interface_textbox(screen, font_6x8, bx+16, by+y*8, 224, 88, 0, 
+		y +=  1 + interface_textbox(screen, font_6x8, bx+16, by+y*8, 224, 88, 0,
 								textstring[STR_STARTGAME_MUCRON3]);
-		y +=  1 + interface_textbox(screen, font_6x8, bx+16, by+y*8, 224, 88, 0, 
+		y +=  1 + interface_textbox(screen, font_6x8, bx+16, by+y*8, 224, 88, 0,
 								textstring[STR_STARTGAME_MUCRON4]);
 		interface_drawbutton(screen, bx+256-64, by+h-24, 48, STARMAP_INTERFACE_COLOR, textstring[STR_OK]);
 		ik_dsprite(screen, bx+16, by+24, spr_SMraces->spr[race_unknown], 0);
@@ -278,9 +278,9 @@ int32 startgame()
 
 		y = 3;
 		interface_drawborder(screen, bx, by, bx+256, by+h, 1, STARMAP_INTERFACE_COLOR, textstring[STR_STARTGAME_TITLE2]);
-		y +=  1 + interface_textbox(screen, font_6x8, bx+84, by+y*8, 160, 88, 0, 
+		y +=  1 + interface_textbox(screen, font_6x8, bx+84, by+y*8, 160, 88, 0,
 								textstring[STR_STARTGAME_MUCRON5]);
-		y +=  1 + interface_textbox(screen, font_6x8, bx+16, by+y*8, 224, 88, 0, 
+		y +=  1 + interface_textbox(screen, font_6x8, bx+16, by+y*8, 224, 88, 0,
 								textstring[STR_STARTGAME_MUCRON6]);
 		interface_drawbutton(screen, bx+256-64, by+h-24, 48, STARMAP_INTERFACE_COLOR, textstring[STR_OK]);
 		ik_dsprite(screen, bx+16, by+24, spr_IFdifnebula->spr[1], 0);
@@ -302,14 +302,14 @@ int32 startgame()
 
 		y = 3;
 		interface_drawborder(screen, bx, by, bx+256, by+h, 1, STARMAP_INTERFACE_COLOR, textstring[STR_STARTGAME_TITLE1]);
-		y +=  1 + interface_textbox(screen, font_6x8, bx+16, by+y*8, 224, 88, 0, 
+		y +=  1 + interface_textbox(screen, font_6x8, bx+16, by+y*8, 224, 88, 0,
 								textstring[STR_STARTGAME_MUCRON1]);
 		interface_thinborder(screen, bx+16, by+y*8, bx+80, by+y*8+64, STARMAP_INTERFACE_COLOR, 0);
 		ik_dsprite(screen, bx+16, by+y*8, spr_SMplanet2->spr[21], 0);
 		interface_thinborder(screen, bx+16, by+y*8, bx+80, by+y*8+64, STARMAP_INTERFACE_COLOR);
-		y +=  1 + interface_textbox(screen, font_6x8, bx+84, by+y*8, 160, 88, 0, 
+		y +=  1 + interface_textbox(screen, font_6x8, bx+84, by+y*8, 160, 88, 0,
 								textstring[STR_STARTGAME_MUCRON2]);
-		y +=  1 + interface_textbox(screen, font_6x8, bx+16, by+y*8, 224, 88, 0, 
+		y +=  1 + interface_textbox(screen, font_6x8, bx+16, by+y*8, 224, 88, 0,
 								textstring[STR_STARTGAME_MUCRON3]);
 		interface_drawbutton(screen, bx+256-64, by+h-24, 48, STARMAP_INTERFACE_COLOR, textstring[STR_OK]);
 
@@ -330,7 +330,7 @@ int32 startgame()
 
 		y = 3;
 		interface_drawborder(screen, bx, by, bx+256, by+h, 1, STARMAP_INTERFACE_COLOR, textstring[STR_STARTGAME_TITLE3]);
-		y +=  1 + interface_textbox(screen, font_6x8, bx+84, by+y*8, 160, 88, 0, 
+		y +=  1 + interface_textbox(screen, font_6x8, bx+84, by+y*8, 160, 88, 0,
 								textstring[STR_STARTGAME_MUCRON7]);
 		interface_drawbutton(screen, bx+256-64, by+h-24, 48, STARMAP_INTERFACE_COLOR, textstring[STR_OK]);
 		ik_dsprite(screen, bx+16, by+24, spr_SMraces->spr[RC_PLANET], 4);
@@ -352,7 +352,7 @@ int32 startgame()
 	}
 
 	saveconfig();
-	
+
 	return end-1;
 }
 
@@ -410,7 +410,7 @@ void loadconfig()
 		settings.opt_timeremaining = 0;
 		settings.opt_lensflares = 1;
 		settings.opt_smoketrails = 1;
-		settings.opt_volume = 8; 
+		settings.opt_volume = 8;
 		s_volume = 80;
 
 		return;

@@ -104,7 +104,7 @@ void ik_drawline(t_ik_image *img, int32 xb, int32 yb, int32 xe, int32 ye, int32 
 	}
 	else if (x>>16<c_minx || x>>16>=c_maxx)  return;
 
-//  ik_putpixel(img, x>>16,y>>16,c1); 
+//  ik_putpixel(img, x>>16,y>>16,c1);
 
 
 	if (dy>0)  // clamp y
@@ -130,18 +130,18 @@ void ik_drawline(t_ik_image *img, int32 xb, int32 yb, int32 xe, int32 ye, int32 
   		x1=x>>16;y1=y>>16;
 	    if (x1>=c_minx && y1>=c_miny && x1<c_maxx && y1<c_maxy)
 				if (!fx)
-					ik_putpixel(img, x1,y1,c1); 
+					ik_putpixel(img, x1,y1,c1);
 				else
-					ik_putpixel_add(img, x1,y1,c1); 
+					ik_putpixel_add(img, x1,y1,c1);
    	}
     else if (c2>0)
     {
   		x1=x>>16;y1=y>>16;
 	    if (x1>=c_minx && y1>=c_miny && x1<c_maxx && y1<c_maxy)
 				if (!fx)
-					ik_putpixel(img, x1,y1,c2); 
+					ik_putpixel(img, x1,y1,c2);
 				else
-					ik_putpixel_add(img, x1,y1,c2); 
+					ik_putpixel_add(img, x1,y1,c2);
    	}
 
   	x+=dx; y+=dy;
@@ -211,14 +211,14 @@ int32 get_rgb_color(int32 r, int32 g, int32 b)
 	for (x=0;x<256;x++)
 	{
 		c0=get_palette_entry(x);
-		r1=r-((c0>>16)&255); 
-		g1=g-((c0>>8)&255); 
+		r1=r-((c0>>16)&255);
+		g1=g-((c0>>8)&255);
 		b1=b-(c0&255);
 		e=r1*r1+g1*g1+b1*b1;
 		if (e<ee)
 		{ c=x; ee=e; }
 	}
-	
+
 	return c;
 }
 
@@ -248,7 +248,7 @@ void calc_color_tables(uint8 *pal)
 
 	for (y=0;y<256;y++)
 		for (x=0;x<256;x++)
-		{			
+		{
 			gfx_transbuffer[y*256+x]=get_rgb_color( ((int32)pal[y*3]+pal[x*3])>>1,
 																							((int32)pal[y*3+1]+pal[x*3+1])>>1,
 																							((int32)pal[y*3+2]+pal[x*3+2])>>1 );
@@ -337,7 +337,7 @@ t_ik_image *ik_load_pcx(char *fname, uint8 *pal)
   fgetc(img);  // encoding
 
 	bpp=fgetc(img);
-	// 4	
+	// 4
 
 	img_w=-fgetc(img);  // xmin
 	img_w-=fgetc(img)<<8;
@@ -386,7 +386,7 @@ t_ik_image *ik_load_pcx(char *fname, uint8 *pal)
 	image=new_image(img_w, img_h);
 	if (!image)
 	{
-		fclose(img);	
+		fclose(img);
 		return NULL;
 	}
 
@@ -414,7 +414,7 @@ t_ik_image *ik_load_pcx(char *fname, uint8 *pal)
 			{
 				line[x++]=ch;
 				c--;
-			}			
+			}
 		}
 
 		po=y*img_w;
@@ -425,17 +425,17 @@ t_ik_image *ik_load_pcx(char *fname, uint8 *pal)
 	fclose(img);
 
 	free(line);
-	
-	return image;					
+
+	return image;
 }
 
-t_ik_image *ik_load_tga(char *fname, uint8 *pal) 
+t_ik_image *ik_load_tga(char *fname, uint8 *pal)
 {
 	t_ik_image *img;
 	FILE *fil;
 	int p;
 	uint8 hdr[18];
-	
+
 	fil = fopen(fname, "rb");
 	if (!fil) return NULL;
 
@@ -488,7 +488,7 @@ void ik_save_screenshot(t_ik_image *img, uint8 *pal)
 	int n;
 	FILE *fil;
 	char fname[32];
-	
+
 	wants_screenshot = 0;
 
 #ifdef MOVIE
@@ -497,7 +497,7 @@ void ik_save_screenshot(t_ik_image *img, uint8 *pal)
 	sprintf(fname, "frames/fram%04d.tga", n);
 	ik_save_tga(fname, img, pal);
 #else
-	
+
 	n=0;
 	while (n<1000)
 	{
@@ -606,7 +606,7 @@ void halfbritescreen()
 	{
 		po = screen->data + screen->pitch*y;
 		for (x = screen->w; x; x--)
-		{	
+		{
 			*po = gfx_lightbuffer[l+*po];
 			po++;
 		}
@@ -677,12 +677,12 @@ void gfx_initmagnifier()
 				magni->data[y*128+x] = 1;
 			else if (r < 128)
 				magni->data[y*128+x] = 2;
-			else 
+			else
 				magni->data[y*128+x] = 0;
 #else
 			if (r < 124)
 				magni->data[y*128+x] = 1;
-			else 
+			else
 				magni->data[y*128+x] = 0;
 #endif
 		}
@@ -757,7 +757,7 @@ void gfx_magnify()
 			}
 			else
 				*p = *m;
-			
+
 			p++; m++;
 		}
 

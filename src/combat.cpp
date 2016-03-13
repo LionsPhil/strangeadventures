@@ -75,7 +75,7 @@ int32 combat_use_gong(int32 t);
 void combat_launch_fighter(int32 s, int32 t);
 
 
-int32 calc_leadangle(int32 tx, int32 ty, int32 vtx, int32 vty, 
+int32 calc_leadangle(int32 tx, int32 ty, int32 vtx, int32 vty,
 										 int32 sx, int32 sy, int32 vsx, int32 vsy,
 										 int32 speed);
 
@@ -101,7 +101,7 @@ int32 combat(int32 flt, int32 sim)
 	t_move = 0; t_disp = 0; g_pause = 0; end = 0; rett=0;
 
 	if (simulated)
-		Play_Sound(WAV_MUS_SIMULATOR, 15, 1, 85);	
+		Play_Sound(WAV_MUS_SIMULATOR, 15, 1, 85);
 	else if (!nebula)
 		Play_Sound(WAV_MUS_COMBAT, 15, 1);
 	else
@@ -119,15 +119,15 @@ int32 combat(int32 flt, int32 sim)
 			Play_SoundFX(WAV_DESELECT);
 			if (simulated)
 			{
-				if (!interface_popup(font_6x8, 240, 200, 160, 72, COMBAT_INTERFACE_COLOR, 0, 
-						textstring[STR_QUIT_TITLE], textstring[STR_QUIT_SIMULATION], 
+				if (!interface_popup(font_6x8, 240, 200, 160, 72, COMBAT_INTERFACE_COLOR, 0,
+						textstring[STR_QUIT_TITLE], textstring[STR_QUIT_SIMULATION],
 						textstring[STR_YES], textstring[STR_NO]))
 				{	must_quit = 1; player.death = 666; }
 			}
 			else
 			{
-				if (!interface_popup(font_6x8, 240, 200, 160, 72, COMBAT_INTERFACE_COLOR, 0, 
-						textstring[STR_QUIT_TITLE], textstring[STR_QUIT_CONFIRM], 
+				if (!interface_popup(font_6x8, 240, 200, 160, 72, COMBAT_INTERFACE_COLOR, 0,
+						textstring[STR_QUIT_TITLE], textstring[STR_QUIT_CONFIRM],
 						textstring[STR_YES], textstring[STR_NO]))
 				{	must_quit = 1; player.death = 666; }
 			}
@@ -136,7 +136,7 @@ int32 combat(int32 flt, int32 sim)
 			t0 = t;
 		}
 
-		mc = ik_mclick();	
+		mc = ik_mclick();
 		c = ik_inkey();
 		b = ik_mouse_b;
 
@@ -154,7 +154,7 @@ int32 combat(int32 flt, int32 sim)
 		}
 
 		if (key_pressed(key_f[0]))
-		{	
+		{
 			combat_help_screen();
 			ik_eventhandler();  // always call every frame
 			t = get_ik_timer(1);
@@ -198,7 +198,7 @@ int32 combat(int32 flt, int32 sim)
 		{
 			if ((cships[s].own&1)==0)
 				f |= 1;
-			else 
+			else
 				f |= 2;
 		}
 		if ((f == 1 || cships[playership].type==-1) && retreat)
@@ -207,7 +207,7 @@ int32 combat(int32 flt, int32 sim)
 			Play_SoundFX(WAV_SELECT, t);
 
 			if (simulated)
-				Play_Sound(WAV_MUS_SIMULATOR, 15, 1, 85);	
+				Play_Sound(WAV_MUS_SIMULATOR, 15, 1, 85);
 			else if (!nebula)
 				Play_Sound(WAV_MUS_COMBAT, 15, 1);
 			else
@@ -266,7 +266,7 @@ int32 combat(int32 flt, int32 sim)
 					break;
 
 					case 2:	// retreat button
-					if (f == 3) 
+					if (f == 3)
 					{
 						if (!retreat)
 						{
@@ -274,7 +274,7 @@ int32 combat(int32 flt, int32 sim)
 							rett = t_move;
 							Play_SoundFX(WAV_SELECT, t);
 							Play_Sound(WAV_FLARE, 15, 1);
-							
+
 							for (s = 0; s < MAX_COMBAT_SHIPS; s++)
 							if ((cships[s].own&1) == 0)
 								combat_findstuff2do(s, t);
@@ -284,7 +284,7 @@ int32 combat(int32 flt, int32 sim)
 							retreat = 0;
 							Play_SoundFX(WAV_SELECT, t);
 							if (simulated)
-								Play_Sound(WAV_MUS_SIMULATOR, 15, 1, 85);	
+								Play_Sound(WAV_MUS_SIMULATOR, 15, 1, 85);
 							else if (!nebula)
 								Play_Sound(WAV_MUS_COMBAT, 15, 1);
 							else
@@ -375,7 +375,7 @@ int32 combat(int32 flt, int32 sim)
 								cships[camera.ship_sel].tac = 2;
 								cships[camera.ship_sel].wp_x = camera.x + ((((ik_mouse_x - 400)<<12)/camera.z)<<10);
 								cships[camera.ship_sel].wp_y = camera.y + ((((244-ik_mouse_y)<<12)/camera.z)<<10);
-							}						
+							}
 	//						camera.ship_sel = -1;
 	//						camera.ship_trg = -1;
 						}
@@ -421,7 +421,7 @@ int32 combat(int32 flt, int32 sim)
 						cships[s].dist = get_distance( cships[camera.ship_trg].ds_x - ik_mouse_x,
 																					 ik_mouse_y - cships[camera.ship_trg].ds_y );
 						if (cships[s].dist <= cships[camera.ship_trg].ds_s>>1)
-						{	
+						{
 							if ((cships[s].own&1) == (cships[camera.ship_trg].own&1))
 								cships[s].dist = 64;
 							else
@@ -451,7 +451,7 @@ int32 combat(int32 flt, int32 sim)
 					if (cships[playership].type>-1)
 						f |= 1;
 				}
-				else 
+				else
 					f |= 2;
 			}
 
@@ -484,9 +484,9 @@ int32 combat(int32 flt, int32 sim)
 					s = 1 + 2*(g_pause == -1);
 					while (s--)
 					{
-						t_move++; 
+						t_move++;
 						combat_movement(t_move);
-						if (t_move==klaktime+1 && klaktime>0) 
+						if (t_move==klaktime+1 && klaktime>0)
 							Play_SoundFX(WAV_HYPERDRIVE, get_ik_timer(1));
 					}
 				}
@@ -549,8 +549,8 @@ void combat_start(int32 flt)
 
 
 	for (t = 0; t < MAX_COMBAT_SHIPS; t++)
-	{	
-		cships[t].type = -1; 
+	{
+		cships[t].type = -1;
 		cships[t].own = -1;
 		for (p = 0; p < 8; p++)
 			cships[t].wepfire[p] = 0;
@@ -602,16 +602,16 @@ void combat_start(int32 flt)
 	nc = 0; nf = 0;
 	for (p = 0; p < s; p++)
 	{
-		if (hulls[shiptypes[sm_fleets[flt].ships[p]].hull].size>=32)	
-		{ 
+		if (hulls[shiptypes[sm_fleets[flt].ships[p]].hull].size>=32)
+		{
 			if (!(shiptypes[sm_fleets[flt].ships[p]].flag & 128))	// if not deep hunter
-				nc++; 
+				nc++;
 		}
 		else
 		{	nf++; }
 	}
 
-	for (p = 0; p < s; p++) 
+	for (p = 0; p < s; p++)
 	{
 		cships[t].type = sm_fleets[flt].ships[p];
 		cships[t].own = 1;
@@ -667,7 +667,7 @@ void combat_start(int32 flt)
 			break;
 
 			case race_urluquai:
-			x = p; 
+			x = p;
 			if (r == 2)
 			{
 				y = rand()%1024;
@@ -726,8 +726,8 @@ void combat_start(int32 flt)
 		cships[t].escaped = 0;
 		cships[t].active = 2;
 		if (shiptypes[cships[t].type].race == race_unknown)
-		{	
-			cships[t].active = 1; cships[t].va = (rand()%3+1)*( (rand()&1)*2-1 ); 
+		{
+			cships[t].active = 1; cships[t].va = (rand()%3+1)*( (rand()&1)*2-1 );
 			if (sm_fleets[flt].system & 1)	// 50% chance of being dead
 			{
 				cships[t].hits = 1;
@@ -810,7 +810,7 @@ void klakar_pissoff()
 	while (!must_quit && !end)
 	{
 		ik_eventhandler();  // always call every frame
-		mc = ik_mclick();	
+		mc = ik_mclick();
 		c = ik_inkey();
 		mx = ik_mouse_x - bx; my = ik_mouse_y - by;
 
@@ -866,7 +866,7 @@ void combat_sim_end()
 		ik_eventhandler();
 		c = ik_inkey();
 		mc = ik_mclick();
-		mx = ik_mouse_x - bx; 
+		mx = ik_mouse_x - bx;
 		my = ik_mouse_y - by;
 
 		if (c==13 || c==32)
@@ -964,8 +964,8 @@ void combat_end(int32 flt)
 			if (cships[c].syshits[x] <= 0 && shipsystems[shiptypes[cships[c].type].system[x]].item > -1)
 			{
 				shiptypes[cships[c].type].sysdmg[x] = 1;
-				if ((de == -1) && (c==playership) && 
-						(rand()%10==0) && 
+				if ((de == -1) && (c==playership) &&
+						(rand()%10==0) &&
 						(shipsystems[shiptypes[cships[c].type].system[x]].type!=sys_shield))
 				{
 					de = shiptypes[cships[c].type].system[x];
@@ -1028,7 +1028,7 @@ void combat_end(int32 flt)
 						// display pissoff message
 						klakar_pissoff();
 						for (it=0; it < player.num_items; it++)
-							if (itemtypes[player.items[it]].flag & 4)	
+							if (itemtypes[player.items[it]].flag & 4)
 								starmap_removeitem(it);
 						sm_fleets[f].num_ships = 0;
 					}
@@ -1049,13 +1049,13 @@ void combat_end(int32 flt)
 							it = -1;
 						else if (sm_stars[it].color < 0)
 							it = -1;
-						else 
+						else
 							for (b = 0; b < STARMAP_MAX_FLEETS; b++)
 								if (sm_fleets[b].num_ships>0 && b!=f && sm_fleets[b].system==it)
 									it = -1;
 					}
 					if (it > -1)
-						sm_fleets[f].system = it;				
+						sm_fleets[f].system = it;
 				}
 			}
 			else	// klakar destroyed
@@ -1064,11 +1064,11 @@ void combat_end(int32 flt)
 			}
 		}
 	}
-	
+
 	if (de > -1 && player.num_ships > 0 && player.ships[0] == 0)
 	{	// system was destroyed
 		sprintf(texty, textstring[STR_SYSTEM_DESTROYED], player.shipname, shipsystems[de].name);
-		interface_popup(font_6x8, 224, 192, 192, 96, STARMAP_INTERFACE_COLOR, 0, 
+		interface_popup(font_6x8, 224, 192, 192, 96, STARMAP_INTERFACE_COLOR, 0,
 										textstring[STR_COMBAT_SYSDMG], texty, textstring[STR_OK]);
 	}
 
@@ -1117,7 +1117,7 @@ void combat_movement(int32 t)
 			}
 		}
 
-		if (shiptypes[cships[c].type].flag & 16) 
+		if (shiptypes[cships[c].type].flag & 16)
 		{
 			if (t > cships[c].launchtime && cships[c].hits > 0)
 			{
@@ -1220,7 +1220,7 @@ void combat_movement(int32 t)
 					cships[c].hits++;
 					cships[c].dmgc_time = t + 50/p;
 				}
-				
+
 				// repair broken systems
 				if (p == 0 && (shiptypes[cships[c].type].race==race_none || shiptypes[cships[c].type].race==race_terran))
 					p = 1;
@@ -1260,15 +1260,15 @@ void combat_movement(int32 t)
 			}
 
 			if (cships[c].target > -1 && cships[cships[c].target].own != cships[c].own)
-			{	
+			{
 				// check if lost target due to cloaking
 				// change tactics here (?)
 				if (cships[cships[c].target].cloaked==1)
-				{	
+				{
 					tg = cships[c].target;
 					cships[c].patx = cships[c].wp_x = cships[tg].x - ((sin1k[cships[c].angle]*cships[c].dist)>>6);
-					cships[c].paty = cships[c].wp_y = cships[tg].y - ((cos1k[cships[c].angle]*cships[c].dist)>>6);							
-					cships[c].target = -1; 
+					cships[c].paty = cships[c].wp_y = cships[tg].y - ((cos1k[cships[c].angle]*cships[c].dist)>>6);
+					cships[c].target = -1;
 					cships[c].tac = 2;
 				}
 				// check if wants to cloak or decloak (enemy only)
@@ -1394,7 +1394,7 @@ void combat_movement(int32 t)
 			{
 				if (cships[c].tac==2)	// move to waypoint
 				{
-					a = get_direction ( (cships[c].wp_x - cships[c].x)>>10, (cships[c].wp_y - cships[c].y)>>10);					
+					a = get_direction ( (cships[c].wp_x - cships[c].x)>>10, (cships[c].wp_y - cships[c].y)>>10);
 					r = get_distance ( (cships[c].wp_x - cships[c].x)>>10, (cships[c].wp_y - cships[c].y)>>10);
 #ifndef DEMO_VERSION
 					if (shiptypes[cships[c].type].flag & 2)
@@ -1466,8 +1466,8 @@ void combat_movement(int32 t)
 			sx = (sin1k[cships[c].a] / 50 * sp) >> 6;
 			sy = (cos1k[cships[c].a] / 50 * sp) >> 6;	//    sp/50 << 10
 
-			cships[c].vx = sx; 
-			cships[c].vy = sy; 
+			cships[c].vx = sx;
+			cships[c].vy = sy;
 
 			if ((cships[c].own != 2 || t-klaktime > 100) && (!cships[c].cloaked))
 			{
@@ -1499,9 +1499,9 @@ void combat_movement(int32 t)
 				if (!(rand()%16) || cships[c].hits < -hull->hits)
 				{
 					cships[c].hits--;
-					combat_SoundFX(WAV_EXPLO1, cships[c].x, 50); 
-					combat_addexplo(cships[c].x + ((rand()%hull->size-hull->size/2)<<9), 
-													cships[c].y + ((rand()%hull->size-hull->size/2)<<9), 
+					combat_SoundFX(WAV_EXPLO1, cships[c].x, 50);
+					combat_addexplo(cships[c].x + ((rand()%hull->size-hull->size/2)<<9),
+													cships[c].y + ((rand()%hull->size-hull->size/2)<<9),
 													spr_explode1, 5, hull->size/2, 0, t, t+32);
 					if (cships[c].hits <= -hull->hits)
 					{
@@ -1602,7 +1602,7 @@ void combat_movement(int32 t)
 					if (cprojs[c].dst->cloaked)
 						cprojs[c].dst = NULL;
 			}
-			
+
 			cprojs[c].vx = (cprojs[c].vx * 15 + ((sin1k[cprojs[c].a] * cprojs[c].wep->speed / COMBAT_FRAMERATE) >> 6)) >> 4;
 			cprojs[c].vy = (cprojs[c].vy * 15 + ((cos1k[cprojs[c].a] * cprojs[c].wep->speed / COMBAT_FRAMERATE) >> 6)) >> 4;
 
@@ -1613,7 +1613,7 @@ void combat_movement(int32 t)
 			{
 				d = cprojs[c].wep->size;
 				combat_addexplo(cprojs[c].x-((sin1k[cprojs[c].a]*d)>>7), cprojs[c].y-((cos1k[cprojs[c].a]*d)>>7), spr_weapons, 10, (d*3)>>2, 2, t, t+35, 18, 0);
-			}		
+			}
 		if (cprojs[c].wep->flags & wpfImplode)
 		{
 			if (!(t&3))
@@ -1632,7 +1632,7 @@ void combat_movement(int32 t)
 				if (p > 0)
 				{
 					d = rand()%p;
-					p = -1; 
+					p = -1;
 					for (a = 0; a < MAX_COMBAT_SHIPS; a++)
 					if (cships[a].type>-1 && (cships[a].own&1)!=(cprojs[c].src->own&1))
 					{
@@ -1685,8 +1685,8 @@ void combat_movement(int32 t)
 					combat_damageship(p, 0, d, t, cprojs[c].wep);
 					cprojs[c].hits -= d;
 					a = hulls[shiptypes[cships[p].type].hull].size>>1;
-					combat_addexplo(cships[p].x + ((rand()%(a*2) - a)<<8), 
-													cships[p].y + ((rand()%(a*2) - a)<<8), 
+					combat_addexplo(cships[p].x + ((rand()%(a*2) - a)<<8),
+													cships[p].y + ((rand()%(a*2) - a)<<8),
 													spr_explode1, 5, 32, 0, t, t+32);
 					if (cprojs[c].hits <= 0)
 					{	cprojs[c].wep = NULL; break; }
@@ -1738,7 +1738,7 @@ void combat_movement(int32 t)
 					else
 						combat_launchstages(c, 3, t);
 				}
-			
+
 			cprojs[c].wep = NULL;
 		}
 	}
@@ -1765,7 +1765,7 @@ void combat_checkalttargets(int32 s, int32 t)
 		{
 			b = -1; rm = cships[s].frange;
 			for (c = 0; c < MAX_COMBAT_SHIPS; c++)
-			if (cships[c].type>-1 && cships[c].hits>0 && 
+			if (cships[c].type>-1 && cships[c].hits>0 &&
 					(cships[c].own&1)!=(cships[s].own&1) && cships[c].cloaked==0 && cships[c].active==2)
 			{
 				r = get_distance( (cships[c].x-cships[s].x)>>10, (cships[c].y-cships[s].y)>>10 );
@@ -1779,7 +1779,7 @@ void combat_checkalttargets(int32 s, int32 t)
 			{
 				rm = -1;
 				for (c = 0; c < shiptypes[cships[s].type].num_systems; c++)
-				if (shipsystems[shiptypes[cships[s].type].system[c]].type == sys_weapon && 
+				if (shipsystems[shiptypes[cships[s].type].system[c]].type == sys_weapon &&
 						shipsystems[shiptypes[cships[s].type].system[c]].par[0] > -1)
 				{
 					r = shipweapons[shipsystems[shiptypes[cships[s].type].system[c]].par[0]].range;
@@ -1787,7 +1787,7 @@ void combat_checkalttargets(int32 s, int32 t)
 				}
 
 				cships[s].target = b;
-				// shiptypes[cships[s].type].speed > shiptypes[cships[b].type].speed+3 && 
+				// shiptypes[cships[s].type].speed > shiptypes[cships[b].type].speed+3 &&
 				if (cships[s].own != 2)
 					cships[s].dist = rm+64;
 				else	// klakar
@@ -1798,7 +1798,7 @@ void combat_checkalttargets(int32 s, int32 t)
 			}
 		}
 
-	
+
 	}
 
 }
@@ -1832,7 +1832,7 @@ void combat_findstuff2do(int32 s, int32 t)
 		if (b > -1)
 		{
 			cships[s].target = b;
-			//	shiptypes[cships[s].type].speed > shiptypes[cships[b].type].speed+3 && 
+			//	shiptypes[cships[s].type].speed > shiptypes[cships[b].type].speed+3 &&
 			if (cships[s].own != 2)
 				cships[s].dist = cships[s].frange+64;
 			else // klakar
@@ -1937,7 +1937,7 @@ void combat_findstuff2do(int32 s, int32 t)
 
 void combat_checkescapes(int32 t)
 {
-	int c, s; 
+	int c, s;
 	int r;
 	//int rm, h;
 
@@ -1951,7 +1951,7 @@ void combat_checkescapes(int32 t)
 				r = get_distance( (cships[c].x-cships[s].x)>>10, (cships[c].y-cships[s].y)>>10);
 				if (r < (cships[c].frange*3)/2)
 					cships[s].flee = 1;
-			}			
+			}
 		}
 
 	if (!retreat)
@@ -1980,7 +1980,7 @@ void combat_checkescapes(int32 t)
 					r = get_distance( (cships[c].x-cships[s].x)>>10, (cships[c].y-cships[s].y)>>10);
 					if (r < (cships[c].frange*3)/2)
 						cships[s].escaped = 0;
-				}			
+				}
 			}
 		}
 	}
@@ -2001,7 +2001,7 @@ int32 combat_findship(int32 mx, int32 my)
 		if (cships[c].hits > 0 && cships[c].type > -1 && (cships[c].cloaked==0 || cships[c].own==0))
 		{
 			sz = (cships[c].ds_s >> 1)+5;
-			if (mx >= cships[c].ds_x-sz && mx <= cships[c].ds_x+sz && 
+			if (mx >= cships[c].ds_x-sz && mx <= cships[c].ds_x+sz &&
 					my >= cships[c].ds_y-sz && my <= cships[c].ds_y+sz)
 				r = c;
 		}
@@ -2022,7 +2022,7 @@ int32 shiptonum(t_ship *s)
 	}
 
 	return -1;
-}	
+}
 
 void combat_updateshipstats(int32 s, int32 t)
 {
@@ -2066,16 +2066,16 @@ void combat_updateshipstats(int32 s, int32 t)
 			if (cships[s].syshits[x]>0)
 			{	cships[s].dmgc_type = shiptypes[ty].system[x]; cships[s].sys_dmgc = x; }
 			break;
-		
+
 			case sys_computer:
 			if (cships[s].syshits[x]>0)
 			{	cships[s].cpu_type = shipsystems[shiptypes[ty].system[x]].par[0]; cships[s].sys_cpu = x; }
 			break;
-		
+
 			case sys_ecm:
 			if (cships[s].syshits[x]>0)
 			{	cships[s].ecm_type = shiptypes[ty].system[x]; cships[s].sys_ecm = x; }
-			
+
 			case sys_misc:
 			if (cships[s].syshits[x]>0)
 			{
@@ -2154,7 +2154,7 @@ void combat_summon_klakar(int32 t)
 	}
 	if (b == -1)
 	{
-		Play_SoundFX(WAV_DESELECT, get_ik_timer(1)); 	
+		Play_SoundFX(WAV_DESELECT, get_ik_timer(1));
 		return;
 	}
 	Play_SoundFX(WAV_DOT, 0);
@@ -2293,11 +2293,11 @@ void combat_help_screen()
 
 	y+=6;
 	ik_print(screen, font_6x8, x+4, y+=8, COMBAT_INTERFACE_COLOR, "HULL DAMAGE");
-	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 112, 64, 0, "The red bar on the left displays the hull integrity. When it reaches the bottom, the ship will be destroyed.") - 8; 
+	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 112, 64, 0, "The red bar on the left displays the hull integrity. When it reaches the bottom, the ship will be destroyed.") - 8;
 
 	y+=6;
 	ik_print(screen, font_6x8, x+4, y+=8, COMBAT_INTERFACE_COLOR, "SHIELD STATUS");
-	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 112, 64, 0, "If the currently selected ship is equipped with a shield, the blue bar on the right displays its strength.") - 8; 
+	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 112, 64, 0, "If the currently selected ship is equipped with a shield, the blue bar on the right displays its strength.") - 8;
 
 	y+=6;
 	ik_print(screen, font_6x8, x+4, y+=8, COMBAT_INTERFACE_COLOR, "SHIP SYSTEMS");
@@ -2310,42 +2310,42 @@ void combat_help_screen()
 
 	y+=6;
 	ik_print(screen, font_6x8, x+4, y+=8, COMBAT_INTERFACE_COLOR, "SYSTEM DAMAGE");
-	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 112, 64, 0, "Damaged systems are shown in different colors. When a system is lost it ceases to function and must be repaired after the battle.") - 8; 
+	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 112, 64, 0, "Damaged systems are shown in different colors. When a system is lost it ceases to function and must be repaired after the battle.") - 8;
 
 	x = 80; y = 308;
 	interface_thinborder(screen, x, y+4, x+120, y+60, COMBAT_INTERFACE_COLOR, 2+COMBAT_INTERFACE_COLOR*16);
 	ik_print(screen, font_6x8, x+4, y+=8, COMBAT_INTERFACE_COLOR, "MISC COMBAT ACTIONS");
-	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 112, 64, 0, "By default, the only button available is Retreat. As you aqcuire special items or devices you may be able to use them during combat.") - 8; 
+	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 112, 64, 0, "By default, the only button available is Retreat. As you aqcuire special items or devices you may be able to use them during combat.") - 8;
 
 	x = 288; y = 374;
 	interface_thinborder(screen, x, y+4, x+120, y+60, COMBAT_INTERFACE_COLOR, 2+COMBAT_INTERFACE_COLOR*16);
 	ik_print(screen, font_6x8, x+4, y+=8, COMBAT_INTERFACE_COLOR, "CURRENT TARGET");
-	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 112, 64, 0, "This window shows the ship you've chosen to attack (or escort in case of friendly ships) along with its hull and shield status.") - 8; 
+	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 112, 64, 0, "This window shows the ship you've chosen to attack (or escort in case of friendly ships) along with its hull and shield status.") - 8;
 
 	x = 284; y = 52;
 	interface_thinborder(screen, x, y+4, x+136, y+84, COMBAT_INTERFACE_COLOR, 2+COMBAT_INTERFACE_COLOR*16);
 	ik_print(screen, font_6x8, x+4, y+=8, COMBAT_INTERFACE_COLOR, "SELECTING SHIPS");
-	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 128, 64, 0, "In addition to using the ship selection icons (see ALLIED SHIPS, top left) you can select any friendly ship by clicking it with the left mouse button. The currently selected ship is marked by a translucent green reticle.") - 8; 
+	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 128, 64, 0, "In addition to using the ship selection icons (see ALLIED SHIPS, top left) you can select any friendly ship by clicking it with the left mouse button. The currently selected ship is marked by a translucent green reticle.") - 8;
 
 	x = 428; y = 52;
 	interface_thinborder(screen, x, y+4, x+112, y+224, COMBAT_INTERFACE_COLOR, 2+COMBAT_INTERFACE_COLOR*16);
 	ik_print(screen, font_6x8, x+4, y+=8, COMBAT_INTERFACE_COLOR, "GIVING ORDERS");
 	y+=6;
 	ik_print(screen, font_6x8, x+4, y+=8, 1, "ATTACK ENEMY");
-	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 104, 64, 0, "Left-click on any enemy spacecraft to order the selected ship to attack it. Hold the button and drag to add a waypoint, for example to attack from the side. The path of attack is shown in red.") - 8; 
+	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 104, 64, 0, "Left-click on any enemy spacecraft to order the selected ship to attack it. Hold the button and drag to add a waypoint, for example to attack from the side. The path of attack is shown in red.") - 8;
 	y+=6;
 	ik_print(screen, font_6x8, x+4, y+=8, 3, "STAY IN FORMATION");
-	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 104, 64, 0, "Right-click anywhere near your ship to order the selected ally to follow you, staying on that side of your ship. The course to its escort position is shown in yellow.") - 8; 
+	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 104, 64, 0, "Right-click anywhere near your ship to order the selected ally to follow you, staying on that side of your ship. The course to its escort position is shown in yellow.") - 8;
 	y+=6;
 	ik_print(screen, font_6x8, x+4, y+=8, 4, "MOVE TO WAYPOINT");
-	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 104, 64, 0, "Left-click at empty space to move the selected ship to that location. The course to the waypoint is shown in green.") - 8; 
+	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 104, 64, 0, "Left-click at empty space to move the selected ship to that location. The course to the waypoint is shown in green.") - 8;
 
 	x = 428; y = 284;
 	interface_thinborder(screen, x, y+4, x+112, y+108, COMBAT_INTERFACE_COLOR, 2+COMBAT_INTERFACE_COLOR*16);
 	ik_print(screen, font_6x8, x+4, y+=8, COMBAT_INTERFACE_COLOR, "PAUSE / SPEED UP");
-	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 104, 64, 0, "Click these symbols to change the speed of the game. You can give orders to your ships even when paused. Click on the single arrow head to return to normal speed.") - 8; 
+	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 104, 64, 0, "Click these symbols to change the speed of the game. You can give orders to your ships even when paused. Click on the single arrow head to return to normal speed.") - 8;
 	y+=6;
-	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 104, 64, 0, "You can also press the space bar to pause and unpause.") - 8; 
+	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 104, 64, 0, "You can also press the space bar to pause and unpause.") - 8;
 #endif
 
 	ik_blit();
@@ -2359,7 +2359,7 @@ void combat_help_screen()
 		ik_eventhandler();
 		c = ik_inkey();
 		mc = ik_mclick();
-		x = key_pressed(key_f[0]); 
+		x = key_pressed(key_f[0]);
 		if (!x)
 		{
 			if (!y)

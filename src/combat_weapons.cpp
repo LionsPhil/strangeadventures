@@ -36,9 +36,9 @@ void combat_gethardpoint(t_ship *ship, int32 hdp, int32 *rx, int32 *ry)
 
 	hull = &hulls[shiptypes[ship->type].hull];
 
-	*rx = ship->x + ((( (hull->hardpts[hdp].x-32) * cos1k[ship->a] + 
+	*rx = ship->x + ((( (hull->hardpts[hdp].x-32) * cos1k[ship->a] +
 				(32-hull->hardpts[hdp].y) * sin1k[ship->a] ) * hull->size) >> 12);
-	*ry = ship->y + ((( (32-hull->hardpts[hdp].y) * cos1k[ship->a] + 
+	*ry = ship->y + ((( (32-hull->hardpts[hdp].y) * cos1k[ship->a] +
 				(32-hull->hardpts[hdp].x) * sin1k[ship->a] ) * hull->size) >> 12);
 }
 
@@ -61,7 +61,7 @@ int32 combat_findtarget(t_ship *ship, int32 hdp)
 	e = -1;
 
 	for (s = 0; s < MAX_COMBAT_SHIPS; s++)
-	if (&cships[s] != ship && cships[s].type>-1 && (cships[s].own&1) != (ship->own&1) && 
+	if (&cships[s] != ship && cships[s].type>-1 && (cships[s].own&1) != (ship->own&1) &&
 			cships[s].hits>0 && cships[s].active==2 && cships[s].cloaked==0)
 	{
 		a1 = get_direction( (cships[s].x>>10)-(ship->x>>10), (cships[s].y>>10)-(ship->y>>10) );
@@ -164,11 +164,11 @@ int32 combat_addbeam(t_shipweapon *wep, t_ship *src, int32 hdp, t_ship *trg, int
 			src->wepfire[hdp] = start + wep->rate * (3 + 2*(src->cpu_type<3));
 	}
 
-	combat_SoundFX(wep->sound1, src->x); 
+	combat_SoundFX(wep->sound1, src->x);
 	return b;
 }
 
-int32 calc_leadangle(int32 tx, int32 ty, int32 vtx, int32 vty, 
+int32 calc_leadangle(int32 tx, int32 ty, int32 vtx, int32 vty,
 										 int32 sx, int32 sy, int32 vsx, int32 vsy,
 										 int32 speed)
 {
@@ -180,7 +180,7 @@ int32 calc_leadangle(int32 tx, int32 ty, int32 vtx, int32 vty,
 	a1 = get_direction( (tx>>10)-(sx>>10), (ty>>10)-(sy>>10) );
 	a2 = get_direction( (vtx - vsx), (vty - vsy) );
 	r = (get_distance( (vtx - vsx), (vty - vsy) ) * COMBAT_FRAMERATE) >> 10;		// target speed
-	a3 = (a2 - a1 + 1536) & 1023; 
+	a3 = (a2 - a1 + 1536) & 1023;
 	if (a3 > 512) a3-=1024;
 	sinb = r * sin (a3 * 3.14159 / 512) / speed;
 	if (sinb > 1)
@@ -206,7 +206,7 @@ int32 combat_addproj(t_ship *src, int32 hdp, t_ship *trg, int32 start)
 	int32 cpu;
 	int s;
 	t_shipweapon *wep;
-	
+
 	s = shiptypes[src->type].system[hdp];
 	if (shipsystems[s].type != sys_weapon)
 		return -1;
@@ -248,7 +248,7 @@ int32 combat_addproj(t_ship *src, int32 hdp, t_ship *trg, int32 start)
 		a1 = get_direction( (tx>>10)-(sx>>10), (ty>>10)-(sy>>10) );
 		a2 = get_direction( (trg->vx - src->vx), (trg->vy - src->vy) );
 		r = (get_distance( (trg->vx - src->vx), (trg->vy - src->vy) ) * COMBAT_FRAMERATE) >> 10;		// target speed
-		a3 = (a2 - a1 + 1536) & 1023; 
+		a3 = (a2 - a1 + 1536) & 1023;
 		if (a3 > 512) a3-=1024;
 		sinb = r * sin (a3 * 3.14159 / 512) / wep->speed;
 		if (sinb > 1)
@@ -279,7 +279,7 @@ int32 combat_addproj(t_ship *src, int32 hdp, t_ship *trg, int32 start)
 
 	if (wep->flags && wpfImplode)
 		a = (1024 + a + rand()%30 - 15) & 1023;
-	
+
 //	a = (src->a + hull->hardpts[hdp].a + 1024) & 1023;
 
 	cprojs[b].x = sx;
@@ -300,8 +300,8 @@ int32 combat_addproj(t_ship *src, int32 hdp, t_ship *trg, int32 start)
 
 	if (wep->flags & wpfNova)
 	{
-		combat_addexplo(cprojs[b].x + cprojs[b].vx * 4, 
-										cprojs[b].y + cprojs[b].vy * 4, 
+		combat_addexplo(cprojs[b].x + cprojs[b].vx * 4,
+										cprojs[b].y + cprojs[b].vy * 4,
 										spr_shockwave, 1, 64, 0, start, start+6, 4);
 	}
 
@@ -331,7 +331,7 @@ int32 combat_addproj(t_ship *src, int32 hdp, t_ship *trg, int32 start)
 				cprojs[b].end = start + 10;
 		}
 	}
-	
+
 	if (wep->flags & wpfImplode)
 		cprojs[b].end = start + COMBAT_FRAMERATE * (wep->range * 3/2) / wep->speed;
 
@@ -345,7 +345,7 @@ int32 combat_addproj(t_ship *src, int32 hdp, t_ship *trg, int32 start)
 	else
 		src->wepfire[hdp] = start + wep->rate * (3 + 2*(src->cpu_type<3));
 
-	combat_SoundFX(wep->sound1, cprojs[b].x); 
+	combat_SoundFX(wep->sound1, cprojs[b].x);
 	return b;
 }
 
@@ -373,7 +373,7 @@ void combat_launchstages(int32 p, int32 num, int32 start)
 	else
 		trg = cprojs[p].dst;
 
-	combat_SoundFX(wep->sound1, cprojs[p].x); 
+	combat_SoundFX(wep->sound1, cprojs[p].x);
 	for (n = 0; n < num; n++)
 	{
 		b = -1;
@@ -384,7 +384,7 @@ void combat_launchstages(int32 p, int32 num, int32 start)
 		if (b==-1)
 			break;
 
-		sx = cprojs[p].x; 
+		sx = cprojs[p].x;
 		sy = cprojs[p].y;
 		combat_gethardpoint(trg, -1, &tx, &ty);
 
@@ -468,14 +468,14 @@ void combat_damageship(int32 s, int32 src, int32 dmg, int32 t, t_shipweapon *wep
 	{
 		if (cships[s].shld_type>-1 && cships[s].shld>0)
 		{
-			combat_SoundFX(WAV_SHIELD, cships[s].x); 
+			combat_SoundFX(WAV_SHIELD, cships[s].x);
 		}
 		else
 		{
 			if (wep->type==0) // beam
-				combat_SoundFX(WAV_EXPLO1, cships[s].x); 
+				combat_SoundFX(WAV_EXPLO1, cships[s].x);
 			else
-				combat_SoundFX(wep->sound2, cships[s].x); 
+				combat_SoundFX(wep->sound2, cships[s].x);
 		}
 		cships[s].damage_time = t;
 	}
@@ -502,7 +502,7 @@ void combat_damageship(int32 s, int32 src, int32 dmg, int32 t, t_shipweapon *wep
 		if (dmg>0)
 		{
 			if ( (rand()%10)<5 )
-			{	
+			{
 				sys = rand()%shiptypes[cships[s].type].num_systems;
 				if (cships[s].syshits[sys]<=0 || shipsystems[shiptypes[cships[s].type].system[sys]].item==-1)
 					sys = -1;
@@ -511,9 +511,9 @@ void combat_damageship(int32 s, int32 src, int32 dmg, int32 t, t_shipweapon *wep
 			if (sys==-1)
 				cships[s].hits -= dmg;	// hull hit
 			else
-			{	
+			{
 				d1 = cships[s].syshits[sys];
-				cships[s].syshits[sys] = MAX (0, cships[s].syshits[sys]-dmg); 
+				cships[s].syshits[sys] = MAX (0, cships[s].syshits[sys]-dmg);
 				if (cships[s].syshits[sys]>0)
 				{
 					if (cships[s].syshits[sys]/5 != d1/5)	// green->yellow, yellow->red
@@ -539,7 +539,7 @@ void combat_damageship(int32 s, int32 src, int32 dmg, int32 t, t_shipweapon *wep
 		if (shiptypes[cships[s].type].race == race_unknown)	// stop space hulk
 			cships[s].vx = cships[s].vy = 0;
 
-		// reset other ships' targets 
+		// reset other ships' targets
 		for (c = 0; c < MAX_COMBAT_SHIPS; c++)
 		if (cships[c].type > -1 && cships[c].hits > 0)
 		{
@@ -612,9 +612,9 @@ void combat_killship(int32 s, int32 t, int32 quiet)
 		if (!quiet)
 		{
 			combat_SoundFX(WAV_EXPLO2, cships[s].x);
-			combat_addexplo(cships[s].x, cships[s].y, spr_shockwave, 
+			combat_addexplo(cships[s].x, cships[s].y, spr_shockwave,
 									5, sz*4, 1, t, t+sz/2, 0);
-			combat_addexplo(cships[s].x, cships[s].y, spr_explode1, 
+			combat_addexplo(cships[s].x, cships[s].y, spr_explode1,
 									5, sz, 0, t, t+sz/4);
 		}
 		cships[s].type = -1;

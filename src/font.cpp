@@ -33,7 +33,7 @@ t_ik_font *ik_load_font(char *fname, uint8 w,  uint8 h)
 	}
 
 	fnt->w=w;
-	fnt->h=h; 
+	fnt->h=h;
 	fnt->data=(uint8 *)malloc(128*w*h);
 	if (!fnt->data)
 	{
@@ -66,7 +66,7 @@ void ik_del_font(t_ik_font *fnt)
 	free(fnt);
 }
 
-// DRAW SINGLE LETTER 
+// DRAW SINGLE LETTER
 void ik_drawfont(t_ik_image *img, t_ik_font *fnt, int32 x, int32 y, uint8 co, uint8 c)
 {
 	int32 x1, y1, o;
@@ -178,7 +178,7 @@ void ik_text_input(int x, int y, int l, t_ik_font *fnt, char *pmt, char *tx, int
 	bup=get_sprite(screen, x, y, fnt->w*l, fnt->h);
 	free_screen();
 
-	start_ik_timer(3, 500); 
+	start_ik_timer(3, 500);
 	t=0;ot=0;
 
 	while (!end)

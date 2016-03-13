@@ -95,15 +95,15 @@ void starmap()
 		ik_eventhandler();  // always call every frame
 		t = get_ik_timer(0);
 		c = ik_inkey();
-		mc = ik_mclick();	
+		mc = ik_mclick();
 		mx = ik_mouse_x; my = ik_mouse_y;
 
 		if (must_quit)
 		{
 			must_quit = 0;
 			Play_SoundFX(WAV_DESELECT);
-			if (!interface_popup(font_6x8, 240, 200, 160, 72, STARMAP_INTERFACE_COLOR, 0, 
-					textstring[STR_QUIT_TITLE], textstring[STR_QUIT_CONFIRM], 
+			if (!interface_popup(font_6x8, 240, 200, 160, 72, STARMAP_INTERFACE_COLOR, 0,
+					textstring[STR_QUIT_TITLE], textstring[STR_QUIT_CONFIRM],
 					textstring[STR_YES], textstring[STR_NO]))
 			{	must_quit = 1; player.death = 666; }
 		}
@@ -114,7 +114,7 @@ void starmap()
 			{	player.engage = 1; player.fold = 0; }
 
 			if (key_pressed(key_f[0]))
-			{	
+			{
 				help_screen();
 				upd = 1;
 			}
@@ -126,7 +126,7 @@ void starmap()
 				if (!settings.opt_timeremaining || player.stardate >= 365*10)
 				{
 					if (mx > SM_MAP_X+394 && mx < SM_MAP_X+406)
-					{	
+					{
 						Play_SoundFX(WAV_WAIT);
 						starmap_advancedays(1);
 					}
@@ -189,12 +189,12 @@ void starmap()
 								player.engage = 1;
 								if (bu[d] == 1)
 								{	// fold space
-									player.fold = 1; 
+									player.fold = 1;
 
 								}
 								else
-								{	
-									player.fold = 0; 
+								{
+									player.fold = 0;
 								}
 							}
 							else if (bu[d] == 2)	// scan
@@ -209,16 +209,16 @@ void starmap()
 					if (player.target == player.system) 				// hire and hunt buttons
 					if (mx > sm_stars[player.target].ds_x-16 && mx < sm_stars[player.target].ds_x+16)
 					{
-						d = c; 
+						d = c;
 						c = sm_stars[player.target].card;
 						if (my > sm_stars[player.target].ds_y+11 && my < sm_stars[player.target].ds_y+23)
 						{
-							if (ecards[c].type == card_ally) 
+							if (ecards[c].type == card_ally)
 							{
 								mx2 = 1;
 								Play_Sound(WAV_ALLY, 15, 1);
 								sprintf(texty, textstring[STR_MERC_DEAL], hulls[shiptypes[ecards[c].parm].hull].name, shiptypes[ecards[c].parm].name);
-								if (!interface_popup(font_6x8, 224, 192, 192, 96, STARMAP_INTERFACE_COLOR, 0, 
+								if (!interface_popup(font_6x8, 224, 192, 192, 96, STARMAP_INTERFACE_COLOR, 0,
 																		textstring[STR_MERC_TITLE], texty, textstring[STR_YES], textstring[STR_NO]))
 								{
 									Stop_Sound(15);
@@ -232,7 +232,7 @@ void starmap()
 									else
 										sprintf(hisher, textstring[STR_MERC_HIS]);
 
-									sprintf(texty, textstring[STR_MERC_PAYMENT], 
+									sprintf(texty, textstring[STR_MERC_PAYMENT],
 													hulls[shiptypes[player.ships[player.num_ships-1]].hull].name,
 													shiptypes[player.ships[player.num_ships-1]].name,
 													hisher);
@@ -317,7 +317,7 @@ void starmap()
 
 								Play_SoundFX(WAV_INSTALL, t);
 								sprintf(texty, textstring[STR_INV_REPAIR_HULL], sp1);
-								sp2 = interface_popup(font_6x8, SM_SHIP_X + 32*(SM_SHIP_X==0) - 64*(SM_SHIP_X>0), SM_SHIP_Y+40, 192, 72, STARMAP_INTERFACE_COLOR, 0, 
+								sp2 = interface_popup(font_6x8, SM_SHIP_X + 32*(SM_SHIP_X==0) - 64*(SM_SHIP_X>0), SM_SHIP_Y+40, 192, 72, STARMAP_INTERFACE_COLOR, 0,
 																		textstring[STR_INV_REPAIR_TITLE], texty, textstring[STR_YES], textstring[STR_NO]);
 								if (!sp2)
 								{
@@ -335,7 +335,7 @@ void starmap()
 								if (upd > -1)
 								{
 									Play_SoundFX(WAV_INFO);
-									interface_popup(font_6x8, SM_SHIP_X + 32*(SM_SHIP_X==0) - 64*(SM_SHIP_X>0), SM_SHIP_Y+24, 192, 112, STARMAP_INTERFACE_COLOR, 0, 
+									interface_popup(font_6x8, SM_SHIP_X + 32*(SM_SHIP_X==0) - 64*(SM_SHIP_X>0), SM_SHIP_Y+24, 192, 112, STARMAP_INTERFACE_COLOR, 0,
 																	itemtypes[upd].name, itemtypes[upd].text, textstring[STR_OK]);
 									upd=1;
 								}
@@ -351,7 +351,7 @@ void starmap()
 								{
 									if (player.sel_ship == 0)
 									{
-										Play_SoundFX(WAV_INSTALL, t);					
+										Play_SoundFX(WAV_INSTALL, t);
 										starmap_uninstallsystem( (my2-168)>>3, 0);
 									}
 								}
@@ -360,7 +360,7 @@ void starmap()
 									sp1 = (int32)(sqrt(itemtypes[shipsystems[shiptypes[player.ships[player.sel_ship]].system[(my-168)>>3]].item].cost)*.75);
 									sprintf(texty, textstring[STR_INV_REPAIR_SYS], itemtypes[shipsystems[shiptypes[player.ships[player.sel_ship]].system[(my-168)>>3]].item].name, sp1);
 									Play_SoundFX(WAV_INSTALL, t);
-									sp2 = interface_popup(font_6x8, SM_SHIP_X + 32*(SM_SHIP_X==0) - 64*(SM_SHIP_X>0), SM_SHIP_Y+160, 192, 72, STARMAP_INTERFACE_COLOR, 0, 
+									sp2 = interface_popup(font_6x8, SM_SHIP_X + 32*(SM_SHIP_X==0) - 64*(SM_SHIP_X>0), SM_SHIP_Y+160, 192, 72, STARMAP_INTERFACE_COLOR, 0,
 																	textstring[STR_INV_REPAIR_TITLE], texty, textstring[STR_YES], textstring[STR_NO]);
 									if (!sp2)
 									{
@@ -380,7 +380,7 @@ void starmap()
 					{
 						/*if (player.sel_ship != 0)
 						{
-							
+
 							player.sel_ship = 0;
 							prep_screen();
 							starmap_display(t);
@@ -423,7 +423,7 @@ void starmap()
 												Play_SoundFX(WAV_INFO);
 												Play_Sound(WAV_MESSAGE, 15, 1);
 												sprintf(texty, textstring[STR_KLAK_UNSAFE], sm_stars[player.system].starname);
-												interface_popup(font_6x8, SM_INV_X + 32*(SM_INV_X==0) - 64*(SM_INV_X>0), SM_INV_Y+24, 192, 112, STARMAP_INTERFACE_COLOR, 0, 
+												interface_popup(font_6x8, SM_INV_X + 32*(SM_INV_X==0) - 64*(SM_INV_X>0), SM_INV_Y+24, 192, 112, STARMAP_INTERFACE_COLOR, 0,
 																		textstring[STR_KLAK_UNAVAIL], texty, textstring[STR_OK]);
 												upd=1;
 											}
@@ -467,10 +467,10 @@ void starmap()
 #endif
 									}
 								}
-								else 
+								else
 								{
 									Play_SoundFX(WAV_INFO);
-									interface_popup(font_6x8, SM_INV_X + 32*(SM_INV_X==0) - 64*(SM_INV_X>0), SM_INV_Y+24, 192, 112, STARMAP_INTERFACE_COLOR, 0, 
+									interface_popup(font_6x8, SM_INV_X + 32*(SM_INV_X==0) - 64*(SM_INV_X>0), SM_INV_Y+24, 192, 112, STARMAP_INTERFACE_COLOR, 0,
 																	itemtypes[player.items[hud.invselect]].name, itemtypes[player.items[hud.invselect]].text, textstring[STR_OK]);
 									upd=1;
 								}
@@ -496,15 +496,15 @@ void starmap()
 						}
 					}
 				}
-				
+
 			}
-		
+
 			if (player.engage)
 			{
 				if (player.target == homesystem) // going home
 				{
 					Play_SoundFX(WAV_DESELECT);
-					if (!interface_popup(font_4x8, 240, 200, 160, 72, STARMAP_INTERFACE_COLOR, 0, 
+					if (!interface_popup(font_4x8, 240, 200, 160, 72, STARMAP_INTERFACE_COLOR, 0,
 							textstring[STR_ENDGAME_CONFIRM1], textstring[STR_ENDGAME_CONFIRM2], textstring[STR_YES], textstring[STR_NO]))
 					{
 						t0 = t;
@@ -532,7 +532,7 @@ void starmap()
 					}
 
 					Play_SoundFX(WAV_DESELECT);
-					if (!interface_popup(font_4x8, 240, 200, 160, 72, STARMAP_INTERFACE_COLOR, 0, 
+					if (!interface_popup(font_4x8, 240, 200, 160, 72, STARMAP_INTERFACE_COLOR, 0,
 							topic, texty, textstring[STR_YES], textstring[STR_NO]))
 					{
 						t0 = t;
@@ -547,7 +547,7 @@ void starmap()
 				{
 #ifndef DEMO_VERSION
 					if (player.fold || (shiptypes[0].engine>-1 && shipsystems[shiptypes[0].engine].par[0]==666))
-					{	
+					{
 						if (player.fold)
 						{
 							if (player.stardate - player.foldate < 7)
@@ -555,7 +555,7 @@ void starmap()
 								if (sm_stars[player.system].novadate>0 && player.stardate - player.hypdate < 60 )
 								{	// attempting to hyper out of nova
 									Play_SoundFX(WAV_DESELECT);
-									if (!interface_popup(font_4x8, 240, 200, 160, 72, STARMAP_INTERFACE_COLOR, 0, 
+									if (!interface_popup(font_4x8, 240, 200, 160, 72, STARMAP_INTERFACE_COLOR, 0,
 											textstring[STR_DRIVE_NOVA1], textstring[STR_DRIVE_NOVA3], textstring[STR_YES], textstring[STR_NO]))
 									{
 										t0 = t;
@@ -582,11 +582,11 @@ void starmap()
 						else
 						{
 							if (player.stardate - player.hypdate < 60)
-							{	
+							{
 								if (sm_stars[player.system].novadate>player.stardate && player.stardate - player.hypdate < 60 )
 								{	// attempting to hyper out of nova
 									Play_SoundFX(WAV_DESELECT);
-									if (!interface_popup(font_4x8, 240, 200, 160, 72, STARMAP_INTERFACE_COLOR, 0, 
+									if (!interface_popup(font_4x8, 240, 200, 160, 72, STARMAP_INTERFACE_COLOR, 0,
 											textstring[STR_DRIVE_NOVA1], textstring[STR_DRIVE_NOVA2], textstring[STR_YES], textstring[STR_NO]))
 									{
 										t0 = t;
@@ -697,7 +697,7 @@ void starmap()
 								{
 									player.enroute = player.distance - player.enroute;
 									d = player.system;
-									player.system = player.target; 
+									player.system = player.target;
 									player.target = d;
 								}
 							}
@@ -796,8 +796,8 @@ void starmap()
 			}
 
 		for (s = 0; s < STARMAP_MAX_FLEETS; s++)
-		if (sm_fleets[s].race == race_kawangi) 
-		{	
+		if (sm_fleets[s].race == race_kawangi)
+		{
 			if (sm_fleets[s].num_ships > 0 && sm_fleets[s].system == homesystem && sm_fleets[s].distance == 0)
 			{
 				kawangi_warning();
@@ -853,13 +853,13 @@ void starmap()
 			if (timer_warning == 1)
 			{
 				Play_SoundFX(WAV_TIMER);
-				interface_popup(font_6x8, 224, 200, 192, 80, STARMAP_INTERFACE_COLOR, 0, 
+				interface_popup(font_6x8, 224, 200, 192, 80, STARMAP_INTERFACE_COLOR, 0,
 												textstring[STR_TIMER_TITLE], textstring[STR_TIMER_WARN1], textstring[STR_OK]);
 			}
 			else if (timer_warning == 2)
 			{
 				Play_SoundFX(WAV_TIMER);
-				interface_popup(font_6x8, 224, 200, 192, 80, STARMAP_INTERFACE_COLOR, 0, 
+				interface_popup(font_6x8, 224, 200, 192, 80, STARMAP_INTERFACE_COLOR, 0,
 												textstring[STR_TIMER_TITLE], textstring[STR_TIMER_WARN2], textstring[STR_OK]);
 			}
 			timer_warning = 0;
@@ -971,7 +971,7 @@ void starmap_displayship(int32 t, int32 st)
 		if (!shiptypes[player.ships[player.sel_ship]].sysdmg[z])
 			ik_dsprite(screen, cx + 24, y, spr_IFarrows->spr[12], 2+(u<<8));
 		else
-		{	
+		{
 			ik_dsprite(screen, cx + 24, y, spr_IFarrows->spr[15], 2+((3-2*((t&31)> 24)) <<8));
 		}
 		switch(shipsystems[s].type)
@@ -983,7 +983,7 @@ void starmap_displayship(int32 t, int32 st)
 				ik_drawline(screen, cx + 20 - z*4, cy + 46 - z*4, cx + 16+hull->hardpts[z].x*2, cy + 46 - z*4, 27, 0, 255);
 				ik_drawline(screen, cx + 16+hull->hardpts[z].x*2, cy + 46 - z*4, cx + 16+hull->hardpts[z].x*2, cy + 40 + hull->hardpts[z].y*2, 27, 0, 255);
 			break;
-			case sys_thruster:	// thrusters			
+			case sys_thruster:	// thrusters
 				ik_print(screen, font_4x8, cx + 32, y, 2*(shiptypes[player.ships[player.sel_ship]].sysdmg[z]==0),   "%s", shipsystems[s].name);
 				ik_drawline(screen, cx + 34 + strlen(shipsystems[s].name)*4, y + 3, cx + 140, y + 3, 43, 0, 255);
 				ik_drawline(screen, cx + 140, y + 3, cx + 140, cy + 166, 43, 0, 255);
@@ -1011,7 +1011,7 @@ void starmap_displayship(int32 t, int32 st)
 					if (hulls[shiptypes[player.ships[player.sel_ship]].hull].hardpts[c].type==hdpEngine)
 						ik_drawline(screen, cx + 16+hulls[shiptypes[player.ships[player.sel_ship]].hull].hardpts[c].x*2, cy + 40 + a*2, cx + 16 + hulls[shiptypes[player.ships[player.sel_ship]].hull].hardpts[c].x*2, cy + 40 + hulls[shiptypes[player.ships[player.sel_ship]].hull].hardpts[c].y*2, 59, 0, 255);
 			break;
-			
+
 			default:	// misc systems
 				ik_print(screen, font_4x8, cx + 32, y, 5*(shiptypes[player.ships[player.sel_ship]].sysdmg[z]==0), "%s", shipsystems[s].name);
 		}
@@ -1021,8 +1021,8 @@ void starmap_displayship(int32 t, int32 st)
 	{
 		l = (32 - t + player.sel_ship_time)>>1;
 		if (l>15) l=15;
-		ik_drsprite(screen, SM_SHIP_X + 80, SM_SHIP_Y + 104, 
-								0, 128, 
+		ik_drsprite(screen, SM_SHIP_X + 80, SM_SHIP_Y + 104,
+								0, 128,
 								hull->sprite, 5+(l<<8));
 	}
 	for (c = 0; c < hull->numh; c++)
@@ -1034,7 +1034,7 @@ void starmap_displayship(int32 t, int32 st)
 			l=3;
 		if (hull->hardpts[c].type == hdpThruster && shiptypes[player.ships[player.sel_ship]].thrust>-1)
 			l=2;
-		ik_dsprite(screen, SM_SHIP_X + 8+hull->hardpts[c].x*2, SM_SHIP_Y + 32 + hull->hardpts[c].y*2, 
+		ik_dsprite(screen, SM_SHIP_X + 8+hull->hardpts[c].x*2, SM_SHIP_Y + 32 + hull->hardpts[c].y*2,
 								spr_IFsystem->spr[hull->hardpts[c].type * 4 + 1], 2+(l<<8));
 	}
 
@@ -1075,11 +1075,11 @@ void starmap_displayship(int32 t, int32 st)
 	ik_dsprite(screen, SM_SHIP_X+88, SM_SHIP_Y+24, spr_IFbutton->spr[16], 2+(l<<8));
 	ik_dsprite(screen, SM_SHIP_X+120, SM_SHIP_Y+28, spr_IFbutton->spr[15], 2+(l<<8));
 	if (shiptypes[player.ships[c]].hits/256 < hulls[shiptypes[player.ships[c]].hull].hits)
-		ik_drawbox(screen, SM_SHIP_X+89+(MAX(shiptypes[player.ships[c]].hits,0)/256*22)/hulls[shiptypes[player.ships[c]].hull].hits, SM_SHIP_Y+28, 
+		ik_drawbox(screen, SM_SHIP_X+89+(MAX(shiptypes[player.ships[c]].hits,0)/256*22)/hulls[shiptypes[player.ships[c]].hull].hits, SM_SHIP_Y+28,
 							 SM_SHIP_X+110, SM_SHIP_Y+35,0);
 	/*
-	ik_drawmeter(screen, SM_SHIP_X+88, SM_SHIP_Y+29, SM_SHIP_X+112, SM_SHIP_Y+34, 1, 
-			((shiptypes[player.ships[c]].hits/256) * 100) / hulls[shiptypes[player.ships[c]].hull].hits, 
+	ik_drawmeter(screen, SM_SHIP_X+88, SM_SHIP_Y+29, SM_SHIP_X+112, SM_SHIP_Y+34, 1,
+			((shiptypes[player.ships[c]].hits/256) * 100) / hulls[shiptypes[player.ships[c]].hull].hits,
 			l, 28);
 	*/
 
@@ -1106,14 +1106,14 @@ void starmap_display(int32 t)
 //	t_hull *hull;
 
 	ssp = hulls[shiptypes[player.ships[0]].hull].sprite;
-	
+
 	// clear screen
 	ik_drawbox(screen, 0, 0, 640, 480, 0);
 
 	// draw starmap
 	cy = SM_MAP_Y + 244;
 	cx = SM_MAP_X + 240;
-	
+
 	ik_setclip(cx-232,cy-232,cx+232,cy+232);
 
 	ik_copybox(sm_nebulagfx, screen, 8, 8, 472, 472, cx-232, cy-232);
@@ -1176,21 +1176,21 @@ void starmap_display(int32 t)
 				a = ((t * (5+c/2)) & 1023);
 				if (c&1)
 					a = 1023 - a;
-				ik_dsprite(screen, 
-									 sm_stars[c].ds_x + (sin1k[a]>>12) - 8, 
-									 sm_stars[c].ds_y - (cos1k[a]>>12) - 8, 
+				ik_dsprite(screen,
+									 sm_stars[c].ds_x + (sin1k[a]>>12) - 8,
+									 sm_stars[c].ds_y - (cos1k[a]>>12) - 8,
 									 spr_SMplanet->spr[sm_stars[c].planet], 0);
 				if (sm_stars[c].explored==1)
-					ik_drsprite(screen, 
-										 sm_stars[c].ds_x + (sin1k[a]>>12) , 
-										 sm_stars[c].ds_y - (cos1k[a]>>12) , 
-										 0, 16, spr_SMplanet->spr[sm_stars[c].planet], 
+					ik_drsprite(screen,
+										 sm_stars[c].ds_x + (sin1k[a]>>12) ,
+										 sm_stars[c].ds_y - (cos1k[a]>>12) ,
+										 0, 16, spr_SMplanet->spr[sm_stars[c].planet],
 										 5+((15*((t&16)>0))<<8 ) );
 			}
 
 			if (ecards[sm_stars[c].card].type == card_ally && sm_stars[c].explored==2)
 			{
-				ik_drsprite(screen, 
+				ik_drsprite(screen,
 										sm_stars[c].ds_x + (sin1k[(t*8+512) & 1023]>>12),
 										sm_stars[c].ds_y - (cos1k[(t*8+512) & 1023]>>12),
 										(t*8 + 768)&1023,
@@ -1219,7 +1219,7 @@ void starmap_display(int32 t)
 			a = ti2 - sm_stars[c].novatime;
 			if (a < 50)
 			{
-				l = 15; 
+				l = 15;
 				if (a > 35) l-=a-35;
 				if (l < 0) l=0;
 				ik_drsprite(screen, sm_stars[c].ds_x, sm_stars[c].ds_y, (c*64)&1023, a*2, spr_shockwave->spr[3], 5+(l<<8));
@@ -1230,7 +1230,7 @@ void starmap_display(int32 t)
 			}
 
 			a = player.stardate-sm_stars[c].novadate;
-			if (sm_stars[c].planet != 10)  
+			if (sm_stars[c].planet != 10)
 			{	// destroy planet and everything
 				sm_stars[c].color=7;
 				sm_stars[c].planet = 10;
@@ -1257,7 +1257,7 @@ void starmap_display(int32 t)
 					if (sm_fleets[l].race != race_kawangi && sm_fleets[l].num_ships>0)
 					{
 						if (sm_fleets[l].system == c || starmap_stardist(sm_fleets[l].system, c) < player.stardate-sm_stars[c].novadate)
-							sm_fleets[l].num_ships = 0;					
+							sm_fleets[l].num_ships = 0;
 					}
 				}
 
@@ -1278,7 +1278,7 @@ void starmap_display(int32 t)
 						player.death = 4;
 					}
 				}
-				else 
+				else
 				{	// kill player
 					l = get_distance(sm_stars[c].x - player.x, sm_stars[c].y - player.y);
 					if (l > a/2+1-8 && l < a/2+1)
@@ -1286,13 +1286,13 @@ void starmap_display(int32 t)
 						player.num_ships = 0;
 						player.death = 4;
 					}
-				}	
+				}
 			}
 
 			a = 64+a/2;
 			l = 15;
 			if (player.stardate > sm_stars[c].novadate+365)
-			{	
+			{
 				l -= (player.stardate - (sm_stars[c].novadate+365)) >> 5;
 				if (l < 0) l = 0;
 			}
@@ -1311,7 +1311,7 @@ void starmap_display(int32 t)
 		if (d > 50)
 			sm_stars[c].color = -2;
 		a = d*2;
-		l = 15; 
+		l = 15;
 		if (d > 35) l-=d-35;
 		if (l < 0) l=0;
 		if (sm_stars[c].novatype == 2)	// main collapser
@@ -1352,7 +1352,7 @@ void starmap_display(int32 t)
 				x = sm_stars[l].x + ((sm_stars[d].x-sm_stars[l].x)*sm_fleets[c].enroute)/sm_fleets[c].distance;
 				y = sm_stars[l].y + ((sm_stars[d].y-sm_stars[l].y)*sm_fleets[c].enroute)/sm_fleets[c].distance;
 				a = get_direction(sm_stars[d].x-sm_stars[l].x, sm_stars[d].y-sm_stars[l].y);
-				
+
 				if (sm_fleets[c].blowtime == 0)
 				{
 					ik_dspriteline(screen, cx+x+(sin1k[a]>>13), cy-y-(cos1k[a]>>13), sm_stars[d].ds_x, sm_stars[d].ds_y, 8, (t&15), 16, spr_IFtarget->spr[0], 4);
@@ -1386,7 +1386,7 @@ void starmap_display(int32 t)
 			{
 				if (sm_fleets[c].explored==2)
 				{
-					ik_drsprite(screen, 
+					ik_drsprite(screen,
 											sm_stars[l].ds_x + (sin1k[(t*(c+3)+512) & 1023]>>12),
 											sm_stars[l].ds_y - (cos1k[(t*(c+3)+512) & 1023]>>12),
 											(t*(c+3) + 768)&1023,
@@ -1400,7 +1400,7 @@ void starmap_display(int32 t)
 				}
 				else if (sm_fleets[c].num_ships>0)
 				{
-					ik_drsprite(screen, 
+					ik_drsprite(screen,
 											sm_stars[l].ds_x,
 											sm_stars[l].ds_y,
 											((t*3+c*128)&1023),
@@ -1416,7 +1416,7 @@ void starmap_display(int32 t)
 		else
 		{
 			l = sm_fleets[c].system;
-			ik_drsprite(screen, 
+			ik_drsprite(screen,
 									sm_stars[l].ds_x,
 									sm_stars[l].ds_y,
 									((t*3+c*128)&1023),
@@ -1467,13 +1467,13 @@ void starmap_display(int32 t)
 					}
 					a = get_direction( sm_stars[l].x - sm_stars[c].x,
 														 sm_stars[l].y - sm_stars[c].y);
-					ik_drsprite(screen, 
+					ik_drsprite(screen,
 											sm_stars[c].ds_x + (sin1k[a]>>12),
 											sm_stars[c].ds_y - (cos1k[a]>>12),
 											a,
 											24,
 											fs1, 0);
-					ik_drsprite(screen, 
+					ik_drsprite(screen,
 											sm_stars[l].ds_x - (sin1k[a]>>12),
 											sm_stars[l].ds_y + (cos1k[a]>>12),
 											a,
@@ -1486,14 +1486,14 @@ void starmap_display(int32 t)
 				{
 					a = get_direction( sm_stars[l].x - sm_stars[c].x,
 														 sm_stars[l].y - sm_stars[c].y);
-					ik_drsprite(screen, 
+					ik_drsprite(screen,
 											sm_stars[l].ds_x - (sin1k[a]>>12),
 											sm_stars[l].ds_y + (cos1k[a]>>12),
 											a,
 											24,
 											ssp, 0);
 				}
-			}	
+			}
 			else if (shiptypes[0].engine>-1 && shipsystems[shiptypes[0].engine].par[0]==666)
 			{	// hyper
 				a = get_direction( sm_stars[l].x - sm_stars[c].x,
@@ -1501,14 +1501,14 @@ void starmap_display(int32 t)
 				if (t-player.hyptime < 32)
 				{
 					if (t-player.hyptime < 16)
-						ik_drsprite(screen, 
+						ik_drsprite(screen,
 												sm_stars[c].ds_x + (sin1k[a]>>12),
 												sm_stars[c].ds_y - (cos1k[a]>>12),
 												a,
 												(16-(t-player.hyptime))*24/16,
 												ssp, 0);
 					d = 15-((t-player.hyptime)*14)/32;
-					ik_drsprite(screen, 
+					ik_drsprite(screen,
 											sm_stars[c].ds_x + (sin1k[a]>>12),
 											sm_stars[c].ds_y - (cos1k[a]>>12),
 											a,
@@ -1518,14 +1518,14 @@ void starmap_display(int32 t)
 				else if (t-player.hyptime > 75 && t-player.hyptime < 107)
 				{
 					/*if (t-player.hyptime < 91)
-						ik_drsprite(screen, 
+						ik_drsprite(screen,
 												sm_stars[l].ds_x - (sin1k[a]>>12),
 												sm_stars[l].ds_y + (cos1k[a]>>12),
 												a,
 												((t-player.hyptime)-75)*24/16,
 												spr_ships->spr[2], 0);
 					else*/
-					ik_drsprite(screen, 
+					ik_drsprite(screen,
 											sm_stars[l].ds_x - (sin1k[a]>>12),
 											sm_stars[l].ds_y + (cos1k[a]>>12),
 											a,
@@ -1533,7 +1533,7 @@ void starmap_display(int32 t)
 											ssp, 0);
 
 					d = 15-((t-player.hyptime-75)*14)/32;
-					ik_drsprite(screen, 
+					ik_drsprite(screen,
 											sm_stars[l].ds_x - (sin1k[a]>>12),
 											sm_stars[l].ds_y + (cos1k[a]>>12),
 											a,
@@ -1542,7 +1542,7 @@ void starmap_display(int32 t)
 				}
 				else if (t-player.hyptime >= 107)
 				{
-					ik_drsprite(screen, 
+					ik_drsprite(screen,
 											sm_stars[l].ds_x - (sin1k[a]>>12),
 											sm_stars[l].ds_y + (cos1k[a]>>12),
 											a,
@@ -1567,7 +1567,7 @@ void starmap_display(int32 t)
 				a = get_direction( sm_stars[l].x - sm_stars[c].x,
 													 sm_stars[l].y - sm_stars[c].y);
 				player.a = a;
-				ik_drsprite(screen, 
+				ik_drsprite(screen,
 										cx+x,
 										cy-y,
 										a,
@@ -1587,19 +1587,19 @@ void starmap_display(int32 t)
 				a = get_direction( sm_stars[player.target].x - x,
 													 sm_stars[player.target].y - y);
 
-				ik_dspriteline(screen, 
+				ik_dspriteline(screen,
 											cx + x + (sin1k[a]>>12),
 											cy - y - (cos1k[a]>>12),
 											sm_stars[player.target].ds_x - ((sin1k[a]*3)>>13),
 											sm_stars[player.target].ds_y + ((cos1k[a]*3)>>13),
 											8, (t&15), 16, spr_IFtarget->spr[4], l);
-				ik_drsprite(screen, 
+				ik_drsprite(screen,
 										sm_stars[player.target].ds_x - (sin1k[a]>>12),
 										sm_stars[player.target].ds_y + (cos1k[a]>>12),
 										a,
 										12,
 										spr_IFtarget->spr[5], l);
-				ik_drsprite(screen, 
+				ik_drsprite(screen,
 										cx+sm_holes[player.explore-1].x,
 										cy-sm_holes[player.explore-1].y,
 										1023-((t*8)&1023),
@@ -1615,7 +1615,7 @@ void starmap_display(int32 t)
 			player.y = sm_stars[c].y;
 			if (player.target==-1 || player.target==player.system) // in orbit
 			{
-				ik_drsprite(screen, 
+				ik_drsprite(screen,
 										sm_stars[c].ds_x + (sin1k[(t*8) & 1023]>>12),
 										sm_stars[c].ds_y - (cos1k[(t*8) & 1023]>>12),
 										(t*8 + 256)&1023,
@@ -1627,7 +1627,7 @@ void starmap_display(int32 t)
 					l = sm_stars[player.target].card;
 					if (ecards[l].type == card_ally)
 					{
-						ik_drsprite(screen, 
+						ik_drsprite(screen,
 												sm_stars[player.target].ds_x,
 												sm_stars[player.target].ds_y + 21,
 												0,
@@ -1636,7 +1636,7 @@ void starmap_display(int32 t)
 					}
 					else if (ecards[l].type == card_lifeform)
 					{
-						ik_drsprite(screen, 
+						ik_drsprite(screen,
 												sm_stars[player.target].ds_x,
 												sm_stars[player.target].ds_y + 21,
 												0,
@@ -1663,13 +1663,13 @@ void starmap_display(int32 t)
 								bu[nbu++] = 2;
 				}
 
-				ik_dspriteline(screen, 
+				ik_dspriteline(screen,
 											sm_stars[c].ds_x + (sin1k[a]>>12),
 											sm_stars[c].ds_y - (cos1k[a]>>12),
 											sm_stars[player.target].ds_x - ((sin1k[a]*3)>>13),
 											sm_stars[player.target].ds_y + ((cos1k[a]*3)>>13),
 										8, (t&15), 16, spr_IFtarget->spr[4], l);
-				ik_drsprite(screen, 
+				ik_drsprite(screen,
 										sm_stars[player.target].ds_x - (sin1k[a]>>12),
 										sm_stars[player.target].ds_y + (cos1k[a]>>12),
 										a,
@@ -1681,14 +1681,14 @@ void starmap_display(int32 t)
 				for (d = 0; d < nbu; d++)
 				{
 					y = sm_stars[player.target].ds_y - x * (12+nbu*5) - nbu*5 + d*10;
-					ik_drsprite(screen, 
+					ik_drsprite(screen,
 											sm_stars[player.target].ds_x,
 											y + 9,
 											0,
 											32,
 											spr_IFbutton->spr[12+bu[d]], 1+((11+4*((t&31)>24))<<8));
 				}
-				ik_drsprite(screen, 
+				ik_drsprite(screen,
 										sm_stars[c].ds_x + (sin1k[a]>>12),
 										sm_stars[c].ds_y - (cos1k[a]>>12),
 										a,
@@ -1712,7 +1712,7 @@ void starmap_display(int32 t)
 				else
 				{ sp1 = sp2 = 0; }
 				if (sp1 == 666)	// hyperdrive
-				{	
+				{
 					if (player.stardate-player.hypdate > 60)
 						a = 0;
 					else
@@ -1730,7 +1730,7 @@ void starmap_display(int32 t)
 			}
 			if (player.target > -1)
 			{
-				ik_drsprite(screen, 
+				ik_drsprite(screen,
 										sm_stars[player.target].ds_x,
 										sm_stars[player.target].ds_y,
 										1023-((t*8)&1023),
@@ -1747,12 +1747,12 @@ void starmap_display(int32 t)
 			if (d < 150)
 			{
 				a = ((65536-cos1k[d*256/150])>>3)&1023;
-				x = ((player.x-sm_holes[player.hole].x)*cos1k[a] + 
+				x = ((player.x-sm_holes[player.hole].x)*cos1k[a] +
 						(player.y-sm_holes[player.hole].y)*sin1k[a]) >> 16;
-				y = ((player.y-sm_holes[player.hole].y)*cos1k[a] - 
+				y = ((player.y-sm_holes[player.hole].y)*cos1k[a] -
 						(player.x-sm_holes[player.hole].x)*sin1k[a]) >> 16;
 				l = 1024*(150-d)/150;
-				ik_drsprite(screen, 
+				ik_drsprite(screen,
 										cx+sm_holes[player.hole].x+((x*l)>>10),
 										cy-sm_holes[player.hole].y-((y*l)>>10),
 										(player.a+a)&1023,
@@ -2010,7 +2010,7 @@ void starmap_advancedays(int32 n)
 					if (shipsystems[shiptypes[player.ships[s]].system[sy]].type == sys_damage)
 						shiptypes[player.ships[s]].hits = hulls[shiptypes[player.ships[s]].hull].hits*256;
 				if (shiptypes[player.ships[s]].hits >= hulls[shiptypes[player.ships[s]].hull].hits*256)
-				{	
+				{
 					ik_print_log("Finished hull repairs on the %s.\n", shiptypes[player.ships[s]].name);
 					shiptypes[player.ships[s]].hits = hulls[shiptypes[player.ships[s]].hull].hits*256;
 				}
@@ -2118,7 +2118,7 @@ void starmap_flee()
 	int32 msim, dsim;
 	int32 mdis, ddis;
 
-	d = -1; 
+	d = -1;
 
 	dsim = ddis = dexp = -1;
 	msim = mdis = mexp = 12000;
@@ -2171,7 +2171,7 @@ void starmap_flee()
 				if (shiptypes[player.ships[c]].flag & 4)	// kuti
 					player.fold = 1;
 		}
-		
+
 		t = get_ik_timer(0);
 		if (shipsystems[shiptypes[0].engine].par[0]==666 || player.fold)
 			player.hyptime = t;
@@ -2216,7 +2216,7 @@ int32 simulate_move(int32 star)
 	if (d <= 2380)
 	{
 		for (c = 0; c < player.num_ships; c++)
-			if (shiptypes[player.ships[c]].flag & 4)	// kuti 
+			if (shiptypes[player.ships[c]].flag & 4)	// kuti
 				fold = 1;
 	}
 
@@ -2253,8 +2253,8 @@ int32 simulate_move(int32 star)
 		{
 			a = ((dt-sm_stars[c].novadate) * 39) / 365;	// size
 			if (get_distance(sm_stars[c].x - sm_stars[dst].x, sm_stars[c].y - sm_stars[dst].y) < a/2+1)
-			{	
-				return -1;	
+			{
+				return -1;
 			}
 		}
 		return dt-player.stardate;
@@ -2307,7 +2307,7 @@ int32 simulate_move(int32 star)
 		{
 			a = ((dt-sm_stars[c].novadate) * 39) / 365;	// size
 			if (get_distance(sm_stars[c].x - x, sm_stars[c].y - y) < a/2+1)
-			{	
+			{
 				end = 1;
 			}
 		}
@@ -2340,12 +2340,12 @@ void help_screen()
 	x = 556; y = 404;
 	interface_thinborder(screen, x, y+4, x+80, y+72, STARMAP_INTERFACE_COLOR, 2+STARMAP_INTERFACE_COLOR*16);
 	ik_print(screen, font_6x8, x+4, y+=8, 3, "MAGNIFIER");
-	interface_textbox(screen, font_6x8, x+4, y+=8, 72, 64, 0, "If you can't read small text, toggle 2X magnifier by pressing F2 or CTRL."); 
+	interface_textbox(screen, font_6x8, x+4, y+=8, 72, 64, 0, "If you can't read small text, toggle 2X magnifier by pressing F2 or CTRL.");
 
 	x = 16; y = 228;
 	interface_thinborder(screen, x, y+4, x+128, y+64, STARMAP_INTERFACE_COLOR, 2+STARMAP_INTERFACE_COLOR*16);
 	ik_print(screen, font_6x8, x+4, y+=8, 11, "NOTE ON STAR DRIVES");
-	interface_textbox(screen, font_4x8, x+4, y+=8, 112, 64, 0, "In an emergency or if you have no star drive, you can slowly travel between stars using your thrusters at roughly the speed of light."); 
+	interface_textbox(screen, font_4x8, x+4, y+=8, 112, 64, 0, "In an emergency or if you have no star drive, you can slowly travel between stars using your thrusters at roughly the speed of light.");
 
 
 	interface_thinborder(screen, 240, 176, 400, 296, STARMAP_INTERFACE_COLOR);
@@ -2374,27 +2374,27 @@ void help_screen()
 	x = 440; y = 204;
 	interface_thinborder(screen, x, y+4, x+144, y+32, STARMAP_INTERFACE_COLOR, 2+STARMAP_INTERFACE_COLOR*16);
 	ik_print(screen, font_6x8, x+4, y+=8, 11, "BLACK HOLE");
-	interface_textbox(screen, font_4x8, x+4, y+=8, 136, 32, 0, "Dangerous ship-eating singularity."); 
+	interface_textbox(screen, font_4x8, x+4, y+=8, 136, 32, 0, "Dangerous ship-eating singularity.");
 
 	x = 440; y = 244;
 	interface_thinborder(screen, x, y+4, x+144, y+56, STARMAP_INTERFACE_COLOR, 2+STARMAP_INTERFACE_COLOR*16);
 	ik_print(screen, font_6x8, x+4, y+=8, 11, "YOUR STARSHIP IN ORBIT");
-	interface_textbox(screen, font_4x8, x+4, y+=8, 136, 64, 0, "When no star lane has been set, your ship is shown orbiting the star in your current system, along with any planets you have found."); 
+	interface_textbox(screen, font_4x8, x+4, y+=8, 136, 64, 0, "When no star lane has been set, your ship is shown orbiting the star in your current system, along with any planets you have found.");
 
 	x = 440; y = 308;
 	interface_thinborder(screen, x, y+4, x+144, y+48, STARMAP_INTERFACE_COLOR, 2+STARMAP_INTERFACE_COLOR*16);
 	ik_print(screen, font_6x8, x+4, y+=8, 11, "ALIEN SPACECRAFT");
-	interface_textbox(screen, font_4x8, x+4, y+=8, 136, 64, 0, "When you discover an alien spacecraft, it is displayed in orbit within the star system."); 
+	interface_textbox(screen, font_4x8, x+4, y+=8, 136, 64, 0, "When you discover an alien spacecraft, it is displayed in orbit within the star system.");
 
 	x = 248; y = 332;
 	interface_thinborder(screen, x, y+4, x+184, y+56, STARMAP_INTERFACE_COLOR, 2+STARMAP_INTERFACE_COLOR*16);
 	ik_print(screen, font_6x8, x+4, y+=8, 11, "STAR SYSTEM SELECTION");
-	interface_textbox(screen, font_4x8, x+4, y+=8, 176, 64, 0, "This window describes the currently selected star system. If the system has already been explored, information about the planet you found there is shown instead."); 
+	interface_textbox(screen, font_4x8, x+4, y+=8, 176, 64, 0, "This window describes the currently selected star system. If the system has already been explored, information about the planet you found there is shown instead.");
 
 	x = 64; y = 292;
 	interface_thinborder(screen, x, y+4, x+160, y+64, STARMAP_INTERFACE_COLOR, 2+STARMAP_INTERFACE_COLOR*16);
 	ik_print(screen, font_6x8, x+4, y+=8, 11, "CARGO LISTING");
-	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 152, 64, 0, "A list of all the items you have on board. Many can be used in some way."); 
+	y+=8*interface_textbox(screen, font_4x8, x+4, y+=8, 152, 64, 0, "A list of all the items you have on board. Many can be used in some way.");
 
 	ik_print(screen, font_4x8, x+4, y+=8, 0, "Click    to activate a device.");
 	ik_dsprite(screen, x+28, y, spr_IFarrows->spr[14], 2+(3<<8));
@@ -2446,7 +2446,7 @@ void help_screen()
 		ik_eventhandler();
 		c = ik_inkey();
 		mc = ik_mclick();
-		x = key_pressed(key_f[0]); 
+		x = key_pressed(key_f[0]);
 		if (!x)
 		{
 			if (!y)

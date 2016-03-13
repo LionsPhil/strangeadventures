@@ -6,10 +6,10 @@ All DIRECTDRAW stuff here
 */
 
 #ifdef WINDOWS
-#define WIN32_LEAN_AND_MEAN  
+#define WIN32_LEAN_AND_MEAN
 
 #include <windows.h>   // include important windows stuff
-#include <windowsx.h> 
+#include <windowsx.h>
 #include <mmsystem.h>
 #include <iostream.h> // include important C/C++ stuff
 #include <conio.h>
@@ -108,7 +108,7 @@ void ik_blit()
 }
 
 // palette stuff
-void update_palette()  
+void update_palette()
 {
 	SDL_Color spal[256];
 	int i;
@@ -131,7 +131,7 @@ void set_palette_entry(int n, int r, int g, int b)
 
 int get_palette_entry(int n)
 {
-	return currentpal[n*3]*65536 + 
+	return currentpal[n*3]*65536 +
 				 currentpal[n*3+1]*256 +
 				 currentpal[n*3+2];
 }

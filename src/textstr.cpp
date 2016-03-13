@@ -8,7 +8,7 @@
 
 #include "textstr.h"
 
-char *textbuffer;	
+char *textbuffer;
 char *textstring[STR_MAX];
 
 void textstrings_init()

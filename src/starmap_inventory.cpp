@@ -60,7 +60,7 @@ void starmap_installitem(int32 n)
 	{
 		sy = itemtypes[player.items[n]].index;
 		styp = shipsystems[sy].type;
-	
+
 		if (styp != sys_misc)
 		{	// misc systems don't cancel out
 			for (s = 0; s < shiptypes[0].num_systems; s++)
@@ -199,7 +199,7 @@ int32 select_weaponpoint()
 	while (!must_quit && !end)
 	{
 		ik_eventhandler();  // always call every frame
-		mc = ik_mclick() & 3;	
+		mc = ik_mclick() & 3;
 		c = ik_inkey();
 		mx = ik_mouse_x - bx; my = ik_mouse_y - by;
 
@@ -251,12 +251,12 @@ int32 select_weaponpoint()
 			for (n = 0; n < hulls[shiptypes[0].hull].numh; n++)
 			if (hulls[shiptypes[0].hull].hardpts[n].type == hdpWeapon)
 			{
-				ik_dsprite(screen, bx+8+hulls[shiptypes[0].hull].hardpts[n].x*2, 
-													 by+16+hulls[shiptypes[0].hull].hardpts[n].y*2, 
+				ik_dsprite(screen, bx+8+hulls[shiptypes[0].hull].hardpts[n].x*2,
+													 by+16+hulls[shiptypes[0].hull].hardpts[n].y*2,
 													 spr_IFsystem->spr[1], 2+((shiptypes[0].sysdmg[n]==0)<<8));
 				if (p==n)
-				ik_dsprite(screen, bx+8+hulls[shiptypes[0].hull].hardpts[n].x*2, 
-													 by+16+hulls[shiptypes[0].hull].hardpts[n].y*2, 
+				ik_dsprite(screen, bx+8+hulls[shiptypes[0].hull].hardpts[n].x*2,
+													 by+16+hulls[shiptypes[0].hull].hardpts[n].y*2,
 													 spr_IFsystem->spr[0], 0);
 			}
 
@@ -305,12 +305,12 @@ void klakar_trade()
 	for (y = 0; y < player.num_items + shiptypes[0].num_systems; y++)
 	{
 		if (y < player.num_items)	// inventory
-		{	
+		{
 			if (!(itemtypes[player.items[y]].flag & 2) && !player.itemflags[y])
 				ploog[num_ploog++]=y;
 		}
 		else		// system
-		{	
+		{
 			i = shipsystems[shiptypes[0].system[y-player.num_items]].item;
 			if (i > -1 && !shiptypes[0].sysdmg[y-player.num_items] && !(itemtypes[i].flag & 2))
 				ploog[num_ploog++]=y;
@@ -342,7 +342,7 @@ void klakar_trade()
 	{
 		ik_eventhandler();  // always call every frame
 		t = get_ik_timer(0);
-		mc = ik_mclick();	
+		mc = ik_mclick();
 		c = ik_inkey();
 		mx = ik_mouse_x - bx; my = ik_mouse_y - by;
 
@@ -356,14 +356,14 @@ void klakar_trade()
 			{
 				c = (my - iny - 4) / 8;
 				if (mx > klx+16 && mx < klx+inw+4 && c+scr1 < kla_numitems)
-				{	
+				{
 					y = sel1;
-					sel1 = c + scr1; 
+					sel1 = c + scr1;
 					Play_SoundFX(WAV_SELECT, t);
 					if (y==sel1 && t-clt<20)	// double click for info
 					{
 						Play_SoundFX(WAV_INFO);
-						interface_popup(font_6x8, bx+64, by+24, 192, 96, STARMAP_INTERFACE_COLOR, 0, 
+						interface_popup(font_6x8, bx+64, by+24, 192, 96, STARMAP_INTERFACE_COLOR, 0,
 														itemtypes[kla_items[sel1]].name, itemtypes[kla_items[sel1]].text);
 						upd=1;
 					}
@@ -379,7 +379,7 @@ void klakar_trade()
 						scr1 = MIN(((my - (iny+12))*(kla_numitems-12)+40) / 80, kla_numitems-12);
 				}
 				if (mx > plx+16 && mx < plx+inw+4 && c+scr2 < num_ploog)
-				{	
+				{
 					y = sel2;
 					sel2 = c + scr2;
 					Play_SoundFX(WAV_SELECT, t);
@@ -387,11 +387,11 @@ void klakar_trade()
 					{
 						Play_SoundFX(WAV_INFO);
 						if (ploog[sel2] < player.num_items) // inventory
-							c = player.items[ploog[sel2]]; 
+							c = player.items[ploog[sel2]];
 						else	// system
-							c = shipsystems[shiptypes[0].system[ploog[sel2]-player.num_items]].item; 
+							c = shipsystems[shiptypes[0].system[ploog[sel2]-player.num_items]].item;
 
-						interface_popup(font_6x8, bx+64, by+24, 192, 96, STARMAP_INTERFACE_COLOR, 0, 
+						interface_popup(font_6x8, bx+64, by+24, 192, 96, STARMAP_INTERFACE_COLOR, 0,
 														itemtypes[c].name, itemtypes[c].text);
 						upd=1;
 					}
@@ -413,7 +413,7 @@ void klakar_trade()
 					f = kla_items[sel1]; c = -1;
 					if (ploog[sel2] < player.num_items) // inventory
 					{
-						kla_items[sel1] = player.items[ploog[sel2]]; 
+						kla_items[sel1] = player.items[ploog[sel2]];
 						player.items[ploog[sel2]] = f;
 						c = ploog[sel2];
 						if (itemtypes[f].type != item_weapon && itemtypes[f].type != item_system)
@@ -437,7 +437,7 @@ void klakar_trade()
 								{
 									starmap_destroysystem(t);
 									starmap_additem(f, 0);
-									starmap_installitem(player.num_items-1);									
+									starmap_installitem(player.num_items-1);
 									f = -1;
 								}
 							}
@@ -455,10 +455,10 @@ void klakar_trade()
 					{
 						for (i = 0; i < shiptypes[0].num_systems; i++)
 							if (c > -1)
-								if (shipsystems[shiptypes[0].system[i]].type == shipsystems[itemtypes[player.items[c]].index].type 
-										&& shipsystems[itemtypes[player.items[c]].index].type != sys_misc  
+								if (shipsystems[shiptypes[0].system[i]].type == shipsystems[itemtypes[player.items[c]].index].type
+										&& shipsystems[itemtypes[player.items[c]].index].type != sys_misc
 										&& itemtypes[player.items[c]].type != item_weapon)
-									c = -1; 
+									c = -1;
 						if (c > -1) // && itemtypes[player.items[c]].type != item_weapon)
 						{
 							if (itemtypes[player.items[c]].type == item_weapon)
@@ -475,7 +475,7 @@ void klakar_trade()
 								starmap_installitem(c);
 						}
 					}
-					
+
 					sort_shiptype_systems(0);
 					upd = 1;
 				}
@@ -487,7 +487,7 @@ void klakar_trade()
 				if (mx > klx+16 && mx < klx+48) // info
 				{
 					Play_SoundFX(WAV_INFO);
-					interface_popup(font_6x8, bx+64, by+24, 192, 96, STARMAP_INTERFACE_COLOR, 0, 
+					interface_popup(font_6x8, bx+64, by+24, 192, 96, STARMAP_INTERFACE_COLOR, 0,
 													itemtypes[kla_items[sel1]].name, itemtypes[kla_items[sel1]].text);
 					upd=1;
 				}
@@ -495,11 +495,11 @@ void klakar_trade()
 				{
 					Play_SoundFX(WAV_INFO);
 					if (ploog[sel2] < player.num_items) // inventory
-						c = player.items[ploog[sel2]]; 
+						c = player.items[ploog[sel2]];
 					else	// system
-						c = shipsystems[shiptypes[0].system[ploog[sel2]-player.num_items]].item; 
+						c = shipsystems[shiptypes[0].system[ploog[sel2]-player.num_items]].item;
 
-					interface_popup(font_6x8, bx+64, by+24, 192, 96, STARMAP_INTERFACE_COLOR, 0, 
+					interface_popup(font_6x8, bx+64, by+24, 192, 96, STARMAP_INTERFACE_COLOR, 0,
 													itemtypes[c].name, itemtypes[c].text);
 					upd=1;
 				}
@@ -517,12 +517,12 @@ void klakar_trade()
 			for (y = 0; y < player.num_items + shiptypes[0].num_systems; y++)
 			{
 				if (y < player.num_items)	// inventory
-				{	
+				{
 					if (!(itemtypes[player.items[y]].flag & 2) && !player.itemflags[y])
 						ploog[num_ploog++]=y;
 				}
 				else		// system
-				{	
+				{
 					if (shipsystems[shiptypes[0].system[y-player.num_items]].item > -1 && !shiptypes[0].sysdmg[y-player.num_items])
 						ploog[num_ploog++]=y;
 				}
@@ -626,12 +626,12 @@ int32 pay_item(char *title, char *text, int r, char klak)
 	for (y = 0; y < player.num_items + shiptypes[0].num_systems; y++)
 	{
 		if (y < player.num_items)	// inventory
-		{	
+		{
 			if (!(itemtypes[player.items[y]].flag & 2) && (itemtypes[player.items[y]].type != item_lifeform || klak == 1))
 				ploog[num_ploog++]=y;
 		}
 		else		// system
-		{	
+		{
 			if (shipsystems[shiptypes[0].system[y-player.num_items]].item > -1 && shiptypes[0].sysdmg[y-player.num_items]==0)
 				ploog[num_ploog++]=y;
 		}
@@ -654,7 +654,7 @@ int32 pay_item(char *title, char *text, int r, char klak)
 		{
 			ik_eventhandler();
 //			t = get_ik_timer(0);
-			mc = ik_mclick();	
+			mc = ik_mclick();
 
 			if (must_quit)
 			{
@@ -675,8 +675,8 @@ int32 pay_item(char *title, char *text, int r, char klak)
 						y = sel;
 						sel = scr + (ik_mouse_y - (by+96))/8;
 						if (sel > num_ploog || sel < 0)
-						{	
-							sel = -1; 
+						{
+							sel = -1;
 							Play_SoundFX(WAV_DESELECT, get_ik_timer(0));
 						}
 						else
@@ -690,7 +690,7 @@ int32 pay_item(char *title, char *text, int r, char klak)
 								y = shipsystems[shiptypes[0].system[ploog[sel]-player.num_items]].item;
 
 							Play_SoundFX(WAV_INFO);
-							interface_popup(font_6x8, bx+96, by+24, 192, 96, STARMAP_INTERFACE_COLOR, 0, 
+							interface_popup(font_6x8, bx+96, by+24, 192, 96, STARMAP_INTERFACE_COLOR, 0,
 															itemtypes[y].name, itemtypes[y].text);
 							upd=1;
 						}
@@ -708,15 +708,15 @@ int32 pay_item(char *title, char *text, int r, char klak)
 					}
 				}
 				if (ik_mouse_y > by+h-24 && ik_mouse_y < by+h-8)
-				{	
+				{
 					if (ik_mouse_x > bx+16 && ik_mouse_x < bx+80)
-					{	
-						end = 1; it = -1; 
+					{
+						end = 1; it = -1;
 						Play_SoundFX(WAV_DECLINE, get_ik_timer(0));
 					}
 					else if (ik_mouse_x > bx+128 && ik_mouse_x < bx+192 && sel > -1)
-					{	
-						end = 1; 
+					{
+						end = 1;
 						sel = ploog[sel];
 						if (sel == -1)
 							it = -1;
@@ -845,7 +845,7 @@ int32 ally_install(int32 s, int32 it, int32 pay)
 		else
 			sprintf(sname, textstring[STR_ALLY_CAPT2], shiptypes[st].name);
 		sprintf(texty, textstring[STR_ALLY_CONFIRM], itemtypes[it].name, sname);
-		if (interface_popup(font_6x8, 256, 192, 192, 0, STARMAP_INTERFACE_COLOR, 0, 
+		if (interface_popup(font_6x8, 256, 192, 192, 0, STARMAP_INTERFACE_COLOR, 0,
 												textstring[STR_ALLY_CONFIRMT], texty, textstring[STR_YES], textstring[STR_NO]))
 		{
 			ik_print_log("AI: User cancelled.\n");
@@ -854,8 +854,8 @@ int32 ally_install(int32 s, int32 it, int32 pay)
 
 		if (sys > -1)
 			if (shipsystems[sys].type == sys_engine)
-			{ 
-				sys = -1; 
+			{
+				sys = -1;
 				ik_print_log("AI: Refused engine. ");
 			}
 	}
@@ -865,19 +865,19 @@ int32 ally_install(int32 s, int32 it, int32 pay)
 		if (pay)
 		{
 			sprintf(texty, textstring[STR_MERC_THANKS2], shiptypes[st].name, itemtypes[it].name);
-			interface_popup(font_6x8, 256, 192, 192, 0, STARMAP_INTERFACE_COLOR, 0, 
+			interface_popup(font_6x8, 256, 192, 192, 0, STARMAP_INTERFACE_COLOR, 0,
 													textstring[STR_ALLY_TITLE], texty, textstring[STR_OK]);
 			return it;
 		}
 		else	// if a gift, refuse if unusable
-		{	
-			r = -1;		
+		{
+			r = -1;
 			ik_print_log("AI: Refused nonsystem. ");
 		}
 	}
 	else if (shipsystems[sys].size <= sz)	// fits in the ship
 	{
-		// replace same type of system if better 
+		// replace same type of system if better
 		ik_print_log("AI: %s fits on ship. ", shipsystems[sys].name);
 		if (shipsystems[sys].type != sys_misc)
 		{
@@ -896,23 +896,23 @@ int32 ally_install(int32 s, int32 it, int32 pay)
 						lc = itemtypes[shipsystems[shiptypes[st].system[c]].item].cost;
 					}
 				}
-			}	
-			
+			}
+
 			if (isys > -1)
 			{
 				ik_print_log("AI: %s replaces %s. ", shipsystems[itemtypes[it].index].name, shipsystems[shiptypes[st].system[isys]].name);
 				shiptypes[st].system[isys] = itemtypes[it].index;
-				r = it; 
+				r = it;
 			}
 		}
-		
+
 		if (!m)	// didn't match the type of any current systems, so install it!
 		{
 			ik_print_log("AI: No match, install %s. ", shipsystems[itemtypes[it].index].name);
 			shiptypes[st].system[shiptypes[st].num_systems++] = itemtypes[it].index;
 			r = it;
 		}
-	
+
 	}
 	else
 	{
@@ -928,7 +928,7 @@ int32 ally_install(int32 s, int32 it, int32 pay)
 		if (r == -1)	// didn't install
 		{
 			if (!m)
-			{	
+			{
 				sprintf(texty, textstring[STR_MERC_TOOBIG], shiptypes[st].name, itemtypes[it].name);
 				ik_print_log("AI: too big. ");
 			}
@@ -937,14 +937,14 @@ int32 ally_install(int32 s, int32 it, int32 pay)
 				sprintf(texty, textstring[STR_MERC_NOGOOD], shiptypes[st].name, itemtypes[it].name);
 				ik_print_log("AI: not good enough. ");
 			}
-			r = interface_popup(font_6x8, 256, 192, 192, 0, STARMAP_INTERFACE_COLOR, 0, 
+			r = interface_popup(font_6x8, 256, 192, 192, 0, STARMAP_INTERFACE_COLOR, 0,
 													textstring[STR_MERC_NOGOODT], texty, textstring[STR_YES], textstring[STR_NO]);
 
 			if (r == 0)
 			{
 				r = it;
 				sprintf(texty, textstring[STR_MERC_THANKS2], shiptypes[st].name, itemtypes[it].name);
-				interface_popup(font_6x8, 256, 192, 192, 0, STARMAP_INTERFACE_COLOR, 0, 
+				interface_popup(font_6x8, 256, 192, 192, 0, STARMAP_INTERFACE_COLOR, 0,
 														textstring[STR_ALLY_TITLE], texty, textstring[STR_OK]);
 				ik_print_log("AI: take it anyway. ");
 			}
@@ -957,7 +957,7 @@ int32 ally_install(int32 s, int32 it, int32 pay)
 		else
 		{
 			sprintf(texty, textstring[STR_MERC_THANKS], shiptypes[st].name);
-			interface_popup(font_6x8, 256, 192, 192, 0, STARMAP_INTERFACE_COLOR, 0, 
+			interface_popup(font_6x8, 256, 192, 192, 0, STARMAP_INTERFACE_COLOR, 0,
 													textstring[STR_ALLY_TITLE], texty, textstring[STR_OK]);
 			ik_print_log("AI: thank you ");
 		}
@@ -971,7 +971,7 @@ int32 ally_install(int32 s, int32 it, int32 pay)
 			else
 				sprintf(sname, textstring[STR_ALLY_CAPT2], shiptypes[st].name);
 			sprintf(texty, textstring[STR_ALLY_REFUSE], sname);
-			interface_popup(font_6x8, 256, 192, 192, 0, STARMAP_INTERFACE_COLOR, 0, 
+			interface_popup(font_6x8, 256, 192, 192, 0, STARMAP_INTERFACE_COLOR, 0,
 											textstring[STR_ALLY_REFUSET], texty, textstring[STR_OK]);
 			ik_print_log("AI: refused. ");
 		}
@@ -982,13 +982,13 @@ int32 ally_install(int32 s, int32 it, int32 pay)
 			else
 				sprintf(sname, textstring[STR_ALLY_SHIP2], shiptypes[st].name);
 			sprintf(texty, textstring[STR_ALLY_INSTALL], itemtypes[r].name, sname);
-			interface_popup(font_6x8, 256, 192, 192, 0, STARMAP_INTERFACE_COLOR, 0, 
+			interface_popup(font_6x8, 256, 192, 192, 0, STARMAP_INTERFACE_COLOR, 0,
 											textstring[STR_ALLY_INSTALLT], texty, textstring[STR_OK]);
 			ik_print_log("AI: thanks for the gift (%s). ", itemtypes[r].name);
 		}
 	}
 	ik_print_log("\n");
-		
+
 
 	return r;
 }
@@ -1011,7 +1011,7 @@ int32 use_vacuum_collapser(char *title)
 
 	sprintf(texty, textstring[STR_LVC_CONFIRM], sm_stars[player.system].starname);
 
-	if (interface_popup(font_6x8, bx, by, 192, 80, STARMAP_INTERFACE_COLOR, 0, 
+	if (interface_popup(font_6x8, bx, by, 192, 80, STARMAP_INTERFACE_COLOR, 0,
 			title, texty, textstring[STR_YES], textstring[STR_NO]))
 		return 0;	// cancel
 
@@ -1056,7 +1056,7 @@ int32 use_vacuum_collapser(char *title)
 	while (!must_quit && !end)
 	{
 		ik_eventhandler();  // always call every frame
-		mc = ik_mclick() & 3;	
+		mc = ik_mclick() & 3;
 		c = ik_inkey();
 
 		if (c == 13)
@@ -1186,7 +1186,7 @@ void vacuum_collapse(int st)
 					r = get_distance(cx - sm_stars[c].x, cy - sm_stars[c].y);
 					if (r < sz)	// five light year radius of destruction
 					{
-						
+
 						Play_SoundFX(WAV_EXPLO2, t);
 						sm_stars[c].novatype = 3;
 						sm_stars[c].novadate = player.stardate - 1;
@@ -1233,7 +1233,7 @@ void vacuum_collapse(int st)
 					}
 
 				}
-			
+
 			}
 
 			if (t > sm_stars[st].novatime && t < sm_stars[st].novatime + 50)
@@ -1255,7 +1255,7 @@ void vacuum_collapse(int st)
 								data = spr_SMnebula->spr[8]->data;
 								x = ((ty>>8)<<7) + (tx>>8);
 
-//								r = ((data[x] * (256-(tx&255)) + data[x+1] * (tx&255)) * (256-(ty&255)) + 
+//								r = ((data[x] * (256-(tx&255)) + data[x+1] * (tx&255)) * (256-(ty&255)) +
 //										(data[x+128] * (256-(tx&255)) + data[x+129] * (tx&255)) * (ty&255)) >> 16;
 								r = data[x];
 								t = sm_nebulamap[(y1<<9)+x1];
@@ -1358,7 +1358,7 @@ int32 probe_fleet_encounter(int32 flt)
 	while (!must_quit && !end)
 	{
 		ik_eventhandler();  // always call every frame
-		mc = ik_mclick();	
+		mc = ik_mclick();
 		t0 = t; t = get_ik_timer(0);
 		mx = ik_mouse_x - bx; my = ik_mouse_y - by;
 		if (mc == 1 && mx > 112 && mx < 144 && my > 184 && my < 200)
@@ -1387,7 +1387,7 @@ int32 probe_fleet_encounter(int32 flt)
 			{
 				sprintf(texty, textstring[STR_PROBE_FLEET3]);
 			}
-			interface_textbox(screen, font_4x8, bx+16, by+160, 128, 24, 0, 
+			interface_textbox(screen, font_4x8, bx+16, by+160, 128, 24, 0,
 												texty);
 
 			ik_dsprite(screen, bx+16, by+32, spr_IFborder->spr[19], 2+(4<<8));
@@ -1399,9 +1399,9 @@ int32 probe_fleet_encounter(int32 flt)
 									 spr_IFarrows->spr[10-(mc<32)+(mc>80)], 5+(l<<8));
 			}
 			l = ((t&63)*3 - 95 + 1024) & 1023;
-			ik_dspriteline(screen, bx + 80, by + 152, 
-										bx + 80 + ((sin1k[l] * 112) >> 16), 
-										by + 152 - ((cos1k[l] * 112) >> 16), 
+			ik_dspriteline(screen, bx + 80, by + 152,
+										bx + 80 + ((sin1k[l] * 112) >> 16),
+										by + 152 - ((cos1k[l] * 112) >> 16),
 										8, (t&31), 18, spr_weapons->spr[2], 5+(10<<8));
 			interface_drawbutton(screen, bx+112, by+184, 32, STARMAP_INTERFACE_COLOR, textstring[STR_OK]);
 			ik_blit();
@@ -1452,7 +1452,7 @@ void probe_exploreplanet(int32 probe)
 	it = -1;
 
 	sm_stars[player.target].explored = 1;
-	c = sm_stars[player.target].card; 
+	c = sm_stars[player.target].card;
 
 	h = 192;
 
@@ -1478,7 +1478,7 @@ void probe_exploreplanet(int32 probe)
 	sprintf(name, textstring[STR_PROBE_MISCDATA]);
 	sprintf(texty, textstring[STR_PROBE_MISCDATA1+tof]);
 	if (ecards[c].type == card_event)
-	{	
+	{
 #ifndef DEMO_VERSION
 		if (!strcmp(ecards[c].name, textstring[STR_EVENT_FLARE]) || !strcmp(ecards[c].name, textstring[STR_EVENT_NOVA]))
 		{
@@ -1493,7 +1493,7 @@ void probe_exploreplanet(int32 probe)
 	}
 	else if (ecards[c].type == card_ally)
 	{
-		it = shiptypes[ecards[c].parm].race; 
+		it = shiptypes[ecards[c].parm].race;
 		if (it == race_none)
 			sprintf(texty, textstring[STR_PROBE_MISCDATA3+tof]);
 #ifndef DEMO_VERSION
@@ -1514,7 +1514,7 @@ void probe_exploreplanet(int32 probe)
 	ik_print(screen, font_6x8, bx+96-strlen(name)*3, by+108, STARMAP_INTERFACE_COLOR, name);
 	interface_textbox(screen, font_6x8,
 										bx+16, by+120, 160, 48, 0,
-										texty); 
+										texty);
 
 	interface_drawbutton(screen, bx+144, by+h-24, 32, STARMAP_INTERFACE_COLOR, textstring[STR_OK]);
 
@@ -1523,7 +1523,7 @@ void probe_exploreplanet(int32 probe)
 	while (!must_quit && !end)
 	{
 		ik_eventhandler();  // always call every frame
-		mc = ik_mclick();	
+		mc = ik_mclick();
 		c = ik_inkey();
 
 		if (mc == 1)
@@ -1554,7 +1554,7 @@ void probe_exploreplanet(int32 probe)
 		{ prep_screen(); ik_blit();	}
 	}
 
-	ik_print_log("Launched the Stellar Probe to the %s system, discovered a %s planet and named it %s.\n", 
+	ik_print_log("Launched the Stellar Probe to the %s system, discovered a %s planet and named it %s.\n",
 								sm_stars[player.target].starname,
 								platypes[sm_stars[player.target].planet].name,
 								sm_stars[player.target].planetname);
@@ -1566,19 +1566,19 @@ void probe_exploreplanet(int32 probe)
 
 int32 stellar_probe(char *title)
 {
-	char texty[256];	
+	char texty[256];
 	int32 p;
 	int32 c;
 
 	if (player.target	== -1 || sm_stars[player.target].explored)
 	{	// no target or bad target - don't launch
-		interface_popup(font_6x8, SM_INV_X + 32*(SM_INV_X==0) - 64*(SM_INV_X>0), SM_INV_Y+40, 192, 80, STARMAP_INTERFACE_COLOR, 0, 
+		interface_popup(font_6x8, SM_INV_X + 32*(SM_INV_X==0) - 64*(SM_INV_X>0), SM_INV_Y+40, 192, 80, STARMAP_INTERFACE_COLOR, 0,
 										title, textstring[STR_PROBE_DIALOG1], textstring[STR_OK]);
 		return 0;
 	}
 
 	sprintf(texty, textstring[STR_PROBE_DIALOG2], sm_stars[player.target].starname);
-	if (!interface_popup(font_6x8, SM_INV_X + 32*(SM_INV_X==0) - 64*(SM_INV_X>0), SM_INV_Y+40, 192, 80, STARMAP_INTERFACE_COLOR, 0, 
+	if (!interface_popup(font_6x8, SM_INV_X + 32*(SM_INV_X==0) - 64*(SM_INV_X>0), SM_INV_Y+40, 192, 80, STARMAP_INTERFACE_COLOR, 0,
 										title, texty, textstring[STR_YES], textstring[STR_NO]))
 	{
 		Stop_All_Sounds();
@@ -1597,7 +1597,7 @@ int32 stellar_probe(char *title)
 		if (p)
 			probe_exploreplanet(0);
 		return 1;
-	}	
+	}
 	must_quit = 0;
 
 	return 0;
@@ -1623,7 +1623,7 @@ void eledras_mirror(char *title)
 
 	if (f == -1 || player.target == player.system || player.system == homesystem || player.target == homesystem)
 	{	// no target or bad target - don't launch
-		interface_popup(font_6x8, SM_INV_X + 32*(SM_INV_X==0) - 64*(SM_INV_X>0), SM_INV_Y+40, 192, 80, STARMAP_INTERFACE_COLOR, 0, 
+		interface_popup(font_6x8, SM_INV_X + 32*(SM_INV_X==0) - 64*(SM_INV_X>0), SM_INV_Y+40, 192, 80, STARMAP_INTERFACE_COLOR, 0,
 										title, textstring[STR_MIRROR_NOTARGET], textstring[STR_OK]);
 		return;
 	}
@@ -1634,7 +1634,7 @@ void eledras_mirror(char *title)
 		if (!(rand()%5))
 			c = 1 + rand()%7;
 		Play_Sound(WAV_MUS_COMBAT, 15, 1);
-		interface_popup(font_6x8, SM_INV_X + 32*(SM_INV_X==0) - 64*(SM_INV_X>0), SM_INV_Y+40, 192, 80, STARMAP_INTERFACE_COLOR, 0, 
+		interface_popup(font_6x8, SM_INV_X + 32*(SM_INV_X==0) - 64*(SM_INV_X>0), SM_INV_Y+40, 192, 80, STARMAP_INTERFACE_COLOR, 0,
 										title, textstring[STR_MIRROR_NOCANDO1+c], textstring[STR_OK]);
 		Play_Sound(WAV_BRIDGE, 15, 1, 50);
 		return;
@@ -1657,7 +1657,7 @@ void eledras_mirror(char *title)
 
 	player.explore = 1;
 	starmap_advancedays(1);
-	
+
 	Play_SoundFX(WAV_MIRROR, 0);
 
 	if (sm_stars[player.system].explored<2)
@@ -1693,7 +1693,7 @@ int32 eledras_bauble(char *title)
 	char itname[256];
 	char texty[256];
 
-	if (!interface_popup(font_6x8, SM_INV_X + 32*(SM_INV_X==0) - 64*(SM_INV_X>0), SM_INV_Y+40, 192, 80, STARMAP_INTERFACE_COLOR, 0, 
+	if (!interface_popup(font_6x8, SM_INV_X + 32*(SM_INV_X==0) - 64*(SM_INV_X>0), SM_INV_Y+40, 192, 80, STARMAP_INTERFACE_COLOR, 0,
 			title, textstring[STR_BAUBLE_CONFIRM], textstring[STR_YES], textstring[STR_NO]))
 	{
 		Stop_All_Sounds();
@@ -1732,8 +1732,8 @@ int32 eledras_bauble(char *title)
 			{
 				for (x = 0; x <= (int)(strlen(itemtypes[c].name)-strlen(itname)); x++)
 				if (!_strnicmp(itname, itemtypes[c].name + x, strlen(itname)))
-				{	
-					it = c;		
+				{
+					it = c;
 					break;
 				}
 
@@ -1749,7 +1749,7 @@ int32 eledras_bauble(char *title)
 	- no duplicates of artifacts (.clas = "artifact") -> no eledra's bauble (obviously)
 */
 
-		if (it>-1)	
+		if (it>-1)
 			if (itemtypes[it].flag & 2) // unsellable (klakar beacon, ambassador)
 				it = -1;
 
@@ -1808,7 +1808,7 @@ int32 eledras_bauble(char *title)
 				sprintf(texty, textstring[STR_BAUBLE_GIFT], itname);
 				Play_SoundFX(WAV_FOMAX_WISH, 0);
 			}
-			
+
 			prep_screen();
 			interface_drawborder(screen,
 													 bx, by, bx+192, by+h,
@@ -1827,7 +1827,7 @@ int32 eledras_bauble(char *title)
 			while (!must_quit && !end)
 			{
 				ik_eventhandler();  // always call every frame
-				mc = ik_mclick();	
+				mc = ik_mclick();
 				c = ik_inkey();
 
 				if (mc == 1)
@@ -1856,7 +1856,7 @@ void use_conograph(char *title)
 {
 	Play_Sound(WAV_CONOGRAPH2, 14, 1);
 	Play_Sound(WAV_CONOGRAPH, 15, 1);
-	interface_popup(font_6x8, SM_INV_X + 32*(SM_INV_X==0) - 64*(SM_INV_X>0), SM_INV_Y+40, 192, 80, STARMAP_INTERFACE_COLOR, 0, 
+	interface_popup(font_6x8, SM_INV_X + 32*(SM_INV_X==0) - 64*(SM_INV_X>0), SM_INV_Y+40, 192, 80, STARMAP_INTERFACE_COLOR, 0,
 									title, textstring[STR_CONOGRAPH_PLAY], textstring[STR_OK]);
 
 	starmap_advancedays(365);
@@ -1898,7 +1898,7 @@ int32 item_colorcode(int32 it)
 		return 7;
 		break;
 
-		default: 
+		default:
 		return 0;
 	}
 
