@@ -447,8 +447,8 @@ void interface_initsprites()
 	t_ik_image *pcx;
 	int x, y, n;
 
-	font_4x8 = ik_load_font("graphics/fnt2.pcx", 4, 8);
-	font_6x8 = ik_load_font("graphics/fnt3.pcx", 6, 8);
+	font_4x8 = ik_load_font("graphics/FNT2.PCX", 4, 8);
+	font_6x8 = ik_load_font("graphics/FNT3.PCX", 6, 8);
 
 	spr_IFborder = load_sprites("graphics/ifborder.spr");
 	spr_IFbutton = load_sprites("graphics/ifbutton.spr");

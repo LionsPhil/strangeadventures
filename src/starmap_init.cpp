@@ -1052,8 +1052,8 @@ void starmap_createnebula(int n)
 	sm_nebula = (t_nebula *)calloc(num_nebula, sizeof(t_nebula));
 
 	sm_nebulamap = (uint8 *)calloc(512*480, 1);
-	sm_nebulagfx = ik_load_pcx("graphics/backgrnd.pcx", NULL); //new_image(480,480);
-	sm_starfield = ik_load_pcx("graphics/backgrnd.pcx", NULL); //new_image(480,480);
+	sm_nebulagfx = ik_load_pcx("graphics/Backgrnd.pcx", NULL); //new_image(480,480);
+	sm_starfield = ik_load_pcx("graphics/Backgrnd.pcx", NULL); //new_image(480,480);
 
 	for (c = 0; c < num_groups; c++)
 	{

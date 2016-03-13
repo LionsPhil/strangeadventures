@@ -856,7 +856,7 @@ void combat_sim_end()
 		return;
 
 	Stop_All_Sounds();
-	bg = ik_load_pcx("graphics/starback.pcx", NULL);
+	bg = ik_load_pcx("graphics/Starback.pcx", NULL);
 
 	Play_SoundFX(WAV_ENDSIMULATION);
 
