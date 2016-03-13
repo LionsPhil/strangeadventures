@@ -29,4 +29,4 @@ To run this, copy the contents of `runtime` from the SDL cross-compile environme
 
 ## Other contributors
 Original game by Digital Eel (Richard Carlson, Iikka Keranen and William Sears; see [the original readme.txt](https://github.com/LionsPhil/strangeadventures/blob/2e61e6274d76e96c9f517aa71434a89ce9b5f58a/readme.txt)).
-There are some build fixes by Chris Collins that have been passed about as tarballs; I'm afraid any better attribution is lost.
+There are [some build fixes by Chris Collins](https://github.com/LionsPhil/strangeadventures/commit/b1ac6cac12077c1fedf513fa7564e2f113bd93d0) that have been passed about as tarballs; I'm afraid any better attribution is lost.
