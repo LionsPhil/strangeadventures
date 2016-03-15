@@ -1080,7 +1080,7 @@ void combat_movement(int32 t)
 	int32 c;
 	int32 d;
 	int32 p;
-	int32 a;
+	int32 a = 0;
 	int32 sys, lsys;
 	int32 r, rm;
 	int32 tg, wx, wy;
@@ -1459,7 +1459,10 @@ void combat_movement(int32 t)
 					}
 				}
 				else if (c != playership)
+				{
+					a = 0;
 					combat_findstuff2do(c, t);
+				}
 			}
 			a = (a + 1024 - cships[c].a) & 1023;
 			if (a > 512) a-=1024;

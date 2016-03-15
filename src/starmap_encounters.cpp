@@ -126,6 +126,7 @@ void starmap_exploreplanet()
 	char hisher[8];
 	char texty[256];
 
+	ti = 0;
 
 	if (sm_stars[player.target].explored == 2)
 		return;
@@ -841,7 +842,7 @@ void starmap_meetrace(int32 r)
 {
 	int32 mc, c;
 	int32 end = 0;
-	int32 t;
+	int32 t = 0;
 	int32 bx = 216, by = 152;
 	int32 mx, my;
 
@@ -906,7 +907,7 @@ void starmap_mantle(int32 flt)
 	int32 bx = 216, by = 152, h = 112;
 	int32 mx, my;
 	int32 r = sm_fleets[flt].race;
-	int32 t;
+	int32 t = 0;
 	char texty[256];
 
 	int32 bab = 0;
@@ -998,7 +999,7 @@ void enemy_encounter(int32 r)
 	int32 end = 0;
 	int32 bx = 216, by = 152;
 	int32 mx, my;
-	int32 t;
+	int32 t = 0;
 	char texty[256];
 
 #ifndef DEMO_VERSION
@@ -1118,6 +1119,7 @@ int32 muktian_encounter()
 	int32 o = 0;
 	char str[256];
 
+	t = 0;
 	r = race_muktian;
 
 
@@ -1229,6 +1231,7 @@ void klakar_encounter()
 	int32 mx, my;
 	int32 r, t;
 //	t_ik_sprite *bg;
+	t = 0;
 
 	halfbritescreen();
 
@@ -1311,7 +1314,7 @@ void kawangi_warning()
 	int32 end = 0;
 	int32 bx = 216, by = 152, h = 208;
 	int32 mx, my;
-	int32 t;
+	int32 t = 0;
 	char texty[512];
 
 	halfbritescreen();
@@ -1371,7 +1374,7 @@ void kawangi_message(int32 flt, int32 m)
 	int32 end = 0;
 	int32 bx = 216, by = 176, h = 128;
 	int32 mx, my;
-	int32 t;
+	int32 t = 0;
 	char texty[512];
 	char topic[32];
 

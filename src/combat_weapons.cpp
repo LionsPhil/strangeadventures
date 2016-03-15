@@ -275,6 +275,8 @@ int32 combat_addproj(t_ship *src, int32 hdp, t_ship *trg, int32 start)
 			r = get_distance( (tx>>10)-(sx>>10), (ty>>10)-(sy>>10) );
 			eta = (r * COMBAT_FRAMERATE) / wep->speed;
 		}*/
+	} else {
+		a = 0; // initialization for compiler's sake
 	}
 
 	if (wep->flags && wpfImplode)

@@ -2,6 +2,7 @@
 //     INCLUDES
 // ----------------
 
+#include <stdexcept>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -204,7 +205,7 @@ and mark them in the replacement array.
 		}
 #else
 		sprintf(spritedir, "%s%s", moddir, fname);
-		sprintf(spritedir+strlen(spritedir)-4, "/\0");
+		sprintf(spritedir+strlen(spritedir)-4, "/%c", '\0');
 
 		find = opendir(spritedir);
 		if (NULL != find) {
@@ -254,7 +255,10 @@ and mark them in the replacement array.
 			fgetc(fil);
 			fgetc(fil);
 			buffu = (uint8*)malloc(w * h);
-			fread(buffu,1,w*h,fil);
+			// short reads seem to be *normal* here for graphics/ifbutton.spr D:
+			memset(buffu, 0, w*h); // so zero-init any missing data
+			if(fread(buffu,1,w*h,fil) != static_cast<size_t>(w*h))
+				{ fprintf(stderr, "Short read when loading sprite '%s'\n", fname); }
 
 			if (!rep[x])
 			{
@@ -443,18 +447,19 @@ void ik_drsprite(t_ik_image *img, int32 x, int32 y, int32 r, int32 s, t_ik_sprit
 			else if (xt<0 || xt>=spr->w<<16)	 x2=x1;   // don't draw hline
 
 			// Clamp Y
-			if (x2>x1)
-			if (dy>0)
-			{
-				if (yt+(x2-x1)*dy>spr->h<<16)			cutright=MAX(cutright, (yt+(x2-x1)*dy-(spr->h<<16))/dy);
-				if (yt<0)													cutleft=MAX(cutleft, -yt/dy+1);
+			if (x2>x1) {
+				if (dy>0)
+				{
+					if (yt+(x2-x1)*dy>spr->h<<16)			cutright=MAX(cutright, (yt+(x2-x1)*dy-(spr->h<<16))/dy);
+					if (yt<0)													cutleft=MAX(cutleft, -yt/dy+1);
+				}
+				else if (dy<0)
+				{
+					if (yt+(x2-x1)*dy<0)				cutright=MAX(cutright, (yt+(x2-x1)*dy)/dy);
+					if (yt>spr->h<<16)					cutleft=MAX(cutleft, -(yt-(spr->h<<16))/dy+1);
+				}
+				else if (yt<0 || yt>=spr->h<<16)	x2=x1;  // don't draw hline
 			}
-			else if (dy<0)
-			{
-				if (yt+(x2-x1)*dy<0)				cutright=MAX(cutright, (yt+(x2-x1)*dy)/dy);
-				if (yt>spr->h<<16)					cutleft=MAX(cutleft, -(yt-(spr->h<<16))/dy+1);
-			}
-			else if (yt<0 || yt>=spr->h<<16)	x2=x1;  // don't draw hline
 
 			// Apply clamps
 			if (cutleft)
@@ -561,18 +566,19 @@ void ik_dspriteline(t_ik_image *img, int32 xb, int32 yb, int32 xe, int32 ye, int
 			else if (xt<0 || xt>=spr->w<<16)	x2=x1;  // don't draw hline
 
 			// Clamp Y
-			if (x2>x1)
-			if (dy>0)
-			{
-				if (yt+(x2-x1)*dy>0)		cutright=MAX(cutright, (yt+(x2-x1)*dy)/dy);
-				if (yt<topy)						cutleft=MAX(cutleft, (topy-yt)/dy+1);
+			if (x2>x1) {
+				if (dy>0)
+				{
+					if (yt+(x2-x1)*dy>0)		cutright=MAX(cutright, (yt+(x2-x1)*dy)/dy);
+					if (yt<topy)						cutleft=MAX(cutleft, (topy-yt)/dy+1);
+				}
+				else if (dy<0)
+				{
+					if (yt+(x2-x1)*dy<topy)		cutright=MAX(cutright, -(topy-(yt+(x2-x1)*dy))/dy+1);
+					if (yt>0)									cutleft=MAX(cutleft, -yt/dy+1);
+				}
+				else if (yt<topy || yt>=0)	 x2=x1;   // don't draw hline
 			}
-			else if (dy<0)
-			{
-				if (yt+(x2-x1)*dy<topy)		cutright=MAX(cutright, -(topy-(yt+(x2-x1)*dy))/dy+1);
-				if (yt>0)									cutleft=MAX(cutleft, -yt/dy+1);
-			}
-			else if (yt<topy || yt>=0)	 x2=x1;   // don't draw hline
 
 			// Apply clamps
 			if (cutleft)

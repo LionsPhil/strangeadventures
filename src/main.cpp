@@ -2,6 +2,8 @@
 //     INCLUDES
 // ----------------
 
+#include <stdexcept>
+
 #include <stdlib.h>
 #include <memory.h>
 #include <string.h>
@@ -121,6 +123,7 @@ void splash_screen()
 	int32 x, y, co;
 	t_ik_image *bg[3];
 	int32 zap;
+	t = 0;
 
 	bg[0] = ik_load_pcx("graphics/cheapass.pcx", NULL);
 	bg[1] = ik_load_pcx("graphics/digieel.pcx", NULL);
@@ -354,6 +357,7 @@ void credits_screen()
 	int32 t, s, l, r;
 	int32 x, y, co;
 	t_ik_image *bg[3];
+	t = 0;
 
 	must_quit = 0;
 
@@ -517,7 +521,8 @@ void main_init()
 	wants_screenshot=0;
 
 	fil = myopen("graphics/palette.dat", "rb");
-	fread(globalpal, 1, 768, fil);
+	if(fread(globalpal, 1, 768, fil) != 768)
+		{ throw std::runtime_error("short read"); }
 	fclose(fil);
 	memcpy(currentpal, globalpal, 768);
 
@@ -595,7 +600,7 @@ int32 intro_screen()
 	int32 sx[32], sy[32], sz[32], sc[32], sl;
 	uint8 *gp[4];
 	int32 x, y;
-	int32 fr, fc = 0;
+	int32 fr = 0;
 	int32 bx, by, h;
 	int32 nebn = 4, starn = 32;
 	uint8 *dr, *bk;
@@ -881,7 +886,8 @@ int32 intro_screen()
 					dr = ik_image_pointer(screen, 16, y);
 					for (x = 16; x < 624; x++)
 					{
-						*dr++ = gfx_lightbuffer[(*dr)+(8<<8)];
+						uint8 dr_prev = *dr;
+						*dr++ = gfx_lightbuffer[(dr_prev)+(8<<8)];
 					}
 				}
 				ik_print(screen, font_6x8, 32, 128, 11, "TOP 20 EXPLORERS");

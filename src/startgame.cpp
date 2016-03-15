@@ -416,7 +416,8 @@ void loadconfig()
 		return;
 	}
 
-	fread(&settings, sizeof(t_gamesettings), 1, cfg);
+	if(fread(&settings, sizeof(t_gamesettings), 1, cfg) != sizeof(t_gamesettings))
+		{ fprintf(stderr, "Short read loading settings; using some defaults\n"); }
 	fclose(cfg);
 	s_volume = settings.opt_volume * 10;
 	settings.opt_mousemode &= 1;

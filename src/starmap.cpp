@@ -1105,6 +1105,8 @@ void starmap_display(int32 t)
 	t_ik_sprite *ssp;
 //	t_hull *hull;
 
+	x = y = 0;
+
 	ssp = hulls[shiptypes[player.ships[0]].hull].sprite;
 
 	// clear screen
@@ -2330,6 +2332,8 @@ void help_screen()
 	int32 t;
 	int32 x, y;
 	t_ik_image *bg;
+
+	t = 0;
 
 	bg = ik_load_pcx("graphics/help.pcx", NULL);
 

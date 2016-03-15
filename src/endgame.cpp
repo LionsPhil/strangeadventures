@@ -517,7 +517,8 @@ void load_scores()
 
 	if (num_scores>20) num_scores=20;
 
-	fread(scores, sizeof(t_score), num_scores, fil);
+	size_t scores_read = fread(scores, sizeof(t_score), num_scores, fil);
+	num_scores = scores_read;
 	fclose(fil);
 }
 

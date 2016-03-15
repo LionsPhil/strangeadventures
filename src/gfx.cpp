@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -128,20 +130,22 @@ void ik_drawline(t_ik_image *img, int32 xb, int32 yb, int32 xe, int32 ye, int32 
   	if ( (1<<(d&7)) & mask )  // check mask
     {
   		x1=x>>16;y1=y>>16;
-	    if (x1>=c_minx && y1>=c_miny && x1<c_maxx && y1<c_maxy)
+	    if (x1>=c_minx && y1>=c_miny && x1<c_maxx && y1<c_maxy) {
 				if (!fx)
 					ik_putpixel(img, x1,y1,c1);
 				else
 					ik_putpixel_add(img, x1,y1,c1);
+		}
    	}
     else if (c2>0)
     {
   		x1=x>>16;y1=y>>16;
-	    if (x1>=c_minx && y1>=c_miny && x1<c_maxx && y1<c_maxy)
+	    if (x1>=c_minx && y1>=c_miny && x1<c_maxx && y1<c_maxy) {
 				if (!fx)
 					ik_putpixel(img, x1,y1,c2);
 				else
 					ik_putpixel_add(img, x1,y1,c2);
+		}
    	}
 
   	x+=dx; y+=dy;
@@ -239,9 +243,13 @@ void calc_color_tables(uint8 *pal)
 	colormap=myopen("graphics/colormap.dat", "rb");
 	if (colormap)
 	{
-		fread(gfx_transbuffer, 1, 65536, colormap);
-		fread(gfx_lightbuffer, 1, 65536, colormap);
-		fread(gfx_addbuffer, 1, 65536, colormap);
+		size_t read_count;
+		read_count = fread(gfx_transbuffer, 1, 65536, colormap);
+		if(read_count != 65536) { throw std::runtime_error("short read"); }
+		read_count = fread(gfx_lightbuffer, 1, 65536, colormap);
+		if(read_count != 65536) { throw std::runtime_error("short read"); }
+		read_count = fread(gfx_addbuffer,   1, 65536, colormap);
+		if(read_count != 65536) { throw std::runtime_error("short read"); }
 		fclose(colormap);
 		return;
 	}
@@ -379,7 +387,8 @@ t_ik_image *ik_load_pcx(const char *fname, uint8 *pal)
 	if (pal)
 	{
 		fseek(img, -768, SEEK_END);
-		fread(pal, 1, 768, img);
+		if(fread(pal, 1, 768, img) != 768)
+			{ throw std::runtime_error("short read"); }
 	}
 
 	// allocate buffer for the image
@@ -439,7 +448,8 @@ t_ik_image *ik_load_tga(const char *fname, uint8 *pal)
 	fil = fopen(fname, "rb");
 	if (!fil) return NULL;
 
-	fread(hdr, 1, 18, fil);
+	if(fread(hdr, 1, 18, fil) != 18)
+		{ throw std::runtime_error("short read"); }
 	p = 1;
 	if (hdr[1] != 1) p = 0;
 	if (hdr[2] != 1) p = 0;
@@ -474,7 +484,9 @@ t_ik_image *ik_load_tga(const char *fname, uint8 *pal)
 
 	for (p = img->h; p > 0; p--)
 	{
-		fread(img->data + (p-1)*img->pitch, 1, img->w, fil);
+		if(fread(img->data + (p-1)*img->pitch, 1, img->w, fil)
+			!= static_cast<size_t>(img->w))
+				{ throw std::runtime_error("short read"); }
 	}
 
 	fclose(fil);
@@ -522,8 +534,8 @@ void ik_save_tga(const char *fname, t_ik_image *img, uint8 *pal)
 		0, 1, 1,								// id_len, pal_type, img_type
 		0, 0, 0, 1,	24,					// first_color, num_colors, pal_size
 		0, 0, 0, 0,							// left, top
-		img->w&255, img->w>>8,	// width
-		img->h&255, img->h>>8,	// height
+		static_cast<uint8>(img->w&255), static_cast<uint8>(img->w>>8), // width
+		static_cast<uint8>(img->h&255), static_cast<uint8>(img->h>>8), // height
 		8, 8										// bpp, des_bits
 		};
 	FILE *fil;

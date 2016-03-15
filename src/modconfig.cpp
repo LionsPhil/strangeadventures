@@ -1,3 +1,4 @@
+#include <stdexcept>
 #include "typedefs.h"
 
 #ifndef DEMO_VERSION
@@ -37,7 +38,6 @@ void modconfig_init()
 {
 	int x;
 	int y;
-	int handle;
 	char tmps[256];
 	FILE *fil;
 
@@ -48,6 +48,7 @@ void modconfig_init()
 	n_moddirs = 0;
 
 #ifdef WINDOWS
+	int handle;
 	_finddata_t find;
 
 	// read mod names
@@ -111,7 +112,8 @@ void modconfig_init()
 	}
 
 	fil = myopen("graphics/palette.dat", "rb");
-	fread(globalpal, 1, 768, fil);
+	if(fread(globalpal, 1, 768, fil) != 768)
+		{ throw std::runtime_error("short read"); }
 	fclose(fil);
 	memcpy(currentpal, globalpal, 768);
 
@@ -139,6 +141,8 @@ int modconfig_main()
 	t_ik_image *backy;
 	int32 mode;
 	int end;
+
+	h = by = 0; // set value for if mc set before t > t0
 
 	modconfig_init();
 

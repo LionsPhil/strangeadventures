@@ -187,7 +187,7 @@ int32 select_weaponpoint()
 	int32 bx = 240, by = 152;
 	int32 mx, my;
 	int32 upd = 1;
-	int32 t;
+	int32 t = 0;
 
 	for (n = 0; n < hulls[shiptypes[0].hull].numh; n++)
 	if (hulls[shiptypes[0].hull].hardpts[n].type == hdpWeapon &&
@@ -623,6 +623,7 @@ int32 pay_item(char *title, char *text, int r, char klak)
 	int32 ploog[64];
 	int32 num_ploog=0;
 	int32 ti, clt, ot;
+	ti = 0;
 
 	for (y = 0; y < player.num_items + shiptypes[0].num_systems; y++)
 	{
@@ -1001,8 +1002,7 @@ int32 use_vacuum_collapser(char *title)
 {
 	int32 mc, c;
 	int32 end = 0;
-	int32 bl = 0;
-	int32 t;
+	int32 t = 0;
 	t_ik_sprite *bg;
 	int32 bx = SM_MAP_X + 144, by = SM_MAP_Y + 200 + (1-2*(sm_stars[player.system].y < 0))*80;
 
@@ -1033,7 +1033,7 @@ int32 use_vacuum_collapser(char *title)
 	ik_print(screen, font_6x8, bx+16, by+48, 0, textstring[STR_LVC_DAYSTILL]);
 	ik_blit();
 
-	sprintf(nummy, "");
+	nummy[0] = '\0';
 	ik_text_input(bx+176-24, by+48, 4, font_6x8, "", nummy, STARMAP_INTERFACE_COLOR*16+3, STARMAP_INTERFACE_COLOR);
 
 	num = 0;
@@ -1426,7 +1426,7 @@ void probe_exploreplanet(int32 probe)
 	int32 it = -1;
 	int32 bx = 224, by = 112;
 	int32 tof = 0;
-	int32 t;
+	int32 t = 0;
 	char name[32];
 	char texty[256];
 
@@ -1688,10 +1688,9 @@ int32 eledras_bauble(char *title)
 	int32 h;
 	int32 end;
 	int32 bx = 224, by = 112;
-	int32 tof = 0;
 	int32 it;
 	int32 mc, c, x;
-	int32 t;
+	int32 t = 0;
 	char itname[256];
 	char texty[256];
 
@@ -1719,7 +1718,7 @@ int32 eledras_bauble(char *title)
 
 		ik_blit();
 
-		sprintf(itname, "");
+		itname[0] = '\0';
 		ik_text_input(bx+16, by+104, 26, font_6x8, "", itname, STARMAP_INTERFACE_COLOR*16+3, STARMAP_INTERFACE_COLOR);
 
 		it = -1;

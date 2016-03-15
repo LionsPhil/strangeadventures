@@ -860,7 +860,7 @@ void starmap_createstars(int n)
 {
 	int32 c;
 	int32 end;
-	int32 r;
+	int32 r = 0;
 	int32 t;
 	int32 h;
 //	int32 x,y,x1,y1;
@@ -1208,7 +1208,7 @@ void starmap_createholes(int32 n)
 {
 	int32 c;
 	int32 end;
-	int32 r;
+	int32 r = 0;
 	int32 t;
 
 	num_holes = n;
