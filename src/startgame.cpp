@@ -416,7 +416,7 @@ void loadconfig()
 		return;
 	}
 
-	if(fread(&settings, sizeof(t_gamesettings), 1, cfg) != sizeof(t_gamesettings))
+	if(fread(&settings, sizeof(t_gamesettings), 1, cfg) != 1)
 		{ fprintf(stderr, "Short read loading settings; using some defaults\n"); }
 	fclose(cfg);
 	s_volume = settings.opt_volume * 10;

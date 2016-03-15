@@ -1270,7 +1270,7 @@ void starmap_createfleets(int32 num) // create enemy fleets
 	int32 end;
 	int32 tries;
 #ifndef DEMO_VERSION
-	int32 muk = 0, mukr = 0;
+	int32 muk = 0;
 	int32 kaw = 0;
 #endif
 
@@ -1294,10 +1294,6 @@ void starmap_createfleets(int32 num) // create enemy fleets
 
 	if (kaw)
 		num++;
-#endif
-
-#ifndef DEMO_VERSION
-	mukr = race_muktian;
 #endif
 
 	kla = race_klakar;
@@ -1770,7 +1766,6 @@ void starmap_initshipnames()
 	char end;
 	int num;
 	int flag;
-	int n;
 
 	ini = myopen("gamedata/names.ini", "rb");
 	if (!ini)
@@ -1786,9 +1781,9 @@ void starmap_initshipnames()
 		if (!strcmp(s1, item_keywords[itkBegin]))
 			num++;
 		if (!strcmp(s1, "CAPTNAMES"))
-		{	flag = 1; n=0; }
+		{	flag = 1; }
 		else if (!strcmp(s1, "SHIPNAMES"))
-		{ flag = 2; n=0; }
+		{ flag = 2; }
 		else if (flag>0 && strcmp(s1, "END")==0)
 			flag = 0;
 		else if (flag == 1)

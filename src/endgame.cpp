@@ -442,14 +442,13 @@ void endgame_init()
 	char end;
 	int num;
 	int flag;
-	int n;
 	int tv1;
 
 	ini = myopen("gamedata/jobs.ini", "rb");
 	if (!ini)
 		return;
 
-	end = 0; num = 0; n = 0; flag = 0;
+	end = 0; num = 0; flag = 0;
 	while (!end)
 	{
 		end = read_line(ini, s1, s2);

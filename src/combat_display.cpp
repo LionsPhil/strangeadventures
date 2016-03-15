@@ -306,7 +306,6 @@ void combat_display(int32 t)
 	int32 sz;
 	int32 fr;
 	int32 bab;
-	t_hull *hull;
 	uint8	*draw, *src;
 
 	combat_autocamera(t);
@@ -411,7 +410,6 @@ void combat_display(int32 t)
 	for (c = 0; c < numships; c++)
 	{
 		s = sortship[c];
-		hull = &hulls[shiptypes[cships[s].type].hull];
 		cships[s].ds_x = cx + ((((cships[s].x - camera.x)>>8) * camera.z) >> 14);
 		cships[s].ds_y = cy - ((((cships[s].y - camera.y)>>8) * camera.z) >> 14);
 		cships[s].ds_s = 	(hulls[shiptypes[cships[s].type].hull].size * camera.z) >> 12;

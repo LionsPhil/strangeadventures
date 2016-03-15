@@ -171,7 +171,7 @@ void cards_deinit()
 
 void card_display(int n)
 {
-	int32 mc, c;
+	int32 c;
 	int32 end = 0;
 
 	prep_screen();
@@ -186,7 +186,7 @@ void card_display(int n)
 	while (!must_quit && !end)
 	{
 		ik_eventhandler();  // always call every frame
-		mc = ik_mclick();
+		ik_mclick();
 		c = ik_inkey();
 
 		if (c == 13)

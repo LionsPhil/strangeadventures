@@ -202,7 +202,6 @@ int32 combat_addproj(t_ship *src, int32 hdp, t_ship *trg, int32 start)
 	int32 sx, sy;
 	int32 tx, ty;
 	double sinb;
-	t_hull *hull;
 	int32 cpu;
 	int s;
 	t_shipweapon *wep;
@@ -222,7 +221,6 @@ int32 combat_addproj(t_ship *src, int32 hdp, t_ship *trg, int32 start)
 		return -1;
 
 	cpu = src->cpu_type;
-	hull = &hulls[shiptypes[src->type].hull];
 	combat_gethardpoint(src, hdp, &sx, &sy);
 	combat_gethardpoint(trg, -1, &tx, &ty);
 	r = get_distance( (tx>>10)-(sx>>10), (ty>>10)-(sy>>10) );
@@ -282,6 +280,7 @@ int32 combat_addproj(t_ship *src, int32 hdp, t_ship *trg, int32 start)
 	if (wep->flags && wpfImplode)
 		a = (1024 + a + rand()%30 - 15) & 1023;
 
+//	t_hull* hull = &hulls[shiptypes[src->type].hull];
 //	a = (src->a + hull->hardpts[hdp].a + 1024) & 1023;
 
 	cprojs[b].x = sx;

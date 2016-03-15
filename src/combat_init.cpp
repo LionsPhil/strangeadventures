@@ -303,7 +303,6 @@ void combat_initshiptypes()
 	int num;
 	int flag;
 	int n, com;
-	int wep;
 
 	ini = myopen("gamedata/ships.ini", "rb");
 	if (!ini)
@@ -358,7 +357,6 @@ void combat_initshiptypes()
 			if (com == shkBegin)
 			{
 				flag = 1;
-				wep = 0;
 				shiptypes[num].engine = -1;
 				shiptypes[num].thrust = -1;
 				shiptypes[num].num_systems = 0;
@@ -419,6 +417,7 @@ void combat_initshiptypes()
 			break;
 
 			case shkWeapon:
+			// If re-enabling this, wep should be zeroed in shkBegin
 			for (n = 0; n < num_shipweapons; n++)
 				if (!strcmp(shipweapons[n].name, s2))
 					shiptypes[num].weapon[wep] = n;
@@ -894,9 +893,8 @@ void initraces(void)
 void sort_shiptype_systems(int32 num)
 {
 	int n, c;
-	int w, t;
+	int t;
 
-	w = 0;
 	// systems are sorted by type (weapons first to match hardpoints)
 	for (n=0; n < shiptypes[num].num_systems; n++)
 	{

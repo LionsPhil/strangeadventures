@@ -330,7 +330,6 @@ t_ik_image *ik_load_pcx(const char *fname, uint8 *pal)
 	uint8 bpp;
 
 	t_ik_image *image;
-	uint8 *buffer;
 	uint8 *line;
 
 	FILE *img;
@@ -399,7 +398,6 @@ t_ik_image *ik_load_pcx(const char *fname, uint8 *pal)
 		return NULL;
 	}
 
-	buffer=image->data;
 	line=(uint8*)malloc(line_w);
 
 	// read image data
