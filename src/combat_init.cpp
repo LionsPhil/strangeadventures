@@ -589,7 +589,8 @@ void combat_initshipsystems()
 	char end;
 	int num;
 	int flag;
-	int n, com;
+	int n = 0;
+	int com;
 	int tv1;
 
 	char systype[16][32];

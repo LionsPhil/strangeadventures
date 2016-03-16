@@ -161,7 +161,7 @@ void ik_printbig(t_ik_image *img, t_ik_font *fnt, int32 x, int32 y, uint8 co, co
 void ik_text_input(int x, int y, int l, t_ik_font *fnt, const char *pmt, char *tx, int bg, int co)
 {
 	int end=0,n,upd=1;
-	char c;
+	int c;
 	int t, ot;
 	int l2 = strlen(pmt);
 	uint32 p;

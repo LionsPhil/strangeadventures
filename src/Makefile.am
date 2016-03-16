@@ -1,4 +1,4 @@
-AM_CXXFLAGS = -std=gnu++98 -Wall
+AM_CXXFLAGS = -std=gnu++98 -Wall -Werror
 
 bin_PROGRAMS = strangelp
 strangelp_SOURCES = \

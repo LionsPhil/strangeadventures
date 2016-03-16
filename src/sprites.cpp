@@ -183,7 +183,7 @@ and mark them in the replacement array.
 	{
 #ifdef WINDOWS
 		sprintf(spritedir, "%s%s", moddir, fname);
-		sprintf(spritedir+strlen(spritedir)-4, "/\0");
+		sprintf(spritedir+strlen(spritedir)-4, "/%c", '\0');
 		sprintf(framename, "%sframe*.tga", spritedir);
 
 		fhandle = _findfirst(framename, &find);

@@ -1,0 +1,17 @@
+#!/bin/sh
+set -e
+set -x
+export ac_cv_func_malloc_0_nonnull=yes
+./autoeverything
+
+# Linux
+./configure
+make V=0
+cp src/strangelp ./
+make clean
+
+# Windows
+PATH=/home/phil/build/sdl-win32/bin:$PATH ./configure --enable-windows --target=i586-mingw32msvc --host=i586-mingw32msvc --build=i586-linux
+make V=0
+cp src/strangelp.exe ./
+make clean
