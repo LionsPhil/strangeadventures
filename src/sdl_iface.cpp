@@ -31,6 +31,7 @@ code to handle all/most of the interaction with the win32 system
 #include "iface_globals.h"
 #include "gfx.h"
 #include "snd.h"
+#include "scaledvideo.hpp"
 
 // DEFINES ////////////////////////////////////////////////
 
@@ -61,6 +62,9 @@ extern int movrecord;
 
 SDL_Surface *sdlsurf;
 extern t_paletteentry pe[256];
+SDL_Rect g_native_resolution;
+SDL_Rect g_virtual_resolution;
+ScaledVideo* g_scaled_video;
 
 char buffer[80];                // used to print text
 int IsMinimized = 0;

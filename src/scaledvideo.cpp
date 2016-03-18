@@ -9,7 +9,16 @@
 // TODO Include OpenGL header
 #endif
 #include "scaledvideo.hpp"
-#include "platform.hpp"
+
+// Temporary
+void warn(const char* fmt, ...) {
+	va_list marker;
+	va_start(marker, fmt);
+	vfprintf(stderr, fmt, marker);
+	fputs("\n", stderr);
+	va_end(marker);
+}
+#define trace warn
 
 //#define SCALE_ARB_BLEND // See below; should be runtime.
 
@@ -30,7 +39,7 @@ ScaledVideo::ScaledVideo(SDL_Rect& virtres, SDL_Rect& trueres, bool opengl,
 
 	// Set up the true surface
 	SDL_Surface* screen;
-	Uint32 flags = SDL_SWSURFACE|SDL_ANYFORMAT;
+	Uint32 flags = SDL_SWSURFACE|SDL_ANYFORMAT|SDL_HWPALETTE;
 	if(opengl) { flags |= SDL_OPENGL|SDL_DOUBLEBUF; }
 	if(fullscreen) { flags |= SDL_FULLSCREEN; }
 	screen = SDL_SetVideoMode(trueres.w, trueres.h, force32?32:0, flags);
@@ -43,7 +52,7 @@ ScaledVideo::ScaledVideo(SDL_Rect& virtres, SDL_Rect& trueres, bool opengl,
 	// Set up our virtual surface
 	int bpp;
 	Uint32 rmask, gmask, bmask, amask;
-	if(opengl) {
+/*	if(opengl) {
 		// We must use an OpenGL-compliant byte ordering.
 		bpp = 32;
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -65,7 +74,13 @@ ScaledVideo::ScaledVideo(SDL_Rect& virtres, SDL_Rect& trueres, bool opengl,
 		gmask = nativefmt->Gmask;
 		bmask = nativefmt->Bmask;
 		amask = nativefmt->Amask;
-	}
+	} */
+	// FIXME let caller specify; SAIS needs this
+	bpp = 8;
+	rmask = 0xff000000;
+	gmask = 0x00ff0000;
+	bmask = 0x0000ff00;
+	amask = 0x000000ff;
 	// Generally speaking, SWSURFACE seems more appropriate for this.
 	virtualfb = SDL_CreateRGBSurface(SDL_SWSURFACE, virtres.w, virtres.h,
 		bpp, rmask, gmask, bmask, amask);
@@ -73,14 +88,14 @@ ScaledVideo::ScaledVideo(SDL_Rect& virtres, SDL_Rect& trueres, bool opengl,
 		warn("Can't set up virtual surface: %s", SDL_GetError());
 		throw std::bad_alloc();
 	}
-	if(!opengl) {
+/*	if(!opengl) {
 		// Match the screen /properly/.
 		SDL_Surface* better = SDL_DisplayFormat(virtualfb);
 		if(better) {
 			SDL_FreeSurface(virtualfb);
 			virtualfb = better;
 		} // else never mind
-	}
+	} */
 }
 
 ScaledVideo::~ScaledVideo() { if(virtualfb) { SDL_FreeSurface(virtualfb); } }
@@ -651,12 +666,13 @@ ScaledVideo* getScaledVideoManual(bool hardware, SDL_Rect virtres,
 
 	trace("Trying video mode %dx%d %sware %s.", DESCRIBE);
 	if((virtres.w == trueres.w) || (virtres.h == trueres.h)) {
-		if((virtres.w == trueres.w) && (virtres.h == trueres.h)) {
-			USE(ScaledVideoNoOp(virtres, trueres, fullscreen))
-		} else {
+// FIXME Only if pixel format matches
+//		if((virtres.w == trueres.w) && (virtres.h == trueres.h)) {
+//			USE(ScaledVideoNoOp(virtres, trueres, fullscreen))
+//		} else {
 			USE(ScaledVideoTranslateOnly(
 				virtres, trueres, fullscreen))
-		}
+//		}
 	}
 
 #ifdef WITH_OPENGL
@@ -687,169 +703,3 @@ ScaledVideo* getScaledVideoManual(bool hardware, SDL_Rect virtres,
 #undef DESCRIBE
 #undef USE
 }
-
-ScaledVideo* getScaledVideoAutomatic(bool hardware, SDL_Rect virtres,
-	bool preferhigh) {
-
-	SDL_Rect** modessoft = 0;
-	SDL_Rect** modeshard = 0;
-	Uint32 flags = SDL_FULLSCREEN|SDL_SWSURFACE|SDL_ANYFORMAT;
-	bool fullscreen = true;
-	
-	while(!modessoft && !modeshard) {
-		// Lost fullscreen flag? We've dropped to trying windowed.
-		if(!(flags & SDL_FULLSCREEN)) { fullscreen = false; }
-
-		modessoft = SDL_ListModes(NULL, flags);
-		modeshard = hardware ? SDL_ListModes(NULL, flags|SDL_OPENGL) :0;
-
-		if(!(flags & SDL_FULLSCREEN)) {
-			// Oh. Well, we can't do anything, then.
-			// Try manual just in case ListModes is wrong.
-			return getScaledVideoManual(hardware, virtres, virtres,
-				false);
-		}
-		// If we go round again, resort to windowed mode
-		flags &= ~SDL_FULLSCREEN;
-	}
-
-	// Completely unlimited? Well, we can't preferhigh if we don't know
-	// native resolution, so just try desired.
-	if((modeshard == (SDL_Rect**)-1)) {
-		trace("Autoscale: hardware video modes entirely unlimited");
-		return getScaledVideoManual(true, virtres, virtres, fullscreen);
-	}
-	if((modessoft == (SDL_Rect**)-1)) {
-		trace("Autoscale: software video modes entirely unlimited");
-		return getScaledVideoManual(false,virtres, virtres, fullscreen);
-	}
-
-	// Make the 'no modes' proper empty sets.
-	SDL_Rect* zerorect = 0;
-	if(modeshard == 0) { modeshard = &zerorect; }
-	if(modessoft == 0) { modessoft = &zerorect; }
-	
-	// Ok, we have a couple of sets of modes. Seek for best fit.
-	/* TODO Rewrite this to wrap all the possible modes in a suitable
-	 * small class, a comparison functor which (based on requirements)
-	 * orders them by suitability, and feed the lot into an STL multiset.
-	 * Bingo, finds the best and gives the rest sorted as fallbacks.
-	 * (Alternatively, any unordered collection, then use std::nth_element.)
-	 * (Needs to be multiset as two completely unusable modes may not be
-	 * < eachother in a deterministic fashion, whereas plain set demands a
-	 * consistent total ordering.) */
-	SDL_Rect bestmode = {0, 0, 0, 0};
-	bool besthard = hardware; // It's a hardware mode
-	double maxscale = 0.0; // or min. Depends on preferhigh.
-	enum {NONE, ARBITRARY, INTEGER, BORDERS, EXACT} bestmodetype = NONE;
-	while(*modeshard || *modessoft) {
-		SDL_Rect* mode;
-		bool thishard;
-
-		// Deal with hardware modes first, so they get priority
-		     if(*modeshard)
-			{ mode = *modeshard; modeshard++; thishard = true; }
-		else if(*modessoft)
-			{ mode = *modessoft; modessoft++; thishard = false; }
-		else { mode = 0; thishard = false; abort(); } // appease G++
-
-		trace("Autoscale: considering %dx%d %sware", mode->w, mode->h,
-			thishard ? "hard" : "soft");
-		
-		double upscale;
-		bool integer = scale_needed(virtres, *mode, &upscale);
-
-		if((mode->w < virtres.w) || (mode->h < virtres.h)) {
-			// No downscaling...neeext!
-			trace("\ttoo small");
-		} else if((mode->w == virtres.w) && (mode->h == virtres.h)) {
-			if(!preferhigh) { 
-				bestmode.w = mode->w; bestmode.h = mode->h;
-				besthard = thishard;
-				bestmodetype = EXACT;
-				trace("\texact fit: SOLD!"); break;
-			} else {
-				if(maxscale > upscale) {
-					trace("\texact fit; but seen higher");
-				} else {
-					bestmode.w = mode->w;
-					bestmode.h = mode->h;
-					besthard = thishard;
-					bestmodetype = EXACT;
-					maxscale = upscale;
-					trace("\texact fit, but higher...?");
-				}
-			}
-		} else if((mode->w == virtres.w) || (mode->h == virtres.h)) {
-			bestmode.w = mode->w; bestmode.h = mode->h;
-			besthard = thishard;
-			bestmodetype = BORDERS;
-			trace("\tfits with borders");
-			if(preferhigh && upscale > maxscale) maxscale = upscale;
-			if(!preferhigh&& upscale < maxscale) maxscale = upscale;
-		} else {
-			if(preferhigh) {
-				// We want MAX upscale, can be ARBITRARY
-				if(maxscale == 0 || maxscale < upscale) {
-					maxscale = upscale;
-					bestmode.w = mode->w;
-					bestmode.h = mode->h;
-					besthard = thishard;
-					bestmodetype =integer?INTEGER:ARBITRARY;
-					trace("\tbiggest seen so far");
-				} else { trace("\tseen bigger"); }
-			} else {
-				/* FIXME can ignore perfect aspect ratio fits
-				 * if they involve more scaling than another
-				 * vertical resolution. */
-				// We want MIN upscale, prefer INTEGER
-				if(integer || bestmodetype == NONE ||
-					bestmodetype == ARBITRARY) {
-					// INTEGER good; ARB tolerable
-					if(maxscale == 0 || maxscale > upscale
-					||(integer && bestmodetype==ARBITRARY)){
-						maxscale = upscale;
-						bestmode.w = mode->w;
-						bestmode.h = mode->h;
-						besthard = thishard;
-						bestmodetype = integer ?
-							INTEGER : ARBITRARY;
-						trace("\tbest seen so far");
-					} else { trace("\tseen smaller"); }
-				} else {
-					trace("\tnot integer, got something "
-						"non-arbitrary already");
-				}
-			}	
-		}
-	}
-
-#ifndef NDEBUG
-	{
-		const char* type = "";
-		switch(bestmodetype) {
-			case NONE: type = "apparently no modes?!"; break;
-			case ARBITRARY: type = "arbitrary scaling"; break;
-			case INTEGER: type = "integer scaling"; break;
-			case BORDERS: type = "fit with borders"; break;
-			case EXACT: type = "exact fit"; break;
-		}
-		trace("Autoscale: chosen %dx%d %sware as %s",
-			bestmode.w, bestmode.h, besthard?"hard":"soft", type);
-	}
-#endif
-
-	// Should never have a bestmode of 0,0. And if we do, failing is what
-	// we want anyway. If that fails for some reason, usual fallback.
-	hardware &= besthard;
-	ScaledVideo* ret =
-		getScaledVideoManual(hardware, virtres, bestmode, fullscreen);
-	if(ret) { return ret; }
-	// Well, dang. Try forcing no hardware accelleration?
-	ret = getScaledVideoManual(false, virtres, bestmode, fullscreen);
-	if(ret) { return ret; }
-	// Ok, give up, fall back to windowed desired.
-	// TODO Ideally, want to recycle heuristic above, sans failed modes.
-	return getScaledVideoManual(hardware, virtres, virtres, false);
-}
-

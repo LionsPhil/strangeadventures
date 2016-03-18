@@ -53,11 +53,6 @@ public:
   * Will assert() if you try to force downscaling. */
 ScaledVideo* getScaledVideoManual(bool hardware, SDL_Rect virtres,
 	 SDL_Rect trueres, bool fullscreen);
-/** Automatically determine the best resolution to use. Will prefer fullscreen,
-  * but resort to windowed mode if no fullscreen modes work.
-  * 'preferhigh' should be true for TFTs, false for CRTs. */
-ScaledVideo* getScaledVideoAutomatic(bool hardware, SDL_Rect virtres,
-	bool preferhigh);
 
 #endif
 

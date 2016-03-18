@@ -33,6 +33,7 @@ using namespace std;
 #include "typedefs.h"
 #include "iface_globals.h"
 #include "gfx.h"
+#include "scaledvideo.hpp"
 
 // DEFINES
 
@@ -43,6 +44,10 @@ using namespace std;
 extern SDL_Surface *sdlsurf;
 unsigned char *drawbuffer;  // video buffer
 int drawpitch;      // line pitch
+
+extern SDL_Rect g_native_resolution;
+extern SDL_Rect g_virtual_resolution;
+extern ScaledVideo* g_scaled_video;
 
 #ifdef MOVIE
 int when = 0;
@@ -87,8 +92,10 @@ void ik_blit()
 		gfx_blarg();
 #endif
 
-	SDL_UpdateRect(sdlsurf, 0, 0, 640, 480);
-	SDL_Flip(sdlsurf);
+	//SDL_UpdateRect(sdlsurf, 0, 0, 640, 480);
+	g_scaled_video->dirtyRect(g_virtual_resolution);
+	//SDL_Flip(sdlsurf);
+	g_scaled_video->update();
 
 	if ((settings.opt_mousemode&5)==0)
 	{
@@ -138,7 +145,7 @@ int get_palette_entry(int n)
 
 void prep_screen() // call before drawing stuff to *screen
 {
-	SDL_LockSurface(sdlsurf);
+	//SDL_LockSurface(sdlsurf);
 
 	screenbuf.data=(uint8*)sdlsurf->pixels;
 	screenbuf.w=sdlsurf->w;
@@ -149,7 +156,7 @@ void prep_screen() // call before drawing stuff to *screen
 
 void free_screen() // call after drawing, before blit
 {
-	SDL_UnlockSurface(sdlsurf);
+	//SDL_UnlockSurface(sdlsurf);
 }
 
 int gfx_checkswitch()

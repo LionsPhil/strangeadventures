@@ -4,11 +4,15 @@
 
 #include "typedefs.h"
 #include "gfx.h"
+#include "scaledvideo.hpp"
 
 int my_main();
 int sound_init();
 
 extern SDL_Surface *sdlsurf;
+extern SDL_Rect g_native_resolution;
+extern SDL_Rect g_virtual_resolution;
+extern ScaledVideo* g_scaled_video;
 
 int main(int argc, char *argv[])
 {
@@ -44,10 +48,21 @@ int main(int argc, char *argv[])
 	Mix_AllocateChannels(16);
 	sound_init();
 
-	if (gfx_fullscreen)
-		sdlsurf = SDL_SetVideoMode(640, 480, 8, SDL_FULLSCREEN | SDL_HWPALETTE);
-	else
-		sdlsurf = SDL_SetVideoMode(640, 480, 8, SDL_HWPALETTE);
+	// Must find the native resolution *before* setting the video mode
+	const SDL_VideoInfo* video_info = SDL_GetVideoInfo();
+	g_native_resolution.w = video_info->current_w;
+	g_native_resolution.h = video_info->current_h;
+
+	g_virtual_resolution.x = 0;
+	g_virtual_resolution.y = 0;
+	g_virtual_resolution.w = 640;
+	g_virtual_resolution.h = 480;
+
+	g_scaled_video = getScaledVideoManual(false, g_virtual_resolution, g_virtual_resolution, false);
+	//g_scaled_video = getScaledVideoManual(false, g_virtual_resolution, &g_native_resolution, true);
+	sdlsurf = g_scaled_video->fb();
+	//sdlsurf = SDL_SetVideoMode(640, 480, 8, SDL_FULLSCREEN | SDL_HWPALETTE);
+
 	my_main();
 
 	return 0;
