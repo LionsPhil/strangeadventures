@@ -18,7 +18,7 @@ This fork uses their SDL version of the codebase, and works with the free full r
 2. Download the most recent build of this fork from [the releases page](https://github.com/LionsPhil/strangeadventures/releases).
 3. Open the folder you installed the game to, and extract the ZIP from step 2 into it.
 4. Run `strangelp.exe`.
-5. If everything's good and you want to use my version by default, either move the original aside and rename mine, or create a new shortcut mine.
+5. If everything's good and you want to use my version by default, either move the original aside and rename mine, or create a new shortcut to mine.
 
 ## Building
 ### Linux
