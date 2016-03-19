@@ -294,95 +294,129 @@ public:
 	}
 };
 
-#if 0
 // Arbitrary software scaler
 class ScaledVideoArbitrary : public ScaledVideo {
 protected:
 	// In this case, we use not only the x and y offset, but also the w
 	// and h to record the effective width and height of our true area.
-	SDL_Rect offset;
+	SDL_Rect m_offset;
 
-	void mapVirtToTrue(Sint16 virtx, Sint16 virty,
-		Sint16* truex, Sint16* truey) {
+	/* This gets called A LOT. Avoid floating point.
+	 * (This is also why it has a protected, nonvirtual version.) */
+	void mapTrueToVirtualInternal(Sint16 true_x, Sint16 true_y,
+		Sint16* virtual_x, Sint16* virtual_y) {
 
-		*truex = ((virtx * offset.w) / virtres.w) + offset.x;
-		*truey = ((virty * offset.h) / virtres.h) + offset.y;
-	}
-
-	// This gets called A LOT. Avoid floating point.
-	void mapTrueToVirt(Sint16 truex, Sint16 truey,
-		Sint16* virtx, Sint16* virty) {
-
-		*virtx = ((truex - offset.x) * virtres.w) / offset.w;
-		*virty = ((truey - offset.y) * virtres.h) / offset.h;
+		*virtual_x =
+			((true_x - m_offset.x) * m_virtual_resolution.w)
+				/ m_offset.w;
+		*virtual_y =
+			((true_y - m_offset.y) * m_virtual_resolution.h)
+				/ m_offset.h;
 	}
 
 public:
-	// Force32 should be false for Arbitrary scaler itself
-	ScaledVideoArbitrary(SDL_Rect virtres, SDL_Rect trueres,
-		bool fullscreen, bool force32 = false)
-		: ScaledVideo(virtres, trueres, false, force32, fullscreen) {
+	ScaledVideoArbitrary(
+		SDL_Surface* virtual_surface,
+		SDL_Surface* true_surface,
+		SDL_Rect& virtual_resolution,
+		SDL_Rect& true_resolution)
+		:
+		ScaledVideo(
+			virtual_surface, true_surface,
+			virtual_resolution, true_resolution) {
 
 		// Calculate target resolution at constant aspect ratio
 		// Time for some integer maths! Rearrange these equalities:
 		// vw/vh = tw/th  ->  tw = (th*vw)/vh
 		// vh/vw = th/tw  ->  th = (tw*vh)/vw
-		Sint16 tw_full_height = (trueres.h * virtres.w) / virtres.h;
-		Sint16 th_full_width  = (trueres.w * virtres.h) / virtres.w;
-		if(tw_full_height > trueres.w) {
-			assert(th_full_width <= trueres.h); // else maths fail
+		Sint16 tw_full_height =
+			(m_true_resolution.h * m_virtual_resolution.w)
+				/ m_virtual_resolution.h;
+		Sint16 th_full_width  =
+			(m_true_resolution.w * m_virtual_resolution.h)
+				/ m_virtual_resolution.w;
+		if(tw_full_height > m_true_resolution.w) {
+			// Check, else maths fail
+			assert(th_full_width <= m_true_resolution.h);
 			// Using the full height makes us too wide.
 			// So use the full width.
-			offset.w = trueres.w;
-			offset.h = th_full_width;
+			m_offset.w = m_true_resolution.w;
+			m_offset.h = th_full_width;
 		} else { // Use the full height.
-			offset.w = tw_full_height;
-			offset.h = trueres.h;
+			m_offset.w = tw_full_height;
+			m_offset.h = m_true_resolution.h;
 		}
 		// And calculate the actual offset part on top of this
-		offset.x = (trueres.w - offset.w) / 2;
-		offset.y = (trueres.h - offset.h) / 2;
-		assert(offset.x == 0 || offset.y == 0);
-
-		trace("\tusing arbitrary scaler to %dx%d", offset.w, offset.h);
+		m_offset.x = (m_true_resolution.w - m_offset.w) / 2;
+		m_offset.y = (m_true_resolution.h - m_offset.h) / 2;
+		assert(m_offset.x == 0 || m_offset.y == 0);
 	}
 
-	virtual void dirtyRect(Sint16 x, Sint16 y, Uint16 w, Uint16 h) {
+	virtual std::string describe() {
+		std::ostringstream oss;
+		oss << "translate by " << m_offset.x << ", " << m_offset.y;
+		oss << " and arbitrary-scale to "
+			<< m_offset.w << "x" << m_offset.y;
+		return oss.str();
+	}
+
+	virtual void updateScale() {
+		Sint16 x = m_virtual_dirty.x;
+		Sint16 y = m_virtual_dirty.y;
+		Uint16 w = m_virtual_dirty.w;
+		Uint16 h = m_virtual_dirty.h;
+
 		// Work out the true bounding rectangle
 		Sint16 truex1, truex2, truey1, truey2;
-		mapVirtToTrue(x,   y,   &truex1, &truey1);
-		mapVirtToTrue(x+w, y+h, &truex2, &truey2);
+		mapVirtualToTrue(x,   y,   &truex1, &truey1);
+		mapVirtualToTrue(x+w, y+h, &truex2, &truey2);
 
 		// For each display pixel in the area, source a virtual pixel
 		Sint16 virtx, virty;
-		SDL_Surface* screen = SDL_GetVideoSurface();
-		SDL_LockSurface(virtualfb);
-		SDL_LockSurface(screen);
-		Uint8 bypp = virtualfb->format->BytesPerPixel;
-		assert(bypp == screen->format->BytesPerPixel);
-		char* dstline = (char*) screen->pixels + (truey1*screen->pitch);
+		SDL_LockSurface(m_virtual_surface);
+		SDL_LockSurface(m_true_surface);
+		Uint8 bypp = m_virtual_surface->format->BytesPerPixel;
+		assert(bypp == m_true_surface->format->BytesPerPixel);
+		char* dstline = (char*) m_true_surface->pixels
+			+ (truey1*m_true_surface->pitch);
 		for(Sint16 ty = truey1; ty < truey2; ++ty) {
 			char* dstpix = dstline + (truex1 * bypp);
 			for(Sint16 tx = truex1; tx < truex2; ++tx) {
-				mapTrueToVirt(tx, ty, &virtx, &virty);
-				char* srcpix = (char*) virtualfb->pixels
-					+ (virty * virtualfb->pitch)
+				mapTrueToVirtualInternal(tx,ty, &virtx,&virty);
+				char* srcpix = (char*) m_virtual_surface->pixels
+					+ (virty * m_virtual_surface->pitch)
 					+ (virtx * bypp);
 				memcpy(dstpix, srcpix, bypp);
 
 				dstpix += bypp;
 			}
-			dstline += screen->pitch;
+			dstline += m_true_surface->pitch;
 		}
-		SDL_UnlockSurface(screen);
-		SDL_UnlockSurface(virtualfb);
+		SDL_UnlockSurface(m_true_surface);
+		SDL_UnlockSurface(m_virtual_surface);
+	}
 
-		// Record the effective area changed
-		ScaledVideo::dirtyRect(truex1, truey1,
-			truex2 - truex1, truey2 - truey1);
+	virtual void mapVirtualToTrue(Sint16 virtual_x, Sint16 virtual_y,
+		Sint16* true_x, Sint16* true_y) {
+
+		*true_x = ((virtual_x * m_offset.w) / m_virtual_resolution.w)
+			+ m_offset.x;
+		*true_y = ((virtual_y * m_offset.h) / m_virtual_resolution.h)
+			+ m_offset.y;
+	}
+
+	virtual void mapTrueToVirtual(Sint16 true_x, Sint16 true_y,
+		Sint16* virtual_x, Sint16* virtual_y) {
+
+		Sint16 unclipped_x, unclipped_y;
+		mapTrueToVirtualInternal(true_x, true_y,
+			&unclipped_x, &unclipped_y);
+		clipPoint(unclipped_x, unclipped_y,
+			virtual_x, virtual_y);
 	}
 };
 
+#if 0
 /* The arbitrary scaler is a "fast" nearest-pixel map, and we want crisp pixels
  * rather than bilinear filtering, but this is not visually optimal. We really
  * want something smarter that antialises misaligned pixel boundaries, but
@@ -732,20 +766,15 @@ ScaledVideo* get_scaled_video(
 			virtual_surface, screen,
 			virtual_resolution, true_resolution);
 	} else {
-		// XXX arb scalers temporarily disabled
-		return new ScaledVideoTranslateOnly(
-			virtual_surface, screen,
-			virtual_resolution, true_resolution);
-#if 0
-		if(high_quality) {
-			return new ScaledVideoArbitraryHQ(
+		if(high_quality && false) { // XXX disabled for now
+			/* return new ScaledVideoArbitraryHQ(
 				virtual_surface, screen,
-				virtual_resolution, true_resolution);
+				virtual_resolution, true_resolution); */
 		} else {
+			// FIXME only works with can_just_copy
 			return new ScaledVideoArbitrary(
 				virtual_surface, screen,
 				virtual_resolution, true_resolution);
 		}
-#endif
 	}
 }
