@@ -8,6 +8,7 @@
 #include <new>
 #include <sstream>
 #include <stdexcept>
+#include <vector>
 
 #include "scaledvideo.hpp"
 
@@ -356,7 +357,7 @@ public:
 		std::ostringstream oss;
 		oss << "translate by " << m_offset.x << ", " << m_offset.y;
 		oss << " and arbitrary-scale to "
-			<< m_offset.w << "x" << m_offset.y;
+			<< m_offset.w << "x" << m_offset.h;
 		return oss.str();
 	}
 
@@ -416,7 +417,6 @@ public:
 	}
 };
 
-#if 0
 /* The arbitrary scaler is a "fast" nearest-pixel map, and we want crisp pixels
  * rather than bilinear filtering, but this is not visually optimal. We really
  * want something smarter that antialises misaligned pixel boundaries, but
@@ -489,18 +489,17 @@ class ScaledVideoArbitraryHQ : public ScaledVideoArbitrary {
 			// Repack and return
 			return SDL_MapRGB(fmt, red1, gre1, blu1);
 		}
-#if 0 /* This is the old, gamma-ignorant, blender. */
-		redM = (Uint8)((((float)red1) * inv) + (((float)red2) * frac));
-		greM = (Uint8)((((float)gre1) * inv) + (((float)gre2) * frac));
-		bluM = (Uint8)((((float)blu1) * inv) + (((float)blu2) * frac));
-#endif
 
 	public:
 		BlendCache(SDL_PixelFormat* fmt, float gamma = 2.2) : fmt(fmt),
-			gamma(gamma), invgamma(1.0 / gamma), max_cache(65536) {}
+			gamma(gamma), invgamma(1.0 / gamma),
+			max_cache(512 * 1024) {}
 
-		~BlendCache()
-			{ trace("Blend cache reached size %d", cache.size()); }
+		~BlendCache() {
+			// XXX DEBUG
+			fprintf(stderr, "Blend cache reached size %lu\n",
+				cache.size());
+		}
 
 		Uint32 blend(Uint32 one, Uint32 two, float frac) {
 			// Don't waste cache entries on non-blends
@@ -515,11 +514,7 @@ class ScaledVideoArbitraryHQ : public ScaledVideoArbitrary {
 				if(cache.size() < max_cache) {
 					cache[Entry(one, two, frac)] = result;
 				} else {
-#ifndef NDEBUG
-					if(max_cache) { max_cache = 0;
-					trace("Blend cache has hit max size!");
-					}
-#endif
+					// Oh well...
 				}
 				return result;
 			} else {
@@ -574,115 +569,139 @@ class ScaledVideoArbitraryHQ : public ScaledVideoArbitrary {
 	}
 	
 public:
-	ScaledVideoArbitraryHQ(SDL_Rect virtres, SDL_Rect trueres,
-		bool fullscreen) // Note init of Arbitrary with force32 on
-		: ScaledVideoArbitrary(virtres, trueres, fullscreen, true),
-		blendcache(virtualfb->format),
-		blendhoriz(trueres.w, 0.0), blendvert(trueres.h, 0.0) {
+	ScaledVideoArbitraryHQ(
+		SDL_Surface* virtual_surface,
+		SDL_Surface* true_surface,
+		SDL_Rect& virtual_resolution,
+		SDL_Rect& true_resolution)
+		:
+		ScaledVideoArbitrary(
+			virtual_surface, true_surface,
+			virtual_resolution, true_resolution),
+		blendcache(m_true_surface->format),
+		blendhoriz(m_true_resolution.w, 0.0),
+		blendvert(m_true_resolution.h, 0.0) {
 
-		/* Pixel blending is inner-loop code, and this constraint avoids
-		 * the need to faff with awkward pixel alignments (hello,
-		 * 24-bit). It's already nightmarish enough as it is.
-		 * The force32 ScaledVideo constructor argument *should*
-		 * make SDL give us a compatable shadow surface if needed. */
-		if(virtualfb->format->BytesPerPixel != 4) {
-			warn("High-quality scaler requires 32-bit graphics; "
-				"currently have %u (%u-bit storage)",
-				virtualfb->format->BitsPerPixel,
-				virtualfb->format->BytesPerPixel * 8);
-			throw ScaledVideo::BadResolution();
-		}
-		// Base base class should ensure that virtualfb is screen fmt.
-		assert(SDL_GetVideoSurface()->format->BytesPerPixel == 4);
+		/* For SAIS' purposes, this is hardcoded to read a palette,
+		 * so I'm not creating a dead code branch for 32->32 */
+		assert(m_virtual_surface->format->BytesPerPixel == 1);
+
+		// This only works in 32-bit color *output*
+		assert(m_true_surface->format->BytesPerPixel == 4);
 
 		// Base class constructor sorts out offset for us
 		// Work out horizontal and vertical blending
 		// Note that this takes the offset w/h (i.e. active true res)
-		calcBlends(virtres.w, offset.w, offset.x, blendhoriz);
-		calcBlends(virtres.h, offset.h, offset.y, blendvert);
-
-		trace("\t(high quality)");
+		calcBlends(m_virtual_resolution.w,
+			m_offset.w, m_offset.x, blendhoriz);
+		calcBlends(m_virtual_resolution.h,
+			m_offset.h, m_offset.y, blendvert);
 	}
 
-	// TODO Refactor: this shares all but the loop body with base
-	virtual void dirtyRect(Sint16 x, Sint16 y, Uint16 w, Uint16 h) {
+	virtual std::string describe() {
+		std::ostringstream oss;
+		oss << "translate by " << m_offset.x << ", " << m_offset.y;
+		oss << " and high-quality arbitrary-scale to "
+			<< m_offset.w << "x" << m_offset.h;
+		return oss.str();
+	}
+
+	virtual void updateScale() {
+		Sint16 x = m_virtual_dirty.x;
+		Sint16 y = m_virtual_dirty.y;
+		Uint16 w = m_virtual_dirty.w;
+		Uint16 h = m_virtual_dirty.h;
+
 		// Work out the true bounding rectangle
 		/* This always maximally overshoots, so should include any
 		 * blends: naughty copy-paste from base implementation. */
 		Sint16 truex1, truex2, truey1, truey2;
-		mapVirtToTrue(x,   y,   &truex1, &truey1);
-		mapVirtToTrue(x+w, y+h, &truex2, &truey2);
+		mapVirtualToTrue(x,   y,   &truex1, &truey1);
+		mapVirtualToTrue(x+w, y+h, &truex2, &truey2);
+
+		/* Decode the palette.
+		 * For 32-bit source, just dereference *srcpix etc, rather than
+		 * go via this; e.g. *((Uint32*) srcpix), */
+		SDL_Palette* palette = m_virtual_surface->format->palette;
+		assert(palette->ncolors <= 256);
+		Uint32 colors[256];
+		for(int c = 0; c < palette->ncolors; ++c) {
+			colors[c] = SDL_MapRGB(m_true_surface->format,
+				palette->colors[c].r,
+				palette->colors[c].g,
+				palette->colors[c].b);
+		}
 
 		/* For each display pixel in the area, source a virtual pixel
 		 * ...and blend as appropriate. */
 		Sint16 virtx, virty;
-		SDL_Surface* screen = SDL_GetVideoSurface();
-		SDL_LockSurface(virtualfb);
-		SDL_LockSurface(screen);
-		Uint8 bypp = 4; // Guaranteed by constructor
-		char* dstline = (char*) screen->pixels + (truey1*screen->pitch);
+		SDL_LockSurface(m_virtual_surface);
+		SDL_LockSurface(m_true_surface);
+		Uint8 virtual_bypp = 1; // Guaranteed by constructor
+		Uint8 true_bypp    = 4; // Guaranteed by constructor
+		char* dstline = (char*) m_true_surface->pixels
+			+ (truey1*m_true_surface->pitch);
 		for(Sint16 ty = truey1; ty < truey2; ++ty) {
 			bool doblendv = (blendvert[ty] != 0.0);
-			char* dstpix = dstline + (truex1 * bypp);
+			char* dstpix = dstline + (truex1 * true_bypp);
 			for(Sint16 tx = truex1; tx < truex2; ++tx) {
 				bool doblendh = (blendhoriz[tx] != 0.0);
 				
-				mapTrueToVirt(tx, ty, &virtx, &virty);
-				char* srcpix = (char*) virtualfb->pixels
-					+ (virty * virtualfb->pitch)
-					+ (virtx * bypp);
-				char* srcpixbelow = 0; // not always needed
+				mapTrueToVirtualInternal(tx, ty, &virtx, &virty);
+				unsigned char* srcpix = (unsigned char*)
+					m_virtual_surface->pixels
+					+ (virty * m_virtual_surface->pitch)
+					+ (virtx * virtual_bypp);
+				unsigned char* srcpixbelow;
 				if(doblendv) { srcpixbelow =
-					srcpix + virtualfb->pitch; }
+					srcpix + m_virtual_surface->pitch; }
 				
 				if(doblendh) {
-					char* srcpixright = srcpix + bypp;
+					unsigned char* srcpixright = srcpix
+						+ virtual_bypp;
 					if(doblendv) {
-						char* srcpixcorner =
-							srcpixbelow + bypp;
+						unsigned char* srcpixcorner =
+							srcpixbelow
+							+ virtual_bypp;
 						// Four-way blend, oh Goddess
 						*((Uint32*) dstpix) =
 						 blendPix( // Both columns
 						  blendPix( // Left column
-						   *((Uint32*) srcpix),
-						   *((Uint32*) srcpixbelow),
+						   colors[*srcpix],
+						   colors[*srcpixbelow],
 						   blendvert[ty]),
 						  blendPix( // Right column
-						   *((Uint32*) srcpixright),
-						   *((Uint32*) srcpixcorner),
+						   colors[*srcpixright],
+						   colors[*srcpixcorner],
 						   blendvert[ty]),
 						  blendhoriz[tx]);
 					} else {
 						// Two-way horizontal
 						*((Uint32*) dstpix) =
 							blendPix(
-							*((Uint32*) srcpix),
-							*((Uint32*)srcpixright),
+							colors[*srcpix],
+							colors[*srcpixright],
 							blendhoriz[tx]);
 					}
 				} else if(doblendv) {
 					// Two-way vertical
 					*((Uint32*) dstpix) = blendPix(
-						*((Uint32*) srcpix),
-						*((Uint32*) srcpixbelow),
+						colors[*srcpix],
+						colors[*srcpixbelow],
 						blendvert[ty]);
 				} else {
 					// No blending; how delightedly simple!
-					memcpy(dstpix, srcpix, bypp);
+					memcpy(dstpix, &colors[*srcpix],
+						true_bypp);
 				}
-				dstpix += bypp;
+				dstpix += true_bypp;
 			}
-			dstline += screen->pitch;
+			dstline += m_true_surface->pitch;
 		}
-		SDL_UnlockSurface(screen);
-		SDL_UnlockSurface(virtualfb);
-
-		// Record the effective area changed (same as base again)
-		ScaledVideo::dirtyRect(truex1, truey1,
-			truex2 - truex1, truey2 - truey1);
+		SDL_UnlockSurface(m_true_surface);
+		SDL_UnlockSurface(m_virtual_surface);
 	}
 };
-#endif
 
 // Factory function ///////////////////////////////////////////////////////////
 
@@ -766,15 +785,22 @@ ScaledVideo* get_scaled_video(
 			virtual_surface, screen,
 			virtual_resolution, true_resolution);
 	} else {
-		if(high_quality && false) { // XXX disabled for now
-			/* return new ScaledVideoArbitraryHQ(
+		/* Have to use the HQ scaler if the formats are incompatable,
+		 * since the fast arbitrary scaler is a dumb copier.
+		 * It only works for a 32-bit output, though... */
+		if((actual_bpp == 32) && (high_quality || !can_just_copy)) {
+			return new ScaledVideoArbitraryHQ(
 				virtual_surface, screen,
-				virtual_resolution, true_resolution); */
-		} else {
-			// FIXME only works with can_just_copy
+				virtual_resolution, true_resolution);
+		} else if(can_just_copy) {
 			return new ScaledVideoArbitrary(
 				virtual_surface, screen,
 				virtual_resolution, true_resolution);
+		} else {
+			/* Eep. And we've already changed video mode, too.
+			 * Should only happen for weird stuff like 16-bit
+			 * displays, though. */
+			throw std::runtime_error("no working scaler!");
 		}
 	}
 }
