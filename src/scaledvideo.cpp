@@ -57,17 +57,14 @@ SDL_Rect ScaledVideo::clipRect(const SDL_Rect& rect) {
 
 	clipPoint(rect.x, rect.y, &out.x, &out.y);
 
-	if(rect.w < 0) {
-		out.w = 0;
-	} else if(rect.x + rect.w > m_virtual_resolution.w) {
+	// w and h are unsigned, cannot be < 0
+	if(rect.x + rect.w > m_virtual_resolution.w) {
 		out.w = m_virtual_resolution.w - out.x;
 	} else {
 		out.w = (rect.x + rect.w) - out.x;
 	}
 
-	if(rect.h < 0) {
-		out.h = 0;
-	} else if(rect.y + rect.h > m_virtual_resolution.h) {
+	if(rect.y + rect.h > m_virtual_resolution.h) {
 		out.h = m_virtual_resolution.h - out.y;
 	} else {
 		out.h = (rect.y + rect.h) - out.y;
@@ -497,7 +494,7 @@ class ScaledVideoArbitraryHQ : public ScaledVideoArbitrary {
 
 		~BlendCache() {
 			// XXX DEBUG
-			fprintf(stderr, "Blend cache reached size %lu\n",
+			fprintf(stderr, "Blend cache reached size %zd\n",
 				cache.size());
 		}
 
@@ -652,7 +649,7 @@ public:
 					m_virtual_surface->pixels
 					+ (virty * m_virtual_surface->pitch)
 					+ (virtx * virtual_bypp);
-				unsigned char* srcpixbelow;
+				unsigned char* srcpixbelow = NULL;
 				if(doblendv) { srcpixbelow =
 					srcpix + m_virtual_surface->pitch; }
 				
