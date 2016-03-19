@@ -64,15 +64,12 @@ public:
 /** Set the SDL video mode to the given true resolution (and flags), and get
   * a ScaledVideo instance that maps from the specified virtual surface to it.
   * Can throw a runtime_error if SDL won't allow switching video mode.
-  * high_quality enables a fancier arbitrary-factor scaler.
-  * Slower, worse at low upscale factors, better at high.
   * Caller owns the returned object. */
 ScaledVideo* get_scaled_video(
 	SDL_Surface* virtual_surface,
 	int true_w,
 	int true_h,
 	int true_bpp = 0,
-	Uint32 flags = SDL_SWSURFACE | SDL_ANYFORMAT,
-	bool high_quality = false);
+	Uint32 flags = SDL_SWSURFACE | SDL_ANYFORMAT);
 
 #endif

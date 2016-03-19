@@ -4,11 +4,9 @@
 #include <cassert>
 #include <cmath>
 #include <cstring>
-#include <map>
 #include <new>
 #include <sstream>
 #include <stdexcept>
-#include <vector>
 
 #include "scaledvideo.hpp"
 
@@ -414,292 +412,6 @@ public:
 	}
 };
 
-/* The arbitrary scaler is a "fast" nearest-pixel map, and we want crisp pixels
- * rather than bilinear filtering, but this is not visually optimal. We really
- * want something smarter that antialises misaligned pixel boundaries, but
- * still scales them up as squares, not points defining a complex gradient
- * fill. This would seem to require tracking the exact edge positions of each
- * virtual pixel to get the correct blend ratios, and the worst case is a true
- * pixel which contains a virtual corner (four-way blend). It's also full of
- * floating point, so will be slower. */
-/* FIXME At low scale factors, like 320x240 -> 400x300, the blends between
- * alternating pixels make things worse. I have a suspicion there's an off-by-
- * one in here bleeding colours across. */
-class ScaledVideoArbitraryHQ : public ScaledVideoArbitrary {
-	/* Blending two pixels is actually a pretty involved task once you've
-	 * spent all day picking apart the PixelFormat properly and doing
-	 * gamma correction to allow for nonlinear colours (sigh). This is
-	 * still not quite strictly right for sRGB, as that uses gamma 1.0 for
-	 * very low colour values. */
-	class BlendCache {
-		struct Entry {
-			Uint32 one; Uint32 two; float frac;
-			Entry(Uint32 one, Uint32 two, float frac) :
-				one(one), two(two), frac(frac) {}
-			bool operator<(const Entry& other) const {
-				return (one == other.one) ?
-					(two == other.two) ?
-						(frac < other.frac) :
-						(two < other.two) :
-					(one < other.one);
-			}
-		};
-
-		SDL_PixelFormat* fmt;
-		float gamma, invgamma;
-		std::map<Entry, Uint32> cache;
-		// Avoid unbounded cache growth. Inelegant.
-		size_t max_cache;
-
-		Uint32 doBlend(Uint32 one, Uint32 two, float frac) {
-			Uint32 red1, gre1, blu1;
-			Uint32 red2, gre2, blu2;
-			float  red3, gre3, blu3;
-			float  red4, gre4, blu4;
-			float  redM, greM, bluM;
-			float inv = 1.0 - frac;
-		// Pick it all apart (weep)
-		red1 =one & fmt->Rmask; red1 >>=fmt->Rshift; red1 <<=fmt->Rloss;
-		gre1 =one & fmt->Gmask; gre1 >>=fmt->Gshift; gre1 <<=fmt->Gloss;
-		blu1 =one & fmt->Bmask; blu1 >>=fmt->Bshift; blu1 <<=fmt->Bloss;
-		red2 =two & fmt->Rmask; red2 >>=fmt->Rshift; red2 <<=fmt->Rloss;
-		gre2 =two & fmt->Gmask; gre2 >>=fmt->Gshift; gre2 <<=fmt->Gloss;
-		blu2 =two & fmt->Bmask; blu2 >>=fmt->Bshift; blu2 <<=fmt->Bloss;		
-			// Convert to linear colourspace
-			red3 = red1 / 255.0; red4 = red2 / 255.0;
-			gre3 = gre1 / 255.0; gre4 = gre2 / 255.0;
-			blu3 = blu1 / 255.0; blu4 = blu2 / 255.0;
-			red3 = powf(red3, gamma); red4 = powf(red4, gamma);
-			gre3 = powf(gre3, gamma); gre4 = powf(gre4, gamma);
-			blu3 = powf(blu3, gamma); blu4 = powf(blu4, gamma);
-		
-			// Blend in linear colourspace
-			redM = (red3 * inv) + (red4 * frac);
-			greM = (gre3 * inv) + (gre4 * frac);
-			bluM = (blu3 * inv) + (blu4 * frac);
-
-			// Convert back to expotential
-			red1 = (Uint32)(powf(redM, invgamma) * 255);
-			gre1 = (Uint32)(powf(greM, invgamma) * 255);
-			blu1 = (Uint32)(powf(bluM, invgamma) * 255);
-
-			// Repack and return
-			return SDL_MapRGB(fmt, red1, gre1, blu1);
-		}
-
-	public:
-		BlendCache(SDL_PixelFormat* fmt, float gamma = 2.2) : fmt(fmt),
-			gamma(gamma), invgamma(1.0 / gamma),
-			max_cache(512 * 1024) {}
-
-		~BlendCache() {
-			// XXX DEBUG
-			fprintf(stderr, "Blend cache reached size %zd\n",
-				cache.size());
-		}
-
-		Uint32 blend(Uint32 one, Uint32 two, float frac) {
-			// Don't waste cache entries on non-blends
-			if(one == two) { return one; }
-			if(frac == 0.0) { return one; }
-			if(frac == 1.0) { return two; }
-
-			std::map<Entry, Uint32>::iterator e
-				= cache.find(Entry(one, two, frac));
-			if(e == cache.end()) { // Cache miss
-				Uint32 result = doBlend(one, two, frac);
-				if(cache.size() < max_cache) {
-					cache[Entry(one, two, frac)] = result;
-				} else {
-					// Oh well...
-				}
-				return result;
-			} else {
-				return e->second;
-			}
-		}
-	};
-	BlendCache blendcache;
-
-	/* For true pixel column/row blend[x], what proportion is the
-	 * linear-nearest-fit pixel (remainder will be next along)?
-	 * Base mapTrueToVirt will, on a "blend" true pixel, always give this
-	 * left/top pixel due to integer truncation; e.g. for middle pixel of
-	 * true fb [012], with virtual fb [01], it gives (1 * 2) / 3 = 0.
-	 * The range of these should also therefore be 0 <= blend < 1. */
-	std::vector<float> blendhoriz;
-	std::vector<float> blendvert;
-	
-	/* Populates a (expected 0-init'd!) blend set based on a given pair of
-	 * dimensions (e.g. the virtual width and the true width).
-	 * 'no' = 'no offset', i.e. the active area. */
-	void calcBlends(const Uint16 virtdim, const Uint16 truenodim,
-		const Sint16 offset, std::vector<float>& blends) {
-		
-		assert(offset >= 0);
-		float truelow;
-		float truehigh = 0;
-		for(Uint16 virtv = 0; virtv < virtdim; ++virtv) {
-			truelow = truehigh;
-			truehigh =
-				(((float) virtv + 1) * truenodim) / virtdim;
-			/* In integer terms, we're now dealing with
-			 * truelow <= x < truehigh
-			 * (truehigh will == truedim in the final iteration).
-			 * We only blend in a 'right/below' direction, and want
-			 * to do this for a single true row/column, to keep
-			 * crisp squares. Everything else is left as zero.
-			 * TRUE | 4 | 5 | 6 |  <-- Say that truelow = 5.7 for
-			 * VIRT    2   |   3                    a virtv of 3.
-			 * mapTrueToVirt(5) will give 2, and we want true pixel
-			 * 5 to be a 0.7 blend of that, and 0.3 of virtual 3.
-			 * The blend factor is "how far through the true pixel
-			 * was the left edge of the virtual one?", i.e. the
-			 * fractional part. */
-			assert(truelow < truenodim);
-			blends[(int)truelow + offset] = truelow - (int)truelow;
-		}
-	}
-
-	inline Uint32 blendPix(Uint32 one, Uint32 two, float frac) {
-		return blendcache.blend(one, two, frac);
-	}
-	
-public:
-	ScaledVideoArbitraryHQ(
-		SDL_Surface* virtual_surface,
-		SDL_Surface* true_surface,
-		SDL_Rect& virtual_resolution,
-		SDL_Rect& true_resolution)
-		:
-		ScaledVideoArbitrary(
-			virtual_surface, true_surface,
-			virtual_resolution, true_resolution),
-		blendcache(m_true_surface->format),
-		blendhoriz(m_true_resolution.w, 0.0),
-		blendvert(m_true_resolution.h, 0.0) {
-
-		/* For SAIS' purposes, this is hardcoded to read a palette,
-		 * so I'm not creating a dead code branch for 32->32 */
-		assert(m_virtual_surface->format->BytesPerPixel == 1);
-
-		// This only works in 32-bit color *output*
-		assert(m_true_surface->format->BytesPerPixel == 4);
-
-		// Base class constructor sorts out offset for us
-		// Work out horizontal and vertical blending
-		// Note that this takes the offset w/h (i.e. active true res)
-		calcBlends(m_virtual_resolution.w,
-			m_offset.w, m_offset.x, blendhoriz);
-		calcBlends(m_virtual_resolution.h,
-			m_offset.h, m_offset.y, blendvert);
-	}
-
-	virtual std::string describe() {
-		std::ostringstream oss;
-		oss << "translate by " << m_offset.x << ", " << m_offset.y;
-		oss << " and high-quality arbitrary-scale to "
-			<< m_offset.w << "x" << m_offset.h;
-		return oss.str();
-	}
-
-	virtual void updateScale() {
-		Sint16 x = m_virtual_dirty.x;
-		Sint16 y = m_virtual_dirty.y;
-		Uint16 w = m_virtual_dirty.w;
-		Uint16 h = m_virtual_dirty.h;
-
-		// Work out the true bounding rectangle
-		/* This always maximally overshoots, so should include any
-		 * blends: naughty copy-paste from base implementation. */
-		Sint16 truex1, truex2, truey1, truey2;
-		mapVirtualToTrue(x,   y,   &truex1, &truey1);
-		mapVirtualToTrue(x+w, y+h, &truex2, &truey2);
-
-		/* Decode the palette.
-		 * For 32-bit source, just dereference *srcpix etc, rather than
-		 * go via this; e.g. *((Uint32*) srcpix), */
-		SDL_Palette* palette = m_virtual_surface->format->palette;
-		assert(palette->ncolors <= 256);
-		Uint32 colors[256];
-		for(int c = 0; c < palette->ncolors; ++c) {
-			colors[c] = SDL_MapRGB(m_true_surface->format,
-				palette->colors[c].r,
-				palette->colors[c].g,
-				palette->colors[c].b);
-		}
-
-		/* For each display pixel in the area, source a virtual pixel
-		 * ...and blend as appropriate. */
-		Sint16 virtx, virty;
-		SDL_LockSurface(m_virtual_surface);
-		SDL_LockSurface(m_true_surface);
-		Uint8 virtual_bypp = 1; // Guaranteed by constructor
-		Uint8 true_bypp    = 4; // Guaranteed by constructor
-		char* dstline = (char*) m_true_surface->pixels
-			+ (truey1*m_true_surface->pitch);
-		for(Sint16 ty = truey1; ty < truey2; ++ty) {
-			bool doblendv = (blendvert[ty] != 0.0);
-			char* dstpix = dstline + (truex1 * true_bypp);
-			for(Sint16 tx = truex1; tx < truex2; ++tx) {
-				bool doblendh = (blendhoriz[tx] != 0.0);
-				
-				mapTrueToVirtualInternal(tx, ty, &virtx, &virty);
-				unsigned char* srcpix = (unsigned char*)
-					m_virtual_surface->pixels
-					+ (virty * m_virtual_surface->pitch)
-					+ (virtx * virtual_bypp);
-				unsigned char* srcpixbelow = NULL;
-				if(doblendv) { srcpixbelow =
-					srcpix + m_virtual_surface->pitch; }
-				
-				if(doblendh) {
-					unsigned char* srcpixright = srcpix
-						+ virtual_bypp;
-					if(doblendv) {
-						unsigned char* srcpixcorner =
-							srcpixbelow
-							+ virtual_bypp;
-						// Four-way blend, oh Goddess
-						*((Uint32*) dstpix) =
-						 blendPix( // Both columns
-						  blendPix( // Left column
-						   colors[*srcpix],
-						   colors[*srcpixbelow],
-						   blendvert[ty]),
-						  blendPix( // Right column
-						   colors[*srcpixright],
-						   colors[*srcpixcorner],
-						   blendvert[ty]),
-						  blendhoriz[tx]);
-					} else {
-						// Two-way horizontal
-						*((Uint32*) dstpix) =
-							blendPix(
-							colors[*srcpix],
-							colors[*srcpixright],
-							blendhoriz[tx]);
-					}
-				} else if(doblendv) {
-					// Two-way vertical
-					*((Uint32*) dstpix) = blendPix(
-						colors[*srcpix],
-						colors[*srcpixbelow],
-						blendvert[ty]);
-				} else {
-					// No blending; how delightedly simple!
-					memcpy(dstpix, &colors[*srcpix],
-						true_bypp);
-				}
-				dstpix += true_bypp;
-			}
-			dstline += m_true_surface->pitch;
-		}
-		SDL_UnlockSurface(m_true_surface);
-		SDL_UnlockSurface(m_virtual_surface);
-	}
-};
-
 // Factory function ///////////////////////////////////////////////////////////
 
 ScaledVideo* get_scaled_video(
@@ -707,8 +419,7 @@ ScaledVideo* get_scaled_video(
 	int true_w,
 	int true_h,
 	int true_bpp,
-	Uint32 flags,
-	bool high_quality) {
+	Uint32 flags) {
 
 	// Sanity-check the desired resolution
 	if((true_w < virtual_surface->w) || (true_h < virtual_surface->h)) {
@@ -782,21 +493,13 @@ ScaledVideo* get_scaled_video(
 			virtual_surface, screen,
 			virtual_resolution, true_resolution);
 	} else {
-		/* Have to use the HQ scaler if the formats are incompatable,
-		 * since the fast arbitrary scaler is a dumb copier.
-		 * It only works for a 32-bit output, though... */
-		if((actual_bpp == 32) && (high_quality || !can_just_copy)) {
-			return new ScaledVideoArbitraryHQ(
-				virtual_surface, screen,
-				virtual_resolution, true_resolution);
-		} else if(can_just_copy) {
+		if(can_just_copy) {
 			return new ScaledVideoArbitrary(
 				virtual_surface, screen,
 				virtual_resolution, true_resolution);
 		} else {
 			/* Eep. And we've already changed video mode, too.
-			 * Should only happen for weird stuff like 16-bit
-			 * displays, though. */
+			 * Need a ScaledVideoArbitraryConverting. */
 			throw std::runtime_error("no working scaler!");
 		}
 	}

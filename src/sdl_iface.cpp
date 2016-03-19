@@ -312,7 +312,6 @@ void gfx_resize() {
 	}
 
 	try {
-		// Currently no way to ask for the HQ arbitrary scaler
 		g_scaled_video = get_scaled_video(sdlsurf, w, h, 8, flags);
 
 		delete old_scaler;
