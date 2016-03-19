@@ -7,6 +7,11 @@ This is only the game code; the game data is under a non-Free license, but they 
 That release seems to use an older codebase, though, that is not very happy under modern Windows (I get horrible palette errors despite forcing 256-color mode, etc.).
 This fork uses their SDL version of the codebase, and works with the free full release data.
 
+## Fork features
+
+* Builds warning-clean for Linux and cross-compiles for Windows
+* Resizable window, including fullscreen (toggle with F11): no more postage-stamp!
+
 ## Building
 ### Linux
 Run `./autoeverything && ./configure && make`. You'll need autotools and SDL-1.2 development files installed, including SDL\_mixer.
