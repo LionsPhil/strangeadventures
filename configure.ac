@@ -35,12 +35,13 @@ AC_SEARCH_LIBS([Mix_OpenAudio], [SDL_mixer], [], [
 	AC_MSG_ERROR([unable to find Mix_OpenAudio from libSDL_mixer])
 ])
 
-# Configure flag to indicate a Windows build
+# Configure flag to indicate a Windows build (Automake needs to know too)
 AC_ARG_ENABLE([windows],
 	AS_HELP_STRING([--enable-windows], [Build for Windows (you must also use mingw32!)]))
 AS_IF([test "x$enable_windows" = "xyes"], [
 	AC_DEFINE([WINDOWS], [], [Windows build])
 ])
+AM_CONDITIONAL([WINDOWS], [test "x$enable_windows" = "xyes"])
 
 # Support --enable-silent-rules or make V=0 for cleaner build logs
 AM_SILENT_RULES

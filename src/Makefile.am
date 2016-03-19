@@ -43,3 +43,11 @@ strangelp_SOURCES = \
 	typedefs.h \
 	w32_gfx.cpp \
 	w32_sound.cpp
+
+# If we're doing a Windows build, get the icon in there too
+if WINDOWS
+strangelp_LDADD = windows_resources.o
+
+windows_resources.o: windows_resources.rc ../winicon.ico
+	i586-mingw32msvc-windres -v -o $@ $<
+endif
