@@ -98,6 +98,7 @@ void eventhandler()
 {
 	SDL_Event event;
 	int b;
+	Sint16 true_x, true_y, virtual_x, virtual_y;
 
 	keystate = SDL_GetKeyState(NULL);
 
@@ -133,8 +134,14 @@ void eventhandler()
 				ik_mouse_c = b;
 				ik_mouse_b |= b;
 			case SDL_MOUSEMOTION:
-				ik_mouse_x = event.motion.x;
-				ik_mouse_y = event.motion.y;
+				true_x = event.motion.x;
+				true_y = event.motion.y;
+				g_scaled_video->mapTrueToVirtual(
+					true_x, true_y,
+					&virtual_x, &virtual_y);
+				ik_mouse_x = virtual_x;
+				ik_mouse_y = virtual_y;
+//				fprintf(stderr, "Mouse %d,%d -> %d,%d\n", true_x, true_y, virtual_x, virtual_y); // XXX
 				break;
 
 			case SDL_MOUSEBUTTONUP:

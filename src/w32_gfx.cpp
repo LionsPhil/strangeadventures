@@ -92,10 +92,8 @@ void ik_blit()
 		gfx_blarg();
 #endif
 
-	//SDL_UpdateRect(sdlsurf, 0, 0, 640, 480);
 	g_scaled_video->dirtyRect(g_virtual_resolution);
-	//SDL_Flip(sdlsurf);
-	g_scaled_video->update();
+	g_scaled_video->update(true);
 
 	if ((settings.opt_mousemode&5)==0)
 	{
@@ -143,9 +141,18 @@ int get_palette_entry(int n)
 				 currentpal[n*3+2];
 }
 
+/* SDL has recursive locks these days. Now we're using an offscreen surface,
+ * the horrible imbalance of prep/free calls is causing a deadlock (I can
+ * only assume that for the screen surface, the locks were no-ops). */
+static bool screen_already_locked = false;
+
 void prep_screen() // call before drawing stuff to *screen
 {
-	//SDL_LockSurface(sdlsurf);
+	if(!screen_already_locked) {
+		// FIXME Nope, there's unmatched locks before the event loop D:
+		//SDL_LockSurface(sdlsurf);
+		//screen_already_locked = true;
+	}
 
 	screenbuf.data=(uint8*)sdlsurf->pixels;
 	screenbuf.w=sdlsurf->w;
@@ -156,7 +163,10 @@ void prep_screen() // call before drawing stuff to *screen
 
 void free_screen() // call after drawing, before blit
 {
-	//SDL_UnlockSurface(sdlsurf);
+	if(screen_already_locked) {
+		SDL_UnlockSurface(sdlsurf);
+		screen_already_locked = false;
+	}
 }
 
 int gfx_checkswitch()

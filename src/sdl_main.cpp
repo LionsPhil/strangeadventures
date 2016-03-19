@@ -1,6 +1,7 @@
+#include <string>
+
 #include <SDL.h>
 #include <SDL_mixer.h>
-
 
 #include "typedefs.h"
 #include "gfx.h"
@@ -58,10 +59,15 @@ int main(int argc, char *argv[])
 	g_virtual_resolution.w = 640;
 	g_virtual_resolution.h = 480;
 
-	g_scaled_video = getScaledVideoManual(false, g_virtual_resolution, g_virtual_resolution, false);
-	//g_scaled_video = getScaledVideoManual(false, g_virtual_resolution, &g_native_resolution, true);
-	sdlsurf = g_scaled_video->fb();
-	//sdlsurf = SDL_SetVideoMode(640, 480, 8, SDL_FULLSCREEN | SDL_HWPALETTE);
+	sdlsurf = SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 480, 8,
+		0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
+
+	g_scaled_video = get_scaled_video(sdlsurf, 640, 480);
+	//g_scaled_video = get_scaled_video(sdlsurf, 1280, 960, 8, SDL_SWSURFACE | SDL_HWPALETTE);
+	//g_scaled_video = get_scaled_video(sdlsurf, g_native_resolution.w, g_native_resolution.h, 8, SDL_SWSURFACE | SDL_ANYFORMAT | SDL_FULLSCREEN | SDL_HWPALETTE, true);
+
+	std::string scaler_description = g_scaled_video->describe();
+	fprintf(stderr, "Using scaling technique: %s\n", scaler_description.c_str());
 
 	my_main();
 

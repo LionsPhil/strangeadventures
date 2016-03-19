@@ -1,246 +1,267 @@
 /* ScaledVideo SDL surfacing scaling routines.
  * Copyright 2009-2016 Philip Boulain. Licensed under the terms of the GNU GPL. */
-#include <new>
-#include <map>
+
 #include <cassert>
-#include <cstring>
 #include <cmath>
-#ifdef WITH_OPENGL
-// TODO Include OpenGL header
-#endif
+#include <cstring>
+#include <map>
+#include <new>
+#include <sstream>
+#include <stdexcept>
+
 #include "scaledvideo.hpp"
 
-// Temporary
-void warn(const char* fmt, ...) {
-	va_list marker;
-	va_start(marker, fmt);
-	vfprintf(stderr, fmt, marker);
-	fputs("\n", stderr);
-	va_end(marker);
-}
-#define trace warn
-
-//#define SCALE_ARB_BLEND // See below; should be runtime.
-
-/* Future expansion: accept a optional SDL_PixelFormat* for the virtual
- * surface; if used, will need to select TranslateOnly over NoOp. */
-
-// Returns true if scale factor is integer
+/* Returns true if scale factor is integer, and sets the scale factor in
+ * the double out parameter. Allows for translations. */
 static bool scale_needed(SDL_Rect& source, SDL_Rect& target, double* scale) {
 	double scalew = ((double) target.w) / source.w;
 	double scaleh = ((double) target.h) / source.h;
 	*scale = (scalew > scaleh) ? scaleh : scalew;
-	return ((source.w * ((int) *scale)) == target.w)
-	    && ((source.h * ((int) *scale)) == target.h);
+	return ((source.w * std::floor(*scale + 0.5)) == target.w)
+	    || ((source.h * std::floor(*scale + 0.5)) == target.h);
 }
 
-ScaledVideo::ScaledVideo(SDL_Rect& virtres, SDL_Rect& trueres, bool opengl,
-	bool force32, bool fullscreen) : virtres(virtres), trueres(trueres) {
+ScaledVideo::ScaledVideo(
+	SDL_Surface* virtual_surface,
+	SDL_Surface* true_surface,
+	SDL_Rect& virtual_resolution,
+	SDL_Rect& true_resolution)
+	:
+	m_virtual_surface(virtual_surface),
+	m_true_surface(true_surface),
+	m_virtual_resolution(virtual_resolution),
+	m_true_resolution(true_resolution) {
 
-	// Set up the true surface
-	SDL_Surface* screen;
-	Uint32 flags = SDL_SWSURFACE|SDL_ANYFORMAT|SDL_HWPALETTE;
-	if(opengl) { flags |= SDL_OPENGL|SDL_DOUBLEBUF; }
-	if(fullscreen) { flags |= SDL_FULLSCREEN; }
-	screen = SDL_SetVideoMode(trueres.w, trueres.h, force32?32:0, flags);
-	if(!screen) {
-		warn("Can't set video mode: %s", SDL_GetError());
-		throw ScaledVideo::BadResolution();
-	}
-	SDL_FillRect(screen, 0, SDL_MapRGB(screen->format, 0, 0, 0));
+	m_virtual_dirty.x = -1;
+	m_virtual_dirty.y = 0;
+	m_virtual_dirty.w = 0;
+	m_virtual_dirty.h = 0;
+}
 
-	// Set up our virtual surface
-	int bpp;
-	Uint32 rmask, gmask, bmask, amask;
-/*	if(opengl) {
-		// We must use an OpenGL-compliant byte ordering.
-		bpp = 32;
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-		rmask = 0xff000000;
-		gmask = 0x00ff0000;
-		bmask = 0x0000ff00;
-		amask = 0x000000ff;
-#else
-		rmask = 0x000000ff;
-		gmask = 0x0000ff00;
-		bmask = 0x00ff0000;
-		amask = 0xff000000;
-#endif
+ScaledVideo::~ScaledVideo() {}
+
+void ScaledVideo::clipPoint(Sint16 raw_x, Sint16 raw_y,
+	Sint16* clip_x, Sint16* clip_y) {
+
+	*clip_x = raw_x < 0 ? 0
+		: (raw_x >= m_virtual_resolution.w ? m_virtual_resolution.w - 1
+		 	: raw_x);
+	*clip_y = raw_y < 0 ? 0
+		: (raw_y >= m_virtual_resolution.h ? m_virtual_resolution.h - 1
+		 	: raw_y);
+}
+
+SDL_Rect ScaledVideo::clipRect(const SDL_Rect& rect) {
+	SDL_Rect out;
+
+	clipPoint(rect.x, rect.y, &out.x, &out.y);
+
+	if(rect.w < 0) {
+		out.w = 0;
+	} else if(rect.x + rect.w > m_virtual_resolution.w) {
+		out.w = m_virtual_resolution.w - out.x;
 	} else {
-		// Match the screen to help SDL do faster blits.
-		SDL_PixelFormat* nativefmt = SDL_GetVideoSurface()->format;
-		bpp = nativefmt->BitsPerPixel;
-		rmask = nativefmt->Rmask;
-		gmask = nativefmt->Gmask;
-		bmask = nativefmt->Bmask;
-		amask = nativefmt->Amask;
-	} */
-	// FIXME let caller specify; SAIS needs this
-	bpp = 8;
-	rmask = 0xff000000;
-	gmask = 0x00ff0000;
-	bmask = 0x0000ff00;
-	amask = 0x000000ff;
-	// Generally speaking, SWSURFACE seems more appropriate for this.
-	virtualfb = SDL_CreateRGBSurface(SDL_SWSURFACE, virtres.w, virtres.h,
-		bpp, rmask, gmask, bmask, amask);
-	if(!virtualfb) {
-		warn("Can't set up virtual surface: %s", SDL_GetError());
-		throw std::bad_alloc();
-	}
-/*	if(!opengl) {
-		// Match the screen /properly/.
-		SDL_Surface* better = SDL_DisplayFormat(virtualfb);
-		if(better) {
-			SDL_FreeSurface(virtualfb);
-			virtualfb = better;
-		} // else never mind
-	} */
-}
-
-ScaledVideo::~ScaledVideo() { if(virtualfb) { SDL_FreeSurface(virtualfb); } }
-
-SDL_Surface* ScaledVideo::fb() { return virtualfb; }
-
-/* Note that the base implemenation clips against the TRUE resolution.
- * This is because it's useful to store dirty rectangles transformed. */
-void ScaledVideo::dirtyRect(Sint16 x, Sint16 y, Uint16 uw, Uint16 uh) {
-	Sint32 w = uw;
-	Sint32 h = uh;
-	Uint16 sw = trueres.w;
-	Uint16 sh = trueres.h;
-	SDL_Rect rect;
-	//trace("got a rect %d %d %u %u", x, y, w, h); // DEBUG
-	// Offscreen sprites may clip away to nothing
-	if(x < 0) { w += x; x = 0; if(w <= 0) { return; }}
-	rect.x = x > sw ? sw : x; sw -= rect.x;
-	if(sw == 0) { return; }
-	if(y < 0) { h += y; y = 0; if(h <= 0) { return; }}
-	rect.y = y > sh ? sh : y; sh -= rect.y;
-	if(sh == 0) { return; }
-	rect.w = w > sw ? sw : w;
-	rect.h = h > sh ? sh : h;
-	dirtyrects.push_back(rect);
-}
-
-void ScaledVideo::dirtyRect(const SDL_Rect& rect)
-	{ this->dirtyRect(rect.x, rect.y, rect.w, rect.h); }
-
-void ScaledVideo::update() {
-	/*trace("Dirtyrects:");
-	for(std::vector<SDL_Rect>::const_iterator i = dirtyrects.begin();
-		i != dirtyrects.end(); ++i) {
-
-		trace("\t%dx%d + %dx%d", i->x, i->y, i->w, i->h);
-	}*/ // DEBUG
-	/* Theoretically, the documentation suggests attempting to avoid
-	 * overdraw here. Realistically, there's not much we can do about that
-	 * without subdivision, and apparently SDL ships out all the rectangles
-	 * in one go to the graphics driver, so we'll let that do it if it
-	 * feels so inclined. */
-	if(dirtyrects.size() == 0) { return; }
-	SDL_UpdateRects(SDL_GetVideoSurface(),
-		dirtyrects.size(), &dirtyrects[0]);
-		/* docs imply this is safe */
-	dirtyrects.clear();
-}
-
-// True no-op. Actually makes virtualfb == true framebuffer.
-class ScaledVideoNoOp : public ScaledVideo {
-public:
-	ScaledVideoNoOp(SDL_Rect virtres, SDL_Rect trueres, bool fullscreen) :
-		ScaledVideo(virtres, trueres, false, false, fullscreen) {
-
-		SDL_FreeSurface(virtualfb);
-		virtualfb = SDL_GetVideoSurface();
-		assert(virtres.w == trueres.w);
-		assert(virtres.h == trueres.h);
-		trace("\tusing no-op scaler");
+		out.w = (rect.x + rect.w) - out.x;
 	}
 
-	~ScaledVideoNoOp() {
-		// Stop the superdestructor from freeing the true video surface.
-		virtualfb = 0;
+	if(rect.h < 0) {
+		out.h = 0;
+	} else if(rect.y + rect.h > m_virtual_resolution.h) {
+		out.h = m_virtual_resolution.h - out.y;
+	} else {
+		out.h = (rect.y + rect.h) - out.y;
 	}
-};
 
-// No scaling, just translate. Not OpenGL (no need).
+	return out;
+}
+
+void ScaledVideo::dirtyRect(const SDL_Rect& rect) {
+	SDL_Rect clipped = clipRect(rect);
+
+	if(m_virtual_dirty.x < 0) {
+		// No existing dirty region
+		m_virtual_dirty = clipped;
+		return;
+	}
+
+	Sint32 r_x2 =    rect.x +    rect.w;
+	Sint32 r_y2 =    rect.y +    rect.h;
+	Sint32 c_x2 = clipped.x + clipped.w;
+	Sint32 c_y2 = clipped.y + clipped.h;
+	if(clipped.x < m_virtual_dirty.x) { m_virtual_dirty.x = clipped.x; }
+	if(clipped.y < m_virtual_dirty.y) { m_virtual_dirty.y = clipped.y; }
+	if(c_x2 > r_x2) { m_virtual_dirty.w = c_x2 - m_virtual_dirty.x; }
+	if(c_y2 > r_y2) { m_virtual_dirty.h = c_y2 - m_virtual_dirty.y; }
+}
+
+void ScaledVideo::update(bool to_screen) {
+	// Nothing to do?
+	if(m_virtual_dirty.x < 0) { return; }
+
+	// Do the actual scaling
+	updateScale();
+
+	// If the target is palettized, copy the palette too
+	if(m_true_surface->format->BitsPerPixel == 8) {
+		SDL_SetPalette(m_true_surface, SDL_LOGPAL|SDL_PHYSPAL,
+			m_virtual_surface->format->palette->colors, 0,
+			m_virtual_surface->format->palette->ncolors);
+	}
+
+	// Render to the screen, if requested
+	if(to_screen) {
+		SDL_Rect true_dirty;
+		Sint16 x2, y2;
+
+		mapVirtualToTrue(
+			m_virtual_dirty.x, m_virtual_dirty.y,
+			&true_dirty.x, &true_dirty.y);
+		mapVirtualToTrue(
+			m_virtual_dirty.x + m_virtual_dirty.w,
+			m_virtual_dirty.y + m_virtual_dirty.h,
+			&x2, &y2);
+		true_dirty.w = x2 - true_dirty.x;
+		true_dirty.h = y2 - true_dirty.y;
+
+		SDL_UpdateRects(m_true_surface, 1, &true_dirty);
+
+		// XXX DEBUG
+		/* fprintf(stderr, "[%d,%d,%d,%d]-%d,%d->[%d,%d,%d,%d]\n",
+			m_virtual_dirty.x, m_virtual_dirty.y,
+			m_virtual_dirty.w, m_virtual_dirty.h,
+			x2, y2,
+			true_dirty.x, true_dirty.y,
+			true_dirty.w, true_dirty.h); */
+	}
+
+	// Mark that we have no dirt left
+	m_virtual_dirty.x = -1;
+}
+
+// No scaling, just translate.
 class ScaledVideoTranslateOnly : public ScaledVideo {
-	SDL_Rect offset;
+	SDL_Rect m_offset;
 public:
-	ScaledVideoTranslateOnly(SDL_Rect virtres, SDL_Rect trueres,
-		bool fullscreen) :
-		ScaledVideo(virtres, trueres, false, false, fullscreen) {
+	ScaledVideoTranslateOnly(
+		SDL_Surface* virtual_surface,
+		SDL_Surface* true_surface,
+		SDL_Rect& virtual_resolution,
+		SDL_Rect& true_resolution)
+		:
+		ScaledVideo(
+			virtual_surface, true_surface,
+			virtual_resolution, true_resolution) {
 
-		offset.x = (trueres.w - virtres.w) / 2;
-		offset.y = (trueres.h - virtres.h) / 2;
-		trace("\tusing translate only scaler, %dx%d",
-			offset.x, offset.y);
+		m_offset.x = (m_true_resolution.w - m_virtual_resolution.w) / 2;
+		m_offset.y = (m_true_resolution.h - m_virtual_resolution.h) / 2;
 	}
 
-	virtual void dirtyRect(Sint16 x, Sint16 y, Uint16 w, Uint16 h) {
-		SDL_Rect srcrect, dstrect, dstrectcpy;
-		// Blit accross to true framebuffer.
-		srcrect.x = x; dstrect.x = x + offset.x;
-		srcrect.y = y; dstrect.y = y + offset.y;
-		srcrect.w = w; dstrect.w = w;
-		srcrect.h = h; dstrect.h = h;
-		dstrectcpy = dstrect; // BlitSurface is destructive
-		SDL_BlitSurface(virtualfb, &srcrect,
-			SDL_GetVideoSurface(), &dstrect);
-		// Put the true framebuffer-relative rectangle in the dirty set
-		ScaledVideo::dirtyRect(dstrectcpy.x, dstrectcpy.y, w, h);
+	virtual std::string describe() {
+		std::ostringstream oss;
+		oss << "translate by " << m_offset.x << ", " << m_offset.y;
+		return oss.str();
+	}
+
+	virtual void updateScale() {
+		// Just blit it with the offset.
+		SDL_Rect destination;
+		destination.x = m_virtual_dirty.x + m_offset.x;
+		destination.y = m_virtual_dirty.y + m_offset.y;
+		SDL_BlitSurface(m_virtual_surface, &m_virtual_dirty,
+			m_true_surface, &destination);
+	}
+
+	virtual void mapVirtualToTrue(Sint16 virtual_x, Sint16 virtual_y,
+		Sint16* true_x, Sint16* true_y) {
+
+		*true_x = virtual_x + m_offset.x;
+		*true_y = virtual_y + m_offset.y;
+	}
+
+	virtual void mapTrueToVirtual(Sint16 true_x, Sint16 true_y,
+		Sint16* virtual_x, Sint16* virtual_y) {
+
+		clipPoint(
+			true_x - m_offset.x,
+			true_y - m_offset.y,
+			virtual_x, virtual_y);
 	}
 };
 
 // Integer software scaler
 class ScaledVideoInteger : public ScaledVideo {
-	SDL_Rect offset;
-	unsigned int scale;
+	SDL_Rect m_offset;
+	unsigned int m_scale;
 public:
-	ScaledVideoInteger(SDL_Rect virtres, SDL_Rect trueres, bool fullscreen)
-		: ScaledVideo(virtres, trueres, false, false, fullscreen) {
-
+	ScaledVideoInteger(
+		SDL_Surface* virtual_surface,
+		SDL_Surface* true_surface,
+		SDL_Rect& virtual_resolution,
+		SDL_Rect& true_resolution)
+		:
+		ScaledVideo(
+			virtual_surface, true_surface,
+			virtual_resolution, true_resolution) {
+			
 		double scaletmp;
-		if(scale_needed(virtres, trueres, &scaletmp)) {
-			scale = (unsigned int) scaletmp;
+		if(scale_needed(virtual_resolution,true_resolution,&scaletmp)) {
+			m_scale = (unsigned int) scaletmp;
 		} else {
-			warn("Integer scaler asked to perform non-int scaling");
-			throw ScaledVideo::BadResolution();
+			throw std::logic_error(
+				"Integer scaler asked to perform non-int "
+				"scaling");
 		}
-		offset.x = (trueres.w - (virtres.w * scale)) / 2;
-		offset.y = (trueres.h - (virtres.h * scale)) / 2;
 
-		trace("\tusing integer scaler, factor %u", scale);
+		m_offset.x =
+			(m_true_resolution.w-(m_virtual_resolution.w*m_scale))
+				/ 2;
+		m_offset.y =
+			(m_true_resolution.h-(m_virtual_resolution.h*m_scale))
+				/ 2;
 	}
 
-	// This is not wonderously efficient; it makes no attempt at batch or
-	// parallel processing, so iterates over every single output pixel.
-	// TODO Profile (or just benchmark), see if Arbitrary approach is
-	// always faster; if so, improve or ditch this.
-	virtual void dirtyRect(Sint16 x, Sint16 y, Uint16 w, Uint16 h) {
+	virtual std::string describe() {
+		std::ostringstream oss;
+		oss << "translate by " << m_offset.x << ", " << m_offset.y;
+		oss << " and integer scale by " << m_scale << "x";
+		return oss.str();
+	}
+
+	/* This is not wonderously efficient; it makes no attempt at batch or
+	 * parallel processing, so iterates over every single output pixel.
+	 * Demands that the pixel formats match (enforced by factory).
+	 * TODO Benchmark, see if Arbitrary approach is always faster; if so,
+	 * improve or ditch this. */
+	virtual void updateScale() {
+		Sint16 x = m_virtual_dirty.x;
+		Sint16 y = m_virtual_dirty.y;
+		Uint16 w = m_virtual_dirty.w;
+		Uint16 h = m_virtual_dirty.h;
+
 		// Check within bounds, else this can scramble memory
 		assert(x >= 0); assert (y >= 0);
-		assert(x + w <= virtres.w); assert(y + h <= virtres.h);
+		assert(x + w <= m_virtual_resolution.w);
+		assert(y + h <= m_virtual_resolution.h);
+
 		// Copy and upscale data
-		SDL_Surface* screen = SDL_GetVideoSurface();
-		SDL_LockSurface(virtualfb);
-		SDL_LockSurface(screen);
-		Uint8 bypp = virtualfb->format->BytesPerPixel;
-		assert(bypp == screen->format->BytesPerPixel);
+		SDL_LockSurface(m_virtual_surface);
+		SDL_LockSurface(m_true_surface);
+		Uint8 bypp = m_virtual_surface->format->BytesPerPixel;
+		assert(bypp == m_true_surface->format->BytesPerPixel);
 		// (we demanded same format from SDL, remember)
-		char* srcline = (char*) virtualfb->pixels
-			+ (y * virtualfb->pitch);
-		char* dstline = (char*) screen->pixels
-			+ (((y*scale)+offset.y) * screen->pitch);
+		char* srcline = (char*) m_virtual_surface->pixels
+			+ (y * m_virtual_surface->pitch);
+		char* dstline = (char*) m_true_surface->pixels
+			+ (((y*m_scale)+m_offset.y) * m_true_surface->pitch);
 		for(Uint16 lines = h; lines; --lines) {
-			for(unsigned int ydup = scale; ydup; --ydup) {
+			for(unsigned int ydup = m_scale; ydup; --ydup) {
 				char* srcpix = srcline + (x * bypp);
 				char* dstpix = dstline +
-					(((x*scale)+offset.x) * bypp);
+					(((x*m_scale)+m_offset.x) * bypp);
 
 				for(Uint16 cols = w; cols; --cols) {
-					for(unsigned int xdup = scale; xdup;
+					// TODO memcpy m_scale*bypp at once?
+					for(unsigned int xdup = m_scale; xdup;
 						--xdup) {
 
 						memcpy(dstpix, srcpix, bypp);
@@ -248,20 +269,32 @@ public:
 					}
 					srcpix += bypp;
 				}
-				dstline += screen->pitch;
+				dstline += m_true_surface->pitch;
 			}
-			srcline += virtualfb->pitch;
+			srcline += m_virtual_surface->pitch;
 		}
-		SDL_UnlockSurface(screen);
-		SDL_UnlockSurface(virtualfb);
+		SDL_UnlockSurface(m_true_surface);
+		SDL_UnlockSurface(m_virtual_surface);
+	}
 
-		// Adjust the update rectangle that gets stored
-		ScaledVideo::dirtyRect(
-			(x*scale) + offset.x, (y*scale) + offset.y,
-			w * scale, h * scale);
+	virtual void mapVirtualToTrue(Sint16 virtual_x, Sint16 virtual_y,
+		Sint16* true_x, Sint16* true_y) {
+
+		*true_x = (virtual_x * m_scale) + m_offset.x;
+		*true_y = (virtual_y * m_scale) + m_offset.y;
+	}
+
+	virtual void mapTrueToVirtual(Sint16 true_x, Sint16 true_y,
+		Sint16* virtual_x, Sint16* virtual_y) {
+
+		clipPoint(
+			(true_x / m_scale) - m_offset.x,
+			(true_y / m_scale) - m_offset.y,
+			virtual_x, virtual_y);
 	}
 };
 
+#if 0
 // Arbitrary software scaler
 class ScaledVideoArbitrary : public ScaledVideo {
 protected:
@@ -350,7 +383,6 @@ public:
 	}
 };
 
-#ifdef SCALE_ARB_BLEND
 /* The arbitrary scaler is a "fast" nearest-pixel map, and we want crisp pixels
  * rather than bilinear filtering, but this is not visually optimal. We really
  * want something smarter that antialises misaligned pixel boundaries, but
@@ -618,88 +650,97 @@ public:
 };
 #endif
 
-#ifdef WITH_OPENGL
-#error "OpenGL scaler not implemented."
-// OpenGL scaler
-/* Not yet implemented because it's quite a lot of extra faff for a scaler
- * whose quality won't exceed the arbitrary scaler, but involves a whole lot
- * more copying---so may well end up actually being slower. */
-class ScaledVideoOpenGL : public ScaledVideo {
-public:
-	ScaledVideoOpenGL(SDL_Rect virtres, SDL_Rect trueres, bool fullscreen) :
-		ScaledVideo(virtres, trueres, true, false, fullscreen) {
+// Factory function ///////////////////////////////////////////////////////////
 
-		warn("OpenGL upscaling unimplemented");
-		throw ScaledVideo::BadResolution(); // TODO Implement
+ScaledVideo* get_scaled_video(
+	SDL_Surface* virtual_surface,
+	int true_w,
+	int true_h,
+	int true_bpp,
+	Uint32 flags,
+	bool high_quality) {
 
-		// Construct appropriate geometry to fill the screen
-		// Set up LINEAR texture scaling
-		/* In theory, a large virtual screen may go over the graphics
-		 * card's maximum texture dimensions. */
-
-		trace("\tusing OpenGL scaler");
+	// Switch to the requested video mode (or bail)
+	SDL_Surface* screen = SDL_SetVideoMode(
+		true_w, true_h, true_bpp, flags);
+	if(!screen) {
+		throw std::runtime_error(SDL_GetError());
 	}
 
-	// update() always copies the whole surface. Keep dirtyrects empty.
-	virtual void dirtyRect(Sint16 x, Sint16 y, Uint16 w, Uint16 h) {}
+	/* Blank the new true surface, since there may be borders we will
+	 * never draw to again. */
+	SDL_FillRect(screen, 0, SDL_MapRGB(screen->format, 0, 0, 0));
 
-	virtual void update() {
-		// TODO Copy whole surface as a texture.
-		// Remember to keep it in a power-of-two square.
+	/* Find the pixel format SDL has chosen for us and compare it to the
+	 * virtual surface. If they're the same, just copying memory is an
+	 * option, so long as we update the palette. */
+	SDL_PixelFormat* true_format    = screen->format;
+	SDL_PixelFormat* virtual_format = virtual_surface->format;
+	int  actual_bpp =   true_format->BitsPerPixel; // might be != true_bpp
+	int virtual_bpp = virtual_format->BitsPerPixel;
+	bool can_just_copy =
+		(actual_bpp == 8 && virtual_bpp == 8) || (
+			(actual_bpp         == virtual_bpp          ) &&
+			(true_format->Rmask == virtual_format->Rmask) &&
+			(true_format->Gmask == virtual_format->Gmask) &&
+			(true_format->Bmask == virtual_format->Bmask) &&
+			(true_format->Amask == virtual_format->Amask));
 
-		SDL_GL_SwapBuffers();
-	}
-};
-#endif
-
-// Factory functions //////////////////////////////////////////////////////////
-
-ScaledVideo* getScaledVideoManual(bool hardware, SDL_Rect virtres,
-	 SDL_Rect trueres, bool fullscreen) {
-#define DESCRIBE trueres.w, trueres.h, \
-	hardware?"hard":"soft", fullscreen?"fullscreen":"windowed"
-#define USE(X) try { return new X; } \
-	catch(ScaledVideo::BadResolution) { \
-		warn("Can't use video mode %dx%d %sware %s!", DESCRIBE); \
-		return NULL; \
-	}
-
-	trace("Trying video mode %dx%d %sware %s.", DESCRIBE);
-	if((virtres.w == trueres.w) || (virtres.h == trueres.h)) {
-// FIXME Only if pixel format matches
-//		if((virtres.w == trueres.w) && (virtres.h == trueres.h)) {
-//			USE(ScaledVideoNoOp(virtres, trueres, fullscreen))
-//		} else {
-			USE(ScaledVideoTranslateOnly(
-				virtres, trueres, fullscreen))
-//		}
-	}
-
-#ifdef WITH_OPENGL
-	if(hardware) {
-		USE(ScaledVideoOpenGL(virtres, trueres, fullscreen))
-#else
-	if(hardware) { warn("Hardware accelleration support not compiled."); }
-	if(0) { // And a } to appease naieve bracket-matching.
-#endif
+	// XXX DEBUG
+	if(can_just_copy) {
+		fprintf(stderr, "Scaling by copying is possible\n");
 	} else {
-		double upscale;
-		bool integer = scale_needed(virtres, trueres, &upscale);
-		if(integer) {
-			USE(ScaledVideoInteger(virtres, trueres, fullscreen))
-		} else {
-			/* TODO Mechanism to select 'high quality' arbitrary
-			 * scaler at runtime. It's slightly slower (the cache
-			 * helps a lot), and currently looks worse at lower
-			 * scale-up factors IMO. Once you get to about 800x600,
-			 * it's probably an improvement. */
-#ifdef SCALE_ARB_BLEND
-			USE(ScaledVideoArbitraryHQ(virtres,trueres,fullscreen))
-#else
-			USE(ScaledVideoArbitrary(virtres, trueres, fullscreen))
-#endif
-		}
+		fprintf(stderr, "Can't scale by copying: "
+			"bpp(%d,%d) rm(%x,%x)\n",
+			actual_bpp, virtual_bpp,
+			true_format->Rmask, virtual_format->Rmask);
 	}
-#undef DESCRIBE
-#undef USE
+	
+	// Get the resolutions packed into SDL_Rects
+	SDL_Rect virtual_resolution;
+	virtual_resolution.x = virtual_resolution.y = 0;
+	virtual_resolution.w = virtual_surface->w;
+	virtual_resolution.h = virtual_surface->h;
+	SDL_Rect true_resolution;
+	true_resolution.x = true_resolution.y = 0;
+	true_resolution.w = true_w;
+	true_resolution.h = true_h;
+
+	/* Translate is simple and should be fast, but SDL_BlitSurface seems
+	 * to choke on 8bpp-to-8bpp blits(!) with "Blit combination not
+	 * supported". Let that case fall down to the integer scaler. */
+	if((actual_bpp != 8) && (
+		(virtual_resolution.w == true_resolution.w) ||
+		(virtual_resolution.h == true_resolution.h))) {
+
+		return new ScaledVideoTranslateOnly(
+			virtual_surface, screen,
+			virtual_resolution, true_resolution);
+	}
+
+	double upscale;
+	bool integer = scale_needed(
+		virtual_resolution, true_resolution, &upscale);
+
+	if(integer && can_just_copy) {
+		return new ScaledVideoInteger(
+			virtual_surface, screen,
+			virtual_resolution, true_resolution);
+	} else {
+		// XXX arb scalers temporarily disabled
+		return new ScaledVideoTranslateOnly(
+			virtual_surface, screen,
+			virtual_resolution, true_resolution);
+#if 0
+		if(high_quality) {
+			return new ScaledVideoArbitraryHQ(
+				virtual_surface, screen,
+				virtual_resolution, true_resolution);
+		} else {
+			return new ScaledVideoArbitrary(
+				virtual_surface, screen,
+				virtual_resolution, true_resolution);
+		}
+#endif
+	}
 }
