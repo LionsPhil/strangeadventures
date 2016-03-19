@@ -56,18 +56,16 @@ int main(int argc, char *argv[])
 
 	g_virtual_resolution.x = 0;
 	g_virtual_resolution.y = 0;
-	g_virtual_resolution.w = 640;
-	g_virtual_resolution.h = 480;
+	g_virtual_resolution.w = gfx_width;
+	g_virtual_resolution.h = gfx_height;
 
-	sdlsurf = SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 480, 8,
+	sdlsurf = SDL_CreateRGBSurface(SDL_SWSURFACE, gfx_width, gfx_height, 8,
 		0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff);
 
-	g_scaled_video = get_scaled_video(sdlsurf, 640, 480);
-	//g_scaled_video = get_scaled_video(sdlsurf, 1280, 960, 8, SDL_SWSURFACE | SDL_HWPALETTE);
-	//g_scaled_video = get_scaled_video(sdlsurf, g_native_resolution.w, g_native_resolution.h, 8, SDL_SWSURFACE | SDL_ANYFORMAT | SDL_FULLSCREEN | SDL_HWPALETTE, true);
-
-	std::string scaler_description = g_scaled_video->describe();
-	fprintf(stderr, "Using scaling technique: %s\n", scaler_description.c_str());
+	g_scaled_video = NULL;
+	gfx_window_width  = gfx_width; // Start at 1:1 size
+	gfx_window_height = gfx_height;
+	gfx_resize();
 
 	my_main();
 

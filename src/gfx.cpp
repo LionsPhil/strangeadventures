@@ -20,6 +20,7 @@ t_ik_image *magni;
 t_ik_image *screen;
 t_ik_image screenbuf;
 int gfx_width, gfx_height, gfx_fullscreen, gfx_switch;
+int gfx_window_width, gfx_window_height;
 int gfx_redraw;
 int c_minx, c_miny, c_maxx, c_maxy;
 

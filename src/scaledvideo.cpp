@@ -17,8 +17,8 @@ static bool scale_needed(SDL_Rect& source, SDL_Rect& target, double* scale) {
 	double scalew = ((double) target.w) / source.w;
 	double scaleh = ((double) target.h) / source.h;
 	*scale = (scalew > scaleh) ? scaleh : scalew;
-	return ((source.w * std::floor(*scale + 0.5)) == target.w)
-	    || ((source.h * std::floor(*scale + 0.5)) == target.h);
+	return ((source.w * (unsigned int) std::floor(*scale)) == target.w)
+	    || ((source.h * (unsigned int) std::floor(*scale)) == target.h);
 }
 
 ScaledVideo::ScaledVideo(
@@ -205,7 +205,7 @@ public:
 			
 		double scaletmp;
 		if(scale_needed(virtual_resolution,true_resolution,&scaletmp)) {
-			m_scale = (unsigned int) scaletmp;
+			m_scale = std::floor(scaletmp);
 		} else {
 			throw std::logic_error(
 				"Integer scaler asked to perform non-int "
@@ -660,6 +660,11 @@ ScaledVideo* get_scaled_video(
 	Uint32 flags,
 	bool high_quality) {
 
+	// Sanity-check the desired resolution
+	if((true_w < virtual_surface->w) || (true_h < virtual_surface->h)) {
+		throw std::runtime_error("can't downscale");
+	}
+
 	// Switch to the requested video mode (or bail)
 	SDL_Surface* screen = SDL_SetVideoMode(
 		true_w, true_h, true_bpp, flags);
@@ -708,7 +713,7 @@ ScaledVideo* get_scaled_video(
 
 	/* Translate is simple and should be fast, but SDL_BlitSurface seems
 	 * to choke on 8bpp-to-8bpp blits(!) with "Blit combination not
-	 * supported". Let that case fall down to the integer scaler. */
+	 * supported". Let that case fall down to the other scalers. */
 	if((actual_bpp != 8) && (
 		(virtual_resolution.w == true_resolution.w) ||
 		(virtual_resolution.h == true_resolution.h))) {

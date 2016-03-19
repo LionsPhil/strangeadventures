@@ -18,6 +18,8 @@ code to handle all/most of the interaction with the win32 system
 
 #endif
 
+#include <stdexcept>
+
 #include <stdlib.h>
 #include <memory.h>
 #include <string.h>
@@ -117,6 +119,10 @@ void eventhandler()
 					settings.opt_mousemode ^= 4;
 					Play_SoundFX(WAV_LOCK,0);
 					break;
+				case SDLK_F11:
+					gfx_fullscreen = !gfx_fullscreen;
+					gfx_resize();
+					break;
 				case SDLK_ESCAPE :
 					must_quit=1;
 					break;
@@ -141,7 +147,6 @@ void eventhandler()
 					&virtual_x, &virtual_y);
 				ik_mouse_x = virtual_x;
 				ik_mouse_y = virtual_y;
-//				fprintf(stderr, "Mouse %d,%d -> %d,%d\n", true_x, true_y, virtual_x, virtual_y); // XXX
 				break;
 
 			case SDL_MOUSEBUTTONUP:
@@ -159,10 +164,17 @@ void eventhandler()
 			}
 			break;
 
-			case SDL_VIDEOEXPOSE:
 			case SDL_VIDEORESIZE:
+				/* DON'T change gfx_width/height; those are
+				 * virtual dimensions */
+				gfx_window_width  = event.resize.w;
+				gfx_window_height = event.resize.h;
+				gfx_resize();
+				/* fallthrough */
+			case SDL_VIDEOEXPOSE:
 				ActiveApp = 1;
 				break;
+
 			case SDL_QUIT:
 				must_quit = 1;
 				break;
@@ -279,4 +291,36 @@ void ik_showcursor()
 void ik_hidecursor()
 {
 	SDL_ShowCursor(0);
+}
+
+void gfx_resize() {
+	int w, h;
+	int flags = SDL_SWSURFACE | SDL_HWPALETTE;
+	ScaledVideo* old_scaler = g_scaled_video;
+
+	if(gfx_fullscreen) {
+		w = g_native_resolution.w;
+		h = g_native_resolution.h;
+		// Add ANYFORMAT since we don't want to *force* 8bpp
+		flags |= SDL_FULLSCREEN | SDL_ANYFORMAT;
+	} else {
+		w = gfx_window_width;
+		h = gfx_window_height;
+		if(w < gfx_width ) { w = gfx_width;  }
+		if(h < gfx_height) { h = gfx_height; }
+		flags |= SDL_RESIZABLE;
+	}
+
+	try {
+		// Currently no way to ask for the HQ arbitrary scaler
+		g_scaled_video = get_scaled_video(sdlsurf, w, h, 8, flags);
+
+		delete old_scaler;
+
+		std::string scaler_description = g_scaled_video->describe();
+		fprintf(stderr, "Using scaling technique: %s\n", scaler_description.c_str());
+
+	} catch (std::runtime_error& re) {
+		fprintf(stderr, "Couldn't change scaler: %s!\n", re.what());
+	}
 }

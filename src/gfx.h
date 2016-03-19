@@ -51,6 +51,10 @@ extern unsigned char *gfx_addbuffer;
 extern int32 sin1k[1024];
 extern int32 cos1k[1024];
 
+// resizing (also initialization)
+extern int gfx_window_width, gfx_window_height;
+void gfx_resize();
+
 // load, generate or delete images
 t_ik_image *new_image(int32 w, int32 h);
 void del_image(t_ik_image *img);
@@ -95,8 +99,6 @@ int get_distance(int32 dx, int32 dy);
 
 void gfx_initmagnifier();
 void gfx_deinitmagnifier();
-
-
 
 // ------------------------
 //         FONT.CPP
