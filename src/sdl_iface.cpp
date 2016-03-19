@@ -294,25 +294,32 @@ void ik_hidecursor()
 }
 
 void gfx_resize() {
-	int w, h;
+	int w, h, bpp;
 	int flags = SDL_SWSURFACE | SDL_HWPALETTE;
 	ScaledVideo* old_scaler = g_scaled_video;
 
 	if(gfx_fullscreen) {
 		w = g_native_resolution.w;
 		h = g_native_resolution.h;
-		// Add ANYFORMAT since we don't want to *force* 8bpp
+		/* Some systems, even with ANYFORMAT, will drop to 8bpp if they
+		 * think they can support it, but then screw up the palette (I
+		 * guess it's not a focus of graphics driver testing any more!).
+		 * So ask for 32bpp and eat a possible inefficiency. Flag
+		 * SDL_ANYFORMAT so if we're on a machine that can only do 8bpp,
+		 * somehow, we still at least try. */
+		bpp = 32;
 		flags |= SDL_FULLSCREEN | SDL_ANYFORMAT;
 	} else {
 		w = gfx_window_width;
 		h = gfx_window_height;
 		if(w < gfx_width ) { w = gfx_width;  }
 		if(h < gfx_height) { h = gfx_height; }
+		bpp = 8; // window should be able to provide this
 		flags |= SDL_RESIZABLE;
 	}
 
 	try {
-		g_scaled_video = get_scaled_video(sdlsurf, w, h, 8, flags);
+		g_scaled_video = get_scaled_video(sdlsurf, w, h, bpp, flags);
 
 		delete old_scaler;
 

@@ -23,6 +23,7 @@ strangelp_SOURCES = \
 	main.cpp \
 	modconfig.cpp \
 	resource.h \
+	sais_version.h \
 	scaledvideo.cpp \
 	scaledvideo.hpp \
 	sdl_iface.cpp \
