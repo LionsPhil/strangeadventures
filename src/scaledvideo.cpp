@@ -290,7 +290,7 @@ public:
 	}
 };
 
-// Arbitrary software scaler
+// Arbitrary software scaler, copying
 class ScaledVideoArbitrary : public ScaledVideo {
 protected:
 	// In this case, we use not only the x and y offset, but also the w
@@ -412,6 +412,93 @@ public:
 	}
 };
 
+/* Arbitrary software scaler, converting.
+ * This is the almost-ultimate fallback: handles any scaling, any 32-bit RGB out
+ * format. */
+class ScaledVideoArbitraryConvertingPaletted : public ScaledVideoArbitrary {
+public:
+	ScaledVideoArbitraryConvertingPaletted(
+		SDL_Surface* virtual_surface,
+		SDL_Surface* true_surface,
+		SDL_Rect& virtual_resolution,
+		SDL_Rect& true_resolution)
+		:
+		ScaledVideoArbitrary(
+			virtual_surface, true_surface,
+			virtual_resolution, true_resolution) {
+
+		assert(virtual_surface->format->BitsPerPixel == 8);
+		assert(   true_surface->format->BitsPerPixel == 32);
+	}
+
+	virtual std::string describe() {
+		std::ostringstream oss;
+		oss << ScaledVideoArbitrary::describe();
+		oss << " (converting from 8bpp)";
+		return oss.str();
+	}
+
+	virtual void updateScale() {
+		Sint16 x = m_virtual_dirty.x;
+		Sint16 y = m_virtual_dirty.y;
+		Uint16 w = m_virtual_dirty.w;
+		Uint16 h = m_virtual_dirty.h;
+
+		// Work out the true bounding rectangle
+		Sint16 truex1, truex2, truey1, truey2;
+		mapVirtualToTrue(x,   y,   &truex1, &truey1);
+		mapVirtualToTrue(x+w, y+h, &truex2, &truey2);
+
+		// Transform the palette into target format
+		SDL_Palette* palette = m_virtual_surface->format->palette;
+		assert(palette->ncolors <= 256);
+		Uint32 colors[256];
+		for(int c = 0; c < palette->ncolors; ++c) {
+			colors[c] = SDL_MapRGB(m_true_surface->format,
+				palette->colors[c].r,
+				palette->colors[c].g,
+				palette->colors[c].b);
+		}
+
+		// For each display pixel in the area, source a virtual pixel
+		Sint16 virtx, virty;
+		SDL_LockSurface(m_virtual_surface);
+		SDL_LockSurface(m_true_surface);
+		Uint8 virtual_bypp = m_virtual_surface->format->BytesPerPixel;
+		Uint8 true_bypp    =    m_true_surface->format->BytesPerPixel;
+		char* dstline = (char*) m_true_surface->pixels
+			+ (truey1*m_true_surface->pitch);
+		for(Sint16 ty = truey1; ty < truey2; ++ty) {
+			char* dstpix = dstline + (truex1 * true_bypp);
+			for(Sint16 tx = truex1; tx < truex2; ++tx) {
+				mapTrueToVirtualInternal(tx,ty, &virtx,&virty);
+				unsigned char* srcpix = (unsigned char*)
+					m_virtual_surface->pixels
+					+ (virty * m_virtual_surface->pitch)
+					+ (virtx * virtual_bypp);
+
+				*((Uint32*) dstpix) = colors[*srcpix];
+
+				dstpix += true_bypp;
+			}
+			dstline += m_true_surface->pitch;
+		}
+		SDL_UnlockSurface(m_true_surface);
+		SDL_UnlockSurface(m_virtual_surface);
+	}
+};
+
+/* SAIS doesn't need to handle non-8bpp input, but the other half of the
+ * ultimate fallback would be a ScaledVideoArbitraryConvertingRGB that
+ * converts pixel data a la:
+ * red1 =one & fmt->Rmask; red1 >>=fmt->Rshift; red1 <<=fmt->Rloss;
+ * gre1 =one & fmt->Gmask; gre1 >>=fmt->Gshift; gre1 <<=fmt->Gloss;
+ * blu1 =one & fmt->Bmask; blu1 >>=fmt->Bshift; blu1 <<=fmt->Bloss;
+ * and does the SDL_MapRGB. Not gonna be the fastest thing...
+ * Bonus points: template it to handle 16-bit output too.
+ * None of the scalers will handle RGB -> paletted output.
+ */
+
 // Factory function ///////////////////////////////////////////////////////////
 
 ScaledVideo* get_scaled_video(
@@ -497,10 +584,21 @@ ScaledVideo* get_scaled_video(
 			return new ScaledVideoArbitrary(
 				virtual_surface, screen,
 				virtual_resolution, true_resolution);
+		} else if(virtual_bpp == 8 && actual_bpp == 32) {
+			return new ScaledVideoArbitraryConvertingPaletted(
+				virtual_surface, screen,
+				virtual_resolution, true_resolution);
+		} else if(actual_bpp == 32) {
+			// SAIS doesn't need this
+			throw std::logic_error(
+				"how did we get a non-8bpp input?");
+			/* return new ScaledVideoArbitraryConvertingRGB(
+				virtual_surface, screen,
+				virtual_resolution, true_resolution); */
 		} else {
-			/* Eep. And we've already changed video mode, too.
-			 * Need a ScaledVideoArbitraryConverting. */
-			throw std::runtime_error("no working scaler!");
+			// We just don't support 16 or 24 bit output
+			throw std::runtime_error(
+				"no supported scaler for output");
 		}
 	}
 }
