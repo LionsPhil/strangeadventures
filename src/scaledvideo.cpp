@@ -120,14 +120,6 @@ void ScaledVideo::update(bool to_screen) {
 		true_dirty.h = y2 - true_dirty.y;
 
 		SDL_UpdateRects(m_true_surface, 1, &true_dirty);
-
-		// XXX DEBUG
-		/* fprintf(stderr, "[%d,%d,%d,%d]-%d,%d->[%d,%d,%d,%d]\n",
-			m_virtual_dirty.x, m_virtual_dirty.y,
-			m_virtual_dirty.w, m_virtual_dirty.h,
-			x2, y2,
-			true_dirty.x, true_dirty.y,
-			true_dirty.w, true_dirty.h); */
 	}
 
 	// Mark that we have no dirt left
@@ -538,16 +530,6 @@ ScaledVideo* get_scaled_video(
 			(true_format->Gmask == virtual_format->Gmask) &&
 			(true_format->Bmask == virtual_format->Bmask) &&
 			(true_format->Amask == virtual_format->Amask));
-
-	// XXX DEBUG
-	if(can_just_copy) {
-		fprintf(stderr, "Scaling by copying is possible\n");
-	} else {
-		fprintf(stderr, "Can't scale by copying: "
-			"bpp(%d,%d) rm(%x,%x)\n",
-			actual_bpp, virtual_bpp,
-			true_format->Rmask, virtual_format->Rmask);
-	}
 	
 	// Get the resolutions packed into SDL_Rects
 	SDL_Rect virtual_resolution;
