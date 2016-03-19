@@ -1,12 +1,10 @@
 #include <windows.h>
-
-#define VERSION_NUM 2005,11,11,1
-#define VERSION_STR "20051111.1"
+#include "sais_version.h"
 
 //VS_VERSION_INFO VERSIONINFO
 1 VERSIONINFO
-FILEVERSION    VERSION_NUM
-PRODUCTVERSION VERSION_NUM
+FILEVERSION    SAIS_VERSION_NUMBER
+PRODUCTVERSION SAIS_VERSION_NUMBER
 FILEFLAGSMASK  VS_FFI_FILEFLAGSMASK
 FILEFLAGS      0
 FILEOS         VOS__WINDOWS32
@@ -19,12 +17,12 @@ BEGIN
 		BEGIN
 			VALUE "CompanyName",      "Digital Eel / LionsPhil"
 			VALUE "FileDescription",  "Strange Adventures in Infinite Space (LionsPhil fork)"
-			VALUE "FileVersion",      VERSION_STR
+			VALUE "FileVersion",      SAIS_VERSION_STRING
 			VALUE "InternalName",     "strangelp"
 			VALUE "LegalCopyright",   "Copyright Digital Eel et. al.; licensed under the terms of the GNU GPL"
 			VALUE "OriginalFilename", "strangelp.exe"
 			VALUE "ProductName",      "Strange Adventures in Infinite Space"
-			VALUE "ProductVersion",   VERSION_STR
+			VALUE "ProductVersion",   SAIS_VERSION_STRING
 		END
 	END
 

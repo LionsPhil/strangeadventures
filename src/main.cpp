@@ -33,6 +33,7 @@
 #include "cards.h"
 #include "startgame.h"
 #include "endgame.h"
+#include "sais_version.h"
 
 #define MAIN_INTERFACE_COLOR 0
 
@@ -953,7 +954,7 @@ int32 intro_screen()
 			interface_drawbutton(screen, 256, 440, 128, MAIN_INTERFACE_COLOR, "HIGH SCORES");
 			interface_drawbutton(screen, 416, 440, 128, MAIN_INTERFACE_COLOR, "QUIT");
 
-			ik_print(screen, font_6x8, 3, 3, 0, SAIS_VERSION_NUMBER);
+			ik_print(screen, font_6x8, 3, 3, 0, "v" SAIS_VERSION_STRING);
 
 			ik_blit();
 		}
